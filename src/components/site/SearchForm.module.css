@@ -1,0 +1,35 @@
+.form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 720px;
+  padding: 8px 10px 8px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--orange);
+}
+
+.form input {
+  flex: 1;
+  min-width: 0;
+  height: 46px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.form button {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  color: var(--white);
+  flex: none;
+}
+
+.form button svg {
+  width: 28px;
+  height: 28px;
+}

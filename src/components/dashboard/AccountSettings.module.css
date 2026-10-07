@@ -1,0 +1,48 @@
+.placeholder {
+  display: grid;
+  place-items: center;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  border: 4px solid var(--orange);
+  color: var(--navy);
+}
+
+.placeholder svg {
+  width: 120px;
+  height: 120px;
+  stroke-width: 1.4;
+}
+
+.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.passwordRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  padding: 6px 8px 6px 22px;
+  border-radius: var(--radius-pill);
+  background: var(--gray-300);
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.buttons :global(.btn) {
+  border-radius: 2px;
+  white-space: normal;
+}
+
+@media (max-width: 520px) {
+  .buttons {
+    grid-template-columns: 1fr;
+  }
+}

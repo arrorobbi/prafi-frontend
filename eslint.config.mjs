@@ -12,6 +12,12 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
+    rules: {
+      // Images are served by the backend through the /images proxy; plain <img> keeps them simple
+      "@next/next/no-img-element": "off",
+    },
+  },
+  {
     ignores: [
       "node_modules/**",
       ".next/**",

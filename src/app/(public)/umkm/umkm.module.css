@@ -1,0 +1,43 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 22px;
+  border: 2px solid var(--navy);
+  border-radius: 14px;
+  background: var(--white);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.logo {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  border: 3px solid var(--orange);
+  object-fit: cover;
+  flex: none;
+  background: var(--gray-200);
+}
+
+.card h3 {
+  color: var(--orange);
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.card p {
+  color: var(--gray-700);
+  font-size: 0.85rem;
+}

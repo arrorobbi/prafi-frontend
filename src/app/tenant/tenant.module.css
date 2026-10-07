@@ -1,0 +1,26 @@
+.shop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 90px;
+  padding: 12px 16px;
+  border-radius: 28px;
+  background: var(--white);
+  color: var(--orange);
+}
+
+.shop img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid var(--orange);
+  object-fit: cover;
+  flex: none;
+}
+
+.shop strong {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}

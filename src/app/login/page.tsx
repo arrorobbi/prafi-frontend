@@ -1,0 +1,159 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { AuthFrame } from "@/components/auth/AuthFrame";
+import styles from "@/components/auth/auth.module.css";
+import { IconEye, IconEyeOff } from "@/components/Icons";
+import { Loading } from "@/components/ui";
+import { api, ApiError, errorMessage } from "@/lib/api";
+import { roleHome, SESSION_MESSAGE_KEY, useAuth } from "@/lib/auth";
+
+function LoginForm() {
+  const router = useRouter();
+  const params = useSearchParams();
+  const { status, user, login } = useAuth();
+  const [email, setEmail] = useState(params.get("email") ?? "");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [resendUserId, setResendUserId] = useState<string | null>(null);
+
+  // Message left by an ended session (expired token, logout, password reset)
+  useEffect(() => {
+    try {
+      const msg = sessionStorage.getItem(SESSION_MESSAGE_KEY);
+      if (msg) {
+        setNotice(msg);
+        sessionStorage.removeItem(SESSION_MESSAGE_KEY);
+      }
+    } catch {
+      // ignore
+    }
+    if (params.get("verified")) setNotice("Email berhasil diverifikasi, silakan login.");
+    if (params.get("reset")) setNotice("Kata sandi berhasil diubah, silakan login dengan kata sandi baru.");
+  }, [params]);
+
+  // Already logged in: go to the dashboard
+  useEffect(() => {
+    if (status === "authenticated" && user && !busy) router.replace(params.get("next") || roleHome(user.role));
+  }, [status, user, busy, router, params]);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    setNotice(null);
+    setResendUserId(null);
+    try {
+      const u = await login(email, password);
+      const next = params.get("next");
+      router.replace(next && next.startsWith("/") ? next : roleHome(u.role));
+    } catch (err) {
+      setBusy(false);
+      if (err instanceof ApiError && err.code === "EMAIL_NOT_VERIFIED") {
+        const d = err.details as { userId?: string; method?: "otp" | "link" } | undefined;
+        if (d?.userId && d.method === "otp") {
+          router.push(`/verifikasi?userId=${d.userId}&email=${encodeURIComponent(email.trim())}`);
+          return;
+        }
+        if (d?.userId) setResendUserId(d.userId);
+        setError("Email belum diaktifkan. Buka tautan aktivasi yang dikirim ke email Anda.");
+        return;
+      }
+      if (err instanceof ApiError && err.code === "USER_NOT_ACTIVATED") {
+        setError("Akun Anda belum diaktifkan. Akun admin diaktifkan oleh Disnakertrans; akun penjual oleh administrator.");
+        return;
+      }
+      setError(errorMessage(err));
+    }
+  };
+
+  return (
+    <div className={styles.orangeCard}>
+      <h2>MASUK AKUN</h2>
+      {notice && <div className={`alert alert-info ${styles.cardAlert}`}>{notice}</div>}
+      {error && (
+        <div className={`alert alert-error ${styles.cardAlert}`}>
+          <div>
+            {error}
+            {resendUserId && (
+              <button
+                type="button"
+                className="btn btn-navy btn-sm"
+                style={{ marginTop: 8 }}
+                onClick={() =>
+                  api.auth
+                    .resendVerification(resendUserId)
+                    .then(({ data }) => setNotice(data.message))
+                    .catch((e) => setError(errorMessage(e)))
+                }
+              >
+                Kirim ulang tautan aktivasi
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+      <form onSubmit={submit}>
+        <label className={styles.pillInput}>
+          <span className="sr-only">Email</span>
+          <input
+            type="email"
+            placeholder="Email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </label>
+        <label className={`${styles.pillInput} ${styles.pwInput}`}>
+          <span className="sr-only">Password</span>
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            autoComplete="current-password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button
+            type="button"
+            aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+            onClick={() => setShowPassword((s) => !s)}
+            className={styles.eye}
+          >
+            {showPassword ? <IconEyeOff width={20} height={20} /> : <IconEye width={20} height={20} />}
+          </button>
+          <Link href="/lupa-password" className={styles.inline}>
+            Lupa Password
+          </Link>
+        </label>
+        <button type="submit" className={`btn btn-navy btn-lg ${styles.loginBtn}`} disabled={busy}>
+          {busy ? "Memproses..." : "Login"}
+        </button>
+      </form>
+      <div className={styles.divider}>ATAU</div>
+      <p className={styles.signup}>
+        Baru di Prafi Hub? <Link href="/register">DAFTAR</Link>
+      </p>
+      <p className={styles.terms}>
+        Dengan login, kamu menyetujui <Link href="/panduan#ketentuan">Syarat, Ketentuan dan Kebijakan dari Prafi Hub</Link> &amp;{" "}
+        <Link href="/panduan#privasi">Kebijakan Privasi</Link> Prafi Hub
+      </p>
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <AuthFrame title="LOGIN/SIGN UP">
+      <Suspense fallback={<Loading />}>
+        <LoginForm />
+      </Suspense>
+    </AuthFrame>
+  );
+}

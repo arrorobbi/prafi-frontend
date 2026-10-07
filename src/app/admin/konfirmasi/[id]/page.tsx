@@ -1,0 +1,156 @@
+"use client";
+
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { useProductReview } from "@/components/dashboard/ProductReview";
+import styles from "@/components/dashboard/dashboard.module.css";
+import { IconWarning } from "@/components/Icons";
+import { Loading, PageHeader, StatusBadge, Thumb } from "@/components/ui";
+import { api, fetchAll } from "@/lib/api";
+import { approvalReason, DEACTIVATE_PREFIX, formatDate, formatNumber, imageSrc, productStatus, REJECT_PREFIX, sellerName } from "@/lib/format";
+import { useAsync } from "@/lib/useAsync";
+import local from "./review.module.css";
+
+/** Product detail for the admin: approve, reject (with reason) or take down. */
+export default function ReviewProductPage() {
+  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+  const [reason, setReason] = useState("");
+  const [reasonError, setReasonError] = useState<string | null>(null);
+
+  const { data, loading, error, reload } = useAsync(async () => {
+    const { data: product } = await api.products.get(id);
+    const tenants = await fetchAll((p) => api.tenants.list({ page: p, limit: 100 })).catch(() => []);
+    return { product, tenant: tenants.find((t) => t.userId === product.tenantId) ?? null };
+  }, [id]);
+
+  const review = useProductReview(() => reload());
+
+  if (loading && !data) return <Loading />;
+  if (error || !data)
+    return (
+      <>
+        <PageHeader title="KONFIRMASI PRODUK" backHref="/admin/konfirmasi" />
+        <div className="alert alert-error">{error ?? "Produk tidak ditemukan"}</div>
+      </>
+    );
+
+  const { product, tenant } = data;
+  const status = productStatus(product);
+  const lastReason = approvalReason(product);
+  const busy = review.busyId === product.id;
+  const max = 255 - Math.max(REJECT_PREFIX.length, DEACTIVATE_PREFIX.length);
+
+  const reject = async () => {
+    if (!reason.trim()) {
+      setReasonError("Alasan penolakan wajib diisi");
+      return;
+    }
+    setReasonError(null);
+    if (await review.reject(product.id, reason)) router.push("/admin/konfirmasi");
+  };
+
+  return (
+    <>
+      <PageHeader title="KONFIRMASI PRODUK" backHref="/admin/konfirmasi" />
+
+      <div className={local.layout}>
+        <div className={local.photo}>
+          <Thumb src={imageSrc(product.image)} alt={product.name} />
+          <StatusBadge status={status} />
+        </div>
+
+        <div className="stack">
+          <div className="field">
+            <span className="label">Nama Produk</span>
+            <div className={styles.readonlyBox}>{product.name}</div>
+          </div>
+          <div className="field">
+            <span className="label">Deskripsi Produk</span>
+            <div className={styles.readonlyBox}>{product.description}</div>
+          </div>
+          <div className="field">
+            <span className="label">Informasi Produk</span>
+            <div className={styles.readonlyBox}>{product.details}</div>
+          </div>
+          <div className={styles.formGrid}>
+            <div className="field">
+              <span className="label">Stok</span>
+              <div className={styles.readonlyBox}>{formatNumber(product.qty)}</div>
+            </div>
+            <div className="field">
+              <span className="label">Tanggal Pengajuan</span>
+              <div className={styles.readonlyBox}>{formatDate(product.createdAt)}</div>
+            </div>
+            <div className="field">
+              <span className="label">Penjual</span>
+              <div className={styles.readonlyBox}>
+                {sellerName(product)}
+                {product.tenant?.email ? ` · ${product.tenant.email}` : ""}
+              </div>
+            </div>
+            <div className="field">
+              <span className="label">Kategori UMKM</span>
+              <div className={styles.readonlyBox}>{tenant?.category?.name ?? "Profil toko belum dibuat"}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {lastReason && status !== "active" && (
+        <div className="alert alert-warning mt">
+          <IconWarning />
+          <span>
+            Keputusan sebelumnya: <strong>{lastReason}</strong>
+            {status === "pending" && " — produk telah diperbarui penjual dan diajukan ulang."}
+          </span>
+        </div>
+      )}
+
+      <label className={`field ${local.reason}`}>
+        <span className="label">{status === "active" ? "Alasan Penonaktifan" : "Alasan Penolakan"}</span>
+        <textarea
+          className="textarea"
+          placeholder={status === "active" ? "Tuliskan alasan produk ini dinonaktifkan (opsional)" : "Tuliskan alasan penolakan produk ini"}
+          value={reason}
+          maxLength={max}
+          onChange={(e) => setReason(e.target.value)}
+        />
+        {reasonError && <span className="field-error">{reasonError}</span>}
+      </label>
+
+      <div className={local.actions}>
+        {status === "active" ? (
+          <button
+            type="button"
+            className="btn btn-red btn-lg"
+            disabled={busy}
+            onClick={async () => {
+              if (await review.deactivate(product.id, reason)) setReason("");
+            }}
+          >
+            NONAKTIFKAN PRODUK
+          </button>
+        ) : (
+          <>
+            <button
+              type="button"
+              className="btn btn-green btn-lg"
+              disabled={busy}
+              onClick={async () => {
+                if (await review.approve(product.id)) router.push("/admin/konfirmasi");
+              }}
+            >
+              TERIMA PRODUK
+            </button>
+            {status !== "rejected" && (
+              <button type="button" className="btn btn-red btn-lg" disabled={busy} onClick={reject}>
+                TOLAK PRODUK
+              </button>
+            )}
+          </>
+        )}
+      </div>
+    </>
+  );
+}

@@ -1,0 +1,87 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 8px 14px;
+  border-radius: 16px;
+  background: var(--white);
+  box-shadow: var(--shadow);
+  transition: transform 0.2s, box-shadow 0.2s;
+  min-width: 0;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.media {
+  position: relative;
+}
+
+.img {
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  object-fit: cover;
+  border-radius: 12px;
+  background: var(--gray-200);
+}
+
+.thumb {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #f5c400;
+  color: var(--white);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.8);
+}
+
+.thumb svg {
+  width: 16px;
+  height: 16px;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 6px;
+  min-width: 0;
+}
+
+.name {
+  color: var(--orange);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seller {
+  color: var(--gray-700);
+  font-size: 0.78rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stock {
+  color: var(--navy);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.small .name {
+  font-size: 0.78rem;
+}
+
+.small .stock {
+  font-size: 0.88rem;
+}

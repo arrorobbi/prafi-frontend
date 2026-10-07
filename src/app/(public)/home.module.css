@@ -1,0 +1,203 @@
+.container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ---------- hero ---------- */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  align-items: center;
+  gap: 40px;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 36px 24px 56px;
+}
+
+.heroRight {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.mapCard {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 16px;
+  border-radius: 28px;
+}
+
+.map {
+  width: 58%;
+  aspect-ratio: 16 / 10;
+  border-radius: 18px;
+  flex: none;
+}
+
+.mapText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.mapText h1 {
+  color: var(--orange);
+  font-size: clamp(1.1rem, 2.1vw, 1.55rem);
+  font-weight: 800;
+  line-height: 1.12;
+}
+
+.picks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* ---------- reasons ---------- */
+.reasons {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  align-items: center;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.reasons h2 {
+  color: var(--orange);
+  font-size: 1.45rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.reasonGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.reason {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 112px;
+  padding: 20px 24px;
+  border-radius: 28px;
+  background: var(--orange);
+  color: var(--white);
+  box-shadow: var(--shadow-lg);
+}
+
+.reasonNavy {
+  background: var(--navy);
+}
+
+.reasonIcon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--navy);
+  flex: none;
+}
+
+.reasonNavy .reasonIcon {
+  background: none;
+  color: var(--white);
+}
+
+.reasonIcon svg {
+  width: 30px;
+  height: 30px;
+}
+
+.reasonNavy .reasonIcon svg {
+  width: 52px;
+  height: 52px;
+}
+
+.reason h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.reason p {
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+/* ---------- more products ---------- */
+.more {
+  margin-top: 56px;
+}
+
+.more h2 {
+  margin-bottom: 18px;
+  color: var(--navy);
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.moreLink {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.emptyText {
+  padding: 24px;
+  text-align: center;
+  color: var(--gray-700);
+}
+
+.emptyText a {
+  color: var(--orange);
+  font-weight: 600;
+}
+
+@media (max-width: 1000px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 20px 16px 40px;
+  }
+
+  .reasons {
+    grid-template-columns: 1fr;
+  }
+
+  .reasons h2 {
+    text-align: center;
+  }
+
+  .reasonGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .mapCard {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .map {
+    width: 100%;
+  }
+
+  .picks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .picks > :nth-child(3) {
+    display: none;
+  }
+}
