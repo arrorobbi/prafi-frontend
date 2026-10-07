@@ -31,10 +31,15 @@ const REASONS = [
 ] as const;
 
 export default async function HomePage() {
-  const { products, failed } = await getLandingProducts(1, 20);
+  const [{ products, failed }, recommended] = await Promise.all([
+    getLandingProducts(1, 20),
+    getLandingProducts(1, 3, { recommended: true }),
+  ]);
   const featured = products.slice(0, 5);
-  const picks = products.slice(0, 3);
-  const others = products.length > 3 ? products.slice(3) : products;
+  // Products their sellers mark as recommended; the newest ones until some are
+  const picks = recommended.products.length ? recommended.products : products.slice(0, 3);
+  const pickIds = new Set(picks.map((p) => p.id));
+  const others = products.filter((p) => !pickIds.has(p.id));
 
   return (
     <>
@@ -87,8 +92,8 @@ export default async function HomePage() {
 
       <section className={`${styles.container} ${styles.more}`}>
         <h2>PRODUK REKOMENDASI LAINNYA</h2>
-        {others.length > 0 ? (
-          <ProductStrip products={others} />
+        {others.length > 0 || products.length > 0 ? (
+          <ProductStrip products={others.length ? others : products} />
         ) : (
           <p className={styles.emptyText}>
             Belum ada produk yang tayang. Pelaku UMKM?{" "}

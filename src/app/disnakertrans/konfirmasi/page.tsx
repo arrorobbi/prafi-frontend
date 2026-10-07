@@ -3,5 +3,5 @@
 import { ConfirmProductList } from "@/components/dashboard/ConfirmProductList";
 
 export default function ConfirmProductsPage() {
-  return <ConfirmProductList base="/admin/konfirmasi" />;
+  return <ConfirmProductList base="/disnakertrans/konfirmasi" />;
 }

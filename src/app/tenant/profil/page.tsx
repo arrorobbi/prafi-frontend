@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import styles from "@/components/dashboard/dashboard.module.css";
-import { IconFacebook, IconMapPin, IconPencil, IconWhatsapp } from "@/components/Icons";
+import { IconFacebook, IconInstagram, IconMapPin, IconPencil, IconWarning, IconWhatsapp } from "@/components/Icons";
 import { ConfirmDialog } from "@/components/Modal";
 import { useToast } from "@/components/Toast";
 import { Loading, PageHeader, Thumb } from "@/components/ui";
@@ -62,6 +62,15 @@ export default function ShopProfilePage() {
   return (
     <>
       <PageHeader title="PROFIL UMKM" />
+      {profile.isComplete === false && (
+        <div className="alert alert-warning mt">
+          <IconWarning />
+          <span>
+            Profil belum lengkap{profile.missingFields?.includes("instagramLink") ? ": tautan Instagram belum diisi" : ""}. Lengkapi melalui{" "}
+            <strong>Ubah Profil</strong> agar dapat menambahkan produk baru.
+          </span>
+        </div>
+      )}
       <div className={styles.splitCard}>
         <div className={styles.logoCard}>
           <Thumb src={imageSrc(profile.logo)} alt={`Logo ${profile.name}`} />
@@ -114,6 +123,11 @@ export default function ShopProfilePage() {
         {isLink(profile.fbLink) && (
           <a href={profile.fbLink} target="_blank" rel="noreferrer" className="btn btn-orange btn-lg">
             <IconFacebook /> KUNJUNGI TOKO
+          </a>
+        )}
+        {isLink(profile.instagramLink) && (
+          <a href={profile.instagramLink} target="_blank" rel="noreferrer" className="btn btn-navy btn-lg">
+            <IconInstagram /> INSTAGRAM
           </a>
         )}
       </div>

@@ -59,6 +59,8 @@ export interface ProductOwner {
   firstName: string;
   lastName: string;
   email?: string;
+  /** Public product responses: the owner's UMKM profile, for "Lihat UMKM" */
+  tenant?: { id: string; name: string } | null;
 }
 
 export interface Product {
@@ -66,7 +68,13 @@ export interface Product {
   name: string;
   description: string;
   details: string;
-  qty: number;
+  /** Rupiah (IDR) */
+  price: number;
+  /** Set by the tenant: shown in the landing page's recommendations */
+  isRecommended: boolean;
+  /** Average of its reviews (1 decimal), null without reviews */
+  ratingAverage: number | null;
+  reviewCount: number;
   imageId: number | null;
   approvalId?: number | null;
   tenantId: string;
@@ -94,6 +102,7 @@ export interface TenantProfile {
   fbLink: string;
   whatsappLink: string;
   gmapsLink: string;
+  instagramLink: string;
   logoId: number;
   tenantCategoryId: number;
   userId: string;
@@ -102,6 +111,33 @@ export interface TenantProfile {
   logo: ImageFile | null;
   category: TenantCategory | null;
   owner?: ProductOwner;
+  /** GET /api/tenants/me: whether products can be added yet, and which fields are still empty */
+  isComplete?: boolean;
+  missingFields?: string[];
+}
+
+/** GET /api/landing/tenants: a public UMKM with a summary of its approved products */
+export interface PublicTenant extends Omit<TenantProfile, "owner" | "isComplete" | "missingFields"> {
+  productCount: number;
+  ratingAverage: number | null;
+  reviewCount: number;
+  owner: { id: string; tenantName: string | null };
+}
+
+/** A visitor's product review (public, no login) */
+export interface Review {
+  id: number;
+  productId: string;
+  name: string;
+  stars: number;
+  review: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RatingSummary {
+  ratingAverage: number | null;
+  reviewCount: number;
 }
 
 export type NotificationType =

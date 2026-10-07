@@ -4,24 +4,23 @@ import { ListShell } from "@/components/site/ListShell";
 import { ProductRow } from "@/components/site/ProductRow";
 import { SearchForm } from "@/components/site/SearchForm";
 import { sellerName } from "@/lib/format";
-import { getAllLandingProducts } from "@/lib/server-api";
-import { groupSellers, matches } from "@/lib/sellers";
+import { getAllLandingProducts, getLandingTenants } from "@/lib/server-api";
+import { matches } from "@/lib/sellers";
 
 export const metadata: Metadata = { title: "Produk" };
 
 export default async function ProductsPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const { q = "" } = await searchParams;
   const query = q.trim();
-  const { products, failed } = await getAllLandingProducts();
+  const [{ products, failed }, { tenants }] = await Promise.all([getAllLandingProducts(), getLandingTenants()]);
   const list = query
     ? products.filter((p) => matches(p.name, query) || matches(p.description, query) || matches(sellerName(p), query))
     : products;
-  const sellers = groupSellers(products);
 
   return (
     <ListShell
       sideTitle="UMKM"
-      sideLinks={sellers.map((s) => ({ href: `/umkm/${s.id}`, label: s.name }))}
+      sideLinks={tenants.map((t) => ({ href: `/umkm/${t.id}`, label: t.name }))}
       title={query ? `HASIL PENCARIAN` : "SEMUA PRODUK"}
       toolbar={<SearchForm action="/produk" defaultValue={query} placeholder="Cari produk..." />}
     >

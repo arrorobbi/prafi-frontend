@@ -78,8 +78,8 @@ export const GUIDES: Guide[] = [
           untuk melihat semua hasil.
         </Step>
         <Step image="pengunjung-3-detail" alt="Halaman detail produk">
-          Halaman detail menampilkan deskripsi, informasi produk, dan stok. Klik nama toko untuk melihat produk lain
-          dari UMKM tersebut.
+          Halaman detail menampilkan harga, deskripsi, informasi produk, dan ulasan pembeli. Anda dapat memberi
+          bintang dan ulasan tanpa login. Klik nama toko untuk melihat profil dan produk lain dari UMKM tersebut.
         </Step>
       </Steps>
     ),
@@ -129,8 +129,9 @@ export const GUIDES: Guide[] = [
         </Step>
         <Step image="profil-2-form" alt="Formulir profil toko">
           Unggah logo atau foto toko (JPG/PNG/WEBP, maksimal 5 MB). Isi nama toko, wilayah (SP 1 – SP 4 atau lainnya),
-          kategori usaha, deskripsi, alamat lengkap, jam operasional (hari, jam buka, jam tutup), dan nomor WhatsApp.
-          Tautan Google Maps dan Facebook/toko online boleh dikosongkan.
+          kategori usaha, deskripsi, alamat lengkap, jam operasional (hari, jam buka, jam tutup), nomor WhatsApp, dan
+          tautan Instagram. Tautan Google Maps dan Facebook/toko online boleh dikosongkan. Profil harus lengkap
+          sebelum Anda dapat menambahkan produk.
         </Step>
         <Step image="profil-3-simpan" alt="Tombol simpan profil">
           Klik <b>SIMPAN PROFIL</b>. Profil dapat diubah kapan saja lewat tombol <b>Ubah Profil</b>.
@@ -154,9 +155,9 @@ export const GUIDES: Guide[] = [
           Klik kotak <b>UNGGAH FOTO PRODUK</b> → <b>PILIH FILE</b> dan pilih foto produk.
         </Step>
         <Step image="produk-3-isi-data" alt="Isian data produk">
-          Isi <b>Nama Produk</b> dan <b>Stok</b> (jumlah yang tersedia), lalu <b>Deskripsi Produk</b> (penjelasan
-          singkat) dan <b>Informasi Produk</b> (bahan, ukuran, harga, cara penggunaan, keunggulan). Masing-masing
-          maksimal 255 karakter.
+          Isi <b>Nama Produk</b> dan <b>Harga</b> (dalam Rupiah), lalu <b>Deskripsi Produk</b> (penjelasan singkat) dan
+          <b>Informasi Produk</b> (bahan, ukuran, cara penggunaan, keunggulan). Masing-masing maksimal 255 karakter.
+          Centang <b>Jadikan produk rekomendasi</b> agar produk tampil di rekomendasi halaman utama setelah disetujui.
         </Step>
         <Step image="produk-4-ajukan" alt="Tombol Ajukan Produk">
           Klik <b>Ajukan Produk</b>. Status produk menjadi <b>Menunggu Konfirmasi</b> dan Anda menerima notifikasi.

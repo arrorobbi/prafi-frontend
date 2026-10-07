@@ -3,5 +3,5 @@
 import { ConfirmProductDetail } from "@/components/dashboard/ConfirmProductDetail";
 
 export default function ReviewProductPage() {
-  return <ConfirmProductDetail base="/admin/konfirmasi" />;
+  return <ConfirmProductDetail base="/disnakertrans/konfirmasi" />;
 }

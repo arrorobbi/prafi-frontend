@@ -54,6 +54,11 @@
   font-weight: 700;
 }
 
+.rating {
+  display: inline-block;
+  margin-top: 6px;
+}
+
 .perks {
   list-style: none;
   display: flex;

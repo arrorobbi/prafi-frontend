@@ -1,12 +1,13 @@
 "use client";
 
+import { RatingSummary } from "../Stars";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { api, fetchAll } from "@/lib/api";
 import {
   approvalReason,
   formatDate,
-  formatNumber,
+  formatRupiah,
   formatTime,
   imageSrc,
   productStatus,
@@ -201,8 +202,18 @@ function ProductDetail({ product, category }: { product: Product; category?: str
           <dd>{product.details}</dd>
         </div>
         <div>
-          <dt className="label">Stok</dt>
-          <dd>{formatNumber(product.qty)}</dd>
+          <dt className="label">Harga</dt>
+          <dd>{formatRupiah(product.price)}</dd>
+        </div>
+        <div>
+          <dt className="label">Rekomendasi Penjual</dt>
+          <dd>{product.isRecommended ? "Ya, tampil di rekomendasi" : "Tidak"}</dd>
+        </div>
+        <div>
+          <dt className="label">Ulasan</dt>
+          <dd>
+            <RatingSummary average={product.ratingAverage} count={product.reviewCount} />
+          </dd>
         </div>
         <div>
           <dt className="label">Penjual</dt>

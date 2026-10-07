@@ -14,7 +14,7 @@ halaman `/panduan`.
   ![Mencari produk](../public/panduan/pengunjung-2-cari.jpg)
 
 - Menu **Produk** menampilkan semua produk; menu **UMKM** menampilkan daftar toko beserta produknya.
-- Klik produk untuk melihat detail: deskripsi, informasi produk, stok, dan toko penjualnya.
+- Klik produk untuk melihat detail: harga, deskripsi, informasi produk, ulasan pembeli, dan toko penjualnya. Siapa pun dapat memberi bintang dan ulasan tanpa login.
 
   ![Detail produk](../public/panduan/pengunjung-3-detail.jpg)
 
@@ -78,7 +78,7 @@ halaman `/panduan`.
 
    ![Unggah foto produk](../public/panduan/produk-2-foto.jpg)
 
-3. Isi **Nama Produk** dan **Stok**.
+3. Isi **Nama Produk** dan **Harga** (Rupiah). Centang **Jadikan produk rekomendasi** bila ingin tampil di rekomendasi halaman utama.
 4. Isi **Deskripsi Produk** (singkat) dan **Informasi Produk** (bahan, ukuran, harga, cara pakai, keunggulan) —
    masing-masing maksimal 255 karakter.
 

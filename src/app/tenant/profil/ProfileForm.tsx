@@ -5,6 +5,7 @@ import styles from "@/components/dashboard/dashboard.module.css";
 import { IconWarning } from "@/components/Icons";
 import { useToast } from "@/components/Toast";
 import { ImagePicker } from "@/components/ui";
+import { useImageUpload } from "@/components/UploadDialog";
 import { api, ApiError, errorMessage, fetchAll, type TenantInput } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { imageSrc, whatsappUrl } from "@/lib/format";
@@ -59,6 +60,8 @@ export function ProfileForm({
   const [whatsapp, setWhatsapp] = useState(phoneFromWhatsapp(profile?.whatsappLink) || user?.phoneNumber || "");
   const [fbLink, setFbLink] = useState(profile?.fbLink && profile.fbLink !== EMPTY_LINK ? profile.fbLink : "");
   const [gmapsLink, setGmapsLink] = useState(profile?.gmapsLink && profile.gmapsLink !== EMPTY_LINK ? profile.gmapsLink : "");
+  const [instagramLink, setInstagramLink] = useState(profile?.instagramLink ?? "");
+  const uploader = useImageUpload();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(profile?.logo ? imageSrc(profile.logo) : null);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -88,6 +91,8 @@ export function ProfileForm({
     if (whatsapp.replace(/\D/g, "").length < 9) e.whatsappLink = "Nomor WhatsApp tidak valid";
     if (fbLink && !/^https?:\/\//i.test(fbLink)) e.fbLink = "Tautan harus diawali https://";
     if (gmapsLink && !/^https?:\/\//i.test(gmapsLink)) e.gmapsLink = "Tautan harus diawali https://";
+    if (!instagramLink.trim()) e.instagramLink = "Tautan Instagram wajib diisi";
+    else if (!/^https?:\/\//i.test(instagramLink.trim())) e.instagramLink = "Tautan harus diawali https:// (mis. https://instagram.com/namatoko)";
     if (!profile && !file) e.logoId = "Logo/foto toko wajib diunggah";
     return e;
   };
@@ -98,45 +103,58 @@ export function ProfileForm({
     setErrors(found);
     if (Object.keys(found).length) return;
 
-    setBusy(true);
-    let uploadedId: number | null = null;
-    try {
-      if (file) uploadedId = (await api.images.upload(file, `Logo ${name.trim()}`)).data.id;
-      const body: TenantInput = {
-        name: name.trim(),
-        tenantCategoryId: Number(categoryId),
-        area: area === OTHER ? otherArea.trim() : area,
-        description: description.trim(),
-        address: address.trim(),
-        operationalHours: `${days.trim() ? `${days.trim()}, ` : ""}${open} - ${close} WIT`,
-        whatsappLink: whatsappUrl(whatsapp),
-        fbLink: fbLink.trim() || EMPTY_LINK,
-        gmapsLink: gmapsLink.trim() || EMPTY_LINK,
-        logoId: uploadedId ?? profile!.logoId,
-      };
+    const body: Omit<TenantInput, "logoId"> = {
+      name: name.trim(),
+      tenantCategoryId: Number(categoryId),
+      area: area === OTHER ? otherArea.trim() : area,
+      description: description.trim(),
+      address: address.trim(),
+      operationalHours: `${days.trim() ? `${days.trim()}, ` : ""}${open} - ${close} WIT`,
+      whatsappLink: whatsappUrl(whatsapp),
+      fbLink: fbLink.trim() || EMPTY_LINK,
+      gmapsLink: gmapsLink.trim() || EMPTY_LINK,
+      instagramLink: instagramLink.trim(),
+    };
 
-      let saved: TenantProfile;
-      if (profile) {
-        const changes: Partial<TenantInput> = {};
-        (Object.keys(body) as (keyof TenantInput)[]).forEach((k) => {
-          if (body[k] !== (profile as unknown as Record<string, unknown>)[k]) (changes as Record<string, unknown>)[k] = body[k];
-        });
-        if (Object.keys(changes).length === 0) {
-          toast.info("Tidak ada perubahan");
-          onSaved(profile);
-          return;
-        }
-        saved = (await api.tenants.updateMine(changes)).data;
-      } else {
-        saved = (await api.tenants.createMine(body)).data;
+    // Editing: only what changed (a new logo always counts as a change)
+    let changes: Partial<TenantInput> = body;
+    if (profile) {
+      changes = {};
+      (Object.keys(body) as (keyof typeof body)[]).forEach((k) => {
+        if (body[k] !== (profile as unknown as Record<string, unknown>)[k]) (changes as Record<string, unknown>)[k] = body[k];
+      });
+      if (Object.keys(changes).length === 0 && !file) {
+        toast.info("Tidak ada perubahan");
+        onSaved(profile);
+        return;
       }
-      uploadedId = null;
+    }
+
+    const saveWith = async (logoId?: number) => {
+      const withLogo = logoId !== undefined ? { ...changes, logoId } : changes;
+      return profile ? (await api.tenants.updateMine(withLogo)).data : (await api.tenants.createMine(withLogo as TenantInput)).data;
+    };
+
+    setBusy(true);
+    try {
+      let saved: TenantProfile | null;
+      if (file) {
+        // Upload popup: progress → saved, or the real error; the profile must point at the new logo
+        saved = await uploader.run({
+          file,
+          altText: `Logo ${name.trim()}`,
+          save: saveWith,
+          isSaved: (t, logoId) => t.logoId === logoId && !!t.logo,
+        });
+        if (!saved) return;
+      } else {
+        saved = await saveWith();
+      }
       toast.success(profile ? "Profil toko diperbarui" : "Profil toko dibuat");
       onSaved(saved);
     } catch (err) {
       if (err instanceof ApiError) setErrors(err.fieldErrors);
       toast.error("Gagal menyimpan profil", errorMessage(err));
-      if (uploadedId !== null) api.images.remove(uploadedId).catch(() => {});
     } finally {
       setBusy(false);
     }
@@ -144,6 +162,7 @@ export function ProfileForm({
 
   return (
     <form className={local.form} onSubmit={submit} noValidate>
+      {uploader.dialog}
       <div className={local.left}>
         <label className="field">
           <span className="label">Nama Usaha/Toko</span>
@@ -237,6 +256,11 @@ export function ProfileForm({
           <span className="label">Tautan Google Maps (opsional)</span>
           <input className="input" placeholder="https://maps.app.goo.gl/..." value={gmapsLink} onChange={(e) => setGmapsLink(e.target.value)} />
           {errors.gmapsLink && <span className="field-error">{errors.gmapsLink}</span>}
+        </label>
+        <label className="field">
+          <span className="label">Tautan Instagram</span>
+          <input className="input" placeholder="https://instagram.com/namatoko" value={instagramLink} onChange={(e) => setInstagramLink(e.target.value)} />
+          {errors.instagramLink && <span className="field-error">{errors.instagramLink}</span>}
         </label>
         <label className="field">
           <span className="label">Tautan Facebook / Toko Online (opsional)</span>

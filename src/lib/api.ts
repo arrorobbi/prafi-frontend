@@ -9,6 +9,9 @@ import type {
   LogLevel,
   PageMeta,
   Product,
+  PublicTenant,
+  RatingSummary,
+  Review,
   Role,
   TenantCategory,
   TenantProfile,
@@ -121,7 +124,7 @@ async function request<T>(method: string, path: string, opts: RequestOptions = {
 
   if (!res.ok || json.success === false) {
     const e = json.error;
-    const err = new ApiError(res.status, e?.code ?? `HTTP_${res.status}`, e?.message ?? `Permintaan gagal (${res.status})`, e?.details);
+    const err = new ApiError(res.status, e?.code ?? `HTTP_${res.status}`, e?.message ?? httpErrorMessage(res.status), e?.details);
     // An authenticated request rejected with 401: the session is over (expired, logged out elsewhere, password reset)
     if (res.status === 401 && token && typeof window !== "undefined") {
       window.dispatchEvent(new CustomEvent(UNAUTHORIZED_EVENT, { detail: err.message }));
@@ -129,6 +132,56 @@ async function request<T>(method: string, path: string, opts: RequestOptions = {
     throw err;
   }
   return { data: json.data as T, meta: json.meta };
+}
+
+/** Messages for responses that aren't the API's JSON (e.g. nginx refusing a large upload before the API sees it). */
+function httpErrorMessage(status: number) {
+  if (status === 413) return "Ukuran file terlalu besar untuk diunggah (maksimal 5 MB)";
+  if (status === 502 || status === 503 || status === 504) return "Server sedang tidak dapat dihubungi, silakan coba lagi sebentar lagi";
+  return `Permintaan gagal (${status})`;
+}
+
+/**
+ * POST /api/images with upload progress (fetch can't report it). onProgress gets 0-100.
+ * Errors are ApiErrors with the API's own message (Bahasa Indonesia), or a clear one when the request
+ * never reached the API (connection lost, file too large for the server).
+ */
+function uploadImage(file: File, altText: string | undefined, onProgress?: (percent: number) => void): Promise<Envelope<ImageFile>> {
+  return new Promise((resolve, reject) => {
+    const form = new FormData();
+    form.append("image", file);
+    if (altText) form.append("altText", altText);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", buildUrl("/images"));
+    xhr.setRequestHeader("Accept", "application/json");
+    const token = getToken();
+    if (token) xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable && onProgress) onProgress(Math.min(100, Math.round((e.loaded / e.total) * 100)));
+    };
+    xhr.onerror = () => reject(new ApiError(0, "NETWORK_ERROR", "Koneksi terputus saat mengunggah gambar. Periksa internet Anda lalu coba lagi."));
+    xhr.ontimeout = () => reject(new ApiError(0, "TIMEOUT", "Unggahan gambar terlalu lama. Periksa internet Anda lalu coba lagi."));
+    xhr.onload = () => {
+      let json: { success?: boolean; data?: ImageFile; error?: { code: string; message: string; details?: unknown } } = {};
+      try {
+        json = JSON.parse(xhr.responseText);
+      } catch {
+        // non-JSON (e.g. nginx 413 page)
+      }
+      if (xhr.status >= 200 && xhr.status < 300 && json.success !== false && json.data) {
+        onProgress?.(100);
+        resolve({ data: json.data });
+        return;
+      }
+      const e = json.error;
+      const err = new ApiError(xhr.status, e?.code ?? `HTTP_${xhr.status}`, e?.message ?? httpErrorMessage(xhr.status), e?.details);
+      if (xhr.status === 401 && token) window.dispatchEvent(new CustomEvent(UNAUTHORIZED_EVENT, { detail: err.message }));
+      reject(err);
+    };
+    xhr.send(form);
+  });
 }
 
 const get = <T>(path: string, query?: Query, anonymous = false) => request<T>("GET", path, { query, anonymous });
@@ -150,7 +203,15 @@ export interface RegisterInput {
   tenantName?: string;
 }
 
-export type ProductInput = { name: string; description: string; details: string; qty: number; imageId: number };
+export type ProductInput = {
+  name: string;
+  description: string;
+  details: string;
+  /** Rupiah, whole numbers */
+  price: number;
+  isRecommended?: boolean;
+  imageId: number;
+};
 
 export type TenantInput = {
   name?: string;
@@ -161,6 +222,7 @@ export type TenantInput = {
   fbLink: string;
   whatsappLink: string;
   gmapsLink: string;
+  instagramLink: string;
   logoId: number;
   tenantCategoryId: number;
 };
@@ -193,12 +255,7 @@ export const api = {
   },
 
   images: {
-    upload: (file: File, altText?: string) => {
-      const form = new FormData();
-      form.append("image", file);
-      if (altText) form.append("altText", altText);
-      return post<ImageFile>("/images", form);
-    },
+    upload: (file: File, altText?: string, onProgress?: (percent: number) => void) => uploadImage(file, altText, onProgress),
     remove: (id: number) => del<null>(`/images/${id}`),
   },
 
@@ -222,7 +279,23 @@ export const api = {
   },
 
   landing: {
-    products: (q: Paged = {}) => get<Product[]>("/landing/products", { page: 1, limit: 20, ...q }, true),
+    products: (q: Paged & { recommended?: boolean; tenantId?: string } = {}) =>
+      get<Product[]>("/landing/products", { page: 1, limit: 20, ...q }, true),
+    product: (id: string) => get<Product>(`/landing/products/${id}`, undefined, true),
+    tenants: (q: Paged & { q?: string; tenantCategoryId?: number } = {}) =>
+      get<PublicTenant[]>("/landing/tenants", { page: 1, limit: 20, ...q }, true),
+    tenant: (id: string) => get<PublicTenant>(`/landing/tenants/${id}`, undefined, true),
+    /** Newest first; meta has ratingAverage and reviewCount */
+    reviews: (productId: string, q: Paged = {}) =>
+      request<Review[]>("GET", `/landing/products/${productId}/reviews`, { query: { page: 1, limit: 10, ...q }, anonymous: true }) as Promise<{
+        data: Review[];
+        meta?: PageMeta & RatingSummary;
+      }>,
+    addReview: (productId: string, input: { name: string; stars: number; review: string }) =>
+      request<Review>("POST", `/landing/products/${productId}/reviews`, { body: input, anonymous: true }) as Promise<{
+        data: Review;
+        meta?: RatingSummary;
+      }>,
   },
 
   tenantCategories: {

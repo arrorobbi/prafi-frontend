@@ -7,6 +7,7 @@ import { IconBell, IconBox, IconCheckCircle, IconHome, IconSettings, IconStore }
 const NAV: NavItem[] = [
   { href: "/disnakertrans", label: "Dashboard", icon: IconHome, exact: true },
   { href: "/disnakertrans/admin", label: "Aktivasi Admin", icon: IconCheckCircle },
+  { href: "/disnakertrans/konfirmasi", label: "Konfirmasi Produk", icon: IconCheckCircle },
   { href: "/disnakertrans/produk", label: "Data Produk", icon: IconBox },
   { href: "/disnakertrans/umkm", label: "Data UMKM", icon: IconStore },
   { href: "/disnakertrans/notifikasi", label: "Notifikasi", icon: IconBell, badge: true },

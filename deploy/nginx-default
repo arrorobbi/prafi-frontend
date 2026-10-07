@@ -64,6 +64,9 @@ server {
 	index index.html index.htm index.nginx-debian.html;
     server_name transniaga.manokwarikab.go.id; # managed by Certbot
 
+	# Image uploads go through this site to the API (max 5 MB per image); nginx's default is 1 MB
+	client_max_body_size 10M;
+
 
 	location / {
 		# prafi-frontend (Next.js) listens directly on port 80

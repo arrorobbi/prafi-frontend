@@ -8,6 +8,7 @@ import { IconLock, IconUser } from "../Icons";
 import { Modal } from "../Modal";
 import { useToast } from "../Toast";
 import { PageHeader, PasswordInput, validateImage } from "../ui";
+import { useImageUpload } from "../UploadDialog";
 import styles from "./dashboard.module.css";
 import local from "./AccountSettings.module.css";
 
@@ -23,6 +24,7 @@ export function AccountSettings({ title }: { title: string }) {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [pwOpen, setPwOpen] = useState(false);
+  const uploader = useImageUpload();
 
   const reset = () => {
     if (!user) return;
@@ -70,21 +72,21 @@ export function AccountSettings({ title }: { title: string }) {
     const problem = validateImage(file);
     if (problem) return toast.error(problem);
     setUploading(true);
-    try {
-      const { data: image } = await api.images.upload(file, `Foto ${fullName(user)}`);
-      const { data } = await api.auth.updateMe({ faceImageId: image.id });
-      setUser(data);
-      toast.success("Foto profil diperbarui");
-    } catch (err) {
-      toast.error("Gagal mengunggah foto", errorMessage(err));
-    } finally {
-      setUploading(false);
-    }
+    // Saved only when the account really points at the new photo (user.faceImageId) and the photo exists
+    const saved = await uploader.run({
+      file,
+      altText: `Foto ${fullName(user)}`,
+      save: async (imageId) => (await api.auth.updateMe({ faceImageId: imageId })).data,
+      isSaved: (u, imageId) => u.faceImageId === imageId && !!u.faceImage,
+    });
+    if (saved) setUser(saved);
+    setUploading(false);
   };
 
   return (
     <>
       <PageHeader title={title} />
+      {uploader.dialog}
       <div className={styles.splitCard}>
         <div className={styles.logoCard}>
           {user.faceImage ? (

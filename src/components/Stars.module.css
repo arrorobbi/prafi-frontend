@@ -1,0 +1,46 @@
+.stars {
+  display: inline-flex;
+  gap: 1px;
+  line-height: 1;
+}
+
+.sm {
+  font-size: 0.9rem;
+}
+
+.md {
+  font-size: 1.15rem;
+}
+
+.lg {
+  font-size: 1.6rem;
+}
+
+.on {
+  color: #f5a623;
+}
+
+.off {
+  color: var(--gray-300);
+}
+
+/* Left half gold, right half grey */
+.half {
+  background: linear-gradient(90deg, #f5a623 50%, var(--gray-300) 50%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.count,
+.none {
+  color: var(--gray-500);
+  font-size: 0.85rem;
+}

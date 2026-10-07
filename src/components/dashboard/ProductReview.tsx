@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { api, errorMessage } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
 import { DEACTIVATE_PREFIX, REJECT_PREFIX } from "@/lib/format";
 import { Modal } from "../Modal";
 import { useToast } from "../Toast";
@@ -9,11 +10,13 @@ import { useToast } from "../Toast";
 const MAX_REASON = 255;
 
 /**
- * Admin product decisions (PATCH /api/approvals/:id?type=product). The reason is stored with a
- * prefix so the frontend can tell "rejected" from "deactivated" (see productStatus).
+ * Product decisions by an admin or disnakertrans (PATCH /api/approvals/:id?type=product). The reason is
+ * stored with a prefix so the frontend can tell "rejected" from "deactivated" (see productStatus).
  */
 export function useProductReview(onDone: () => void) {
   const toast = useToast();
+  const { user } = useAuth();
+  const by = user?.role === "disnakertrans" ? "Disnakertrans" : "administrator";
   const [busyId, setBusyId] = useState<string | null>(null);
 
   const run = async (id: string, isActive: boolean, reason: string | undefined, success: string) => {
@@ -33,10 +36,10 @@ export function useProductReview(onDone: () => void) {
 
   return {
     busyId,
-    approve: (id: string) => run(id, true, "Disetujui administrator", "Produk disetujui dan tampil di halaman utama"),
+    approve: (id: string) => run(id, true, `Disetujui ${by}`, "Produk disetujui dan tampil di halaman utama"),
     reject: (id: string, reason: string) => run(id, false, `${REJECT_PREFIX}${reason.trim()}`, "Produk ditolak"),
     deactivate: (id: string, reason: string) =>
-      run(id, false, `${DEACTIVATE_PREFIX}${reason.trim() || "Diturunkan administrator"}`, "Produk dinonaktifkan"),
+      run(id, false, `${DEACTIVATE_PREFIX}${reason.trim() || `Diturunkan ${by}`}`, "Produk dinonaktifkan"),
   };
 }
 

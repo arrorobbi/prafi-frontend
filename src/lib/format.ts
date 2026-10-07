@@ -7,6 +7,10 @@ const NUMBER = new Intl.NumberFormat("id-ID");
 export const formatDate = (iso?: string | null) => (iso ? DATE.format(new Date(iso)) : "-");
 export const formatTime = (iso?: string | null) => (iso ? TIME.format(new Date(iso)) : "");
 export const formatNumber = (n: number) => NUMBER.format(n);
+/** 25000 → "Rp 25.000" */
+export const formatRupiah = (n: number) => `Rp ${NUMBER.format(n)}`;
+/** 4.5 → "4,5" */
+export const formatRating = (n: number) => n.toLocaleString("id-ID", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 export function timeAgo(iso: string) {
   const seconds = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);

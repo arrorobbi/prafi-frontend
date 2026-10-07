@@ -3,12 +3,12 @@
 import { ProductBrowser } from "@/components/dashboard/ProductBrowser";
 import { PageHeader } from "@/components/ui";
 
-/** Read-only: only admins approve products. */
+/** Every product; opening one leads to its approval page (disnakertrans approve products like admins). */
 export default function ProductsPage() {
   return (
     <>
       <PageHeader title="DATA PRODUK" />
-      <ProductBrowser />
+      <ProductBrowser detailHref={(p) => `/disnakertrans/konfirmasi/${p.id}`} />
     </>
   );
 }

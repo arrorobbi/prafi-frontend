@@ -1,5 +1,6 @@
 "use client";
 
+import { RatingSummary } from "@/components/Stars";
 import Link from "next/link";
 import { useState } from "react";
 import styles from "@/components/dashboard/dashboard.module.css";
@@ -8,7 +9,7 @@ import { ConfirmDialog } from "@/components/Modal";
 import { useToast } from "@/components/Toast";
 import { EmptyState, Loading, PageHeader, Pagination, StatusBadge, Thumb } from "@/components/ui";
 import { api, errorMessage, fetchAll } from "@/lib/api";
-import { formatDate, formatNumber, imageSrc, productStatus, type ProductStatus } from "@/lib/format";
+import { formatDate, formatRupiah, imageSrc, productStatus, type ProductStatus } from "@/lib/format";
 import type { Product } from "@/lib/types";
 import { useAsync } from "@/lib/useAsync";
 import local from "./produk.module.css";
@@ -105,7 +106,8 @@ export default function MyProductsPage() {
                   <tr>
                     <th>Foto</th>
                     <th>Nama Produk</th>
-                    <th>Stok</th>
+                    <th>Harga</th>
+                    <th>Ulasan</th>
                     <th>Diajukan</th>
                     <th>Status</th>
                     <th>Aksi</th>
@@ -117,8 +119,19 @@ export default function MyProductsPage() {
                       <td data-label="">
                         <Thumb src={imageSrc(p.image)} alt={p.name} className="thumb" />
                       </td>
-                      <td data-label="Nama Produk">{p.name}</td>
-                      <td data-label="Stok">{formatNumber(p.qty)}</td>
+                      <td data-label="Nama Produk">
+                        {p.name}
+                        {p.isRecommended && (
+                          <>
+                            {" "}
+                            <span className="badge badge-active">Rekomendasi</span>
+                          </>
+                        )}
+                      </td>
+                      <td data-label="Harga">{formatRupiah(p.price)}</td>
+                      <td data-label="Ulasan">
+                        <RatingSummary average={p.ratingAverage} count={p.reviewCount} />
+                      </td>
                       <td data-label="Diajukan">{formatDate(p.createdAt)}</td>
                       <td data-label="Status">
                         <StatusBadge status={productStatus(p)} />

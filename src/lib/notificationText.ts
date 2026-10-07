@@ -82,7 +82,10 @@ export function notificationHref(n: AppNotification, role: Role) {
     if (n.entityType === "user") return n.approval?.user?.role === "disnakertrans" ? "/superadmin/disnakertrans" : "/superadmin/pengguna";
     if (n.entityType === "tenant") return "/superadmin/umkm";
   }
-  if (role === "disnakertrans" && n.entityType === "user") return "/disnakertrans/admin";
+  if (role === "disnakertrans") {
+    if (n.entityType === "product" && n.entityId) return `/disnakertrans/konfirmasi/${n.entityId}`;
+    if (n.entityType === "user") return "/disnakertrans/admin";
+  }
   return null;
 }
 
