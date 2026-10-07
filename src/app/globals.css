@@ -220,6 +220,8 @@ button:disabled {
   border: 2px solid transparent;
   border-radius: var(--radius-pill);
   background: var(--gray-300);
+  /* Own color, not inherited: fields sit on colored panels with white text (e.g. the orange category form) */
+  color: var(--text);
   font-size: 0.95rem;
   outline: none;
   transition: border-color 0.15s, background 0.15s;
