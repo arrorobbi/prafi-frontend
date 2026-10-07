@@ -71,12 +71,8 @@ export function ProfileForm({
     fetchAll((p) => api.tenantCategories.list({ page: p, limit: 100 }))
       .then(setCategories)
       .catch((err) => {
-        // The API currently lets only superadmin/admin read categories (403 for tenants)
-        setCategoryError(
-          err instanceof ApiError && err.status === 403
-            ? "Daftar kategori belum dapat dimuat untuk akun penjual. Hubungi administrator Transniaga."
-            : errorMessage(err),
-        );
+        // Kategori Usaha = the Kategori UMKM the admin manages; if they can't load, keep the current one selectable
+        setCategoryError(`Daftar kategori UMKM gagal dimuat: ${errorMessage(err)}`);
         setCategories(profile?.category ? [profile.category] : []);
       });
   }, [profile?.category]);
