@@ -1,0 +1,26 @@
+server {
+    server_name core.transniaga.manokwarikab.go.id;
+
+    location / {
+        proxy_pass https://127.0.0.1:10000;
+        proxy_ssl_verify off;            # Webmin uses a self-signed cert locally
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # websockets (Webmin terminal / live stats)
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 3600s;
+        proxy_buffering off;
+    }
+
+    listen [::]:443 ssl; # managed by Certbot
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/core.transniaga.manokwarikab.go.id/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/core.transniaga.manokwarikab.go.id/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
