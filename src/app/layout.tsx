@@ -1,16 +1,26 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
+import { ToastProvider } from "@/components/Toast";
+import { AuthProvider } from "@/lib/auth";
 import "./globals.css";
 
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800"],
   variable: "--font-poppins",
 });
 
 export const metadata: Metadata = {
-  title: "Under Construction",
-  description: "This site is under construction. We'll be live soon.",
+  title: {
+    default: "PRAFI HUB — Produk Pilihan Ada Disini",
+    template: "%s | PRAFI HUB",
+  },
+  description:
+    "Direktori dan marketplace UMKM Kawasan Transmigrasi Prafi, Manokwari. Temukan produk pilihan dari pelaku usaha lokal.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0e3c69",
 };
 
 export default function RootLayout({
@@ -19,8 +29,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={poppins.variable}>{children}</body>
+    <html lang="id">
+      <body className={poppins.variable}>
+        <AuthProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </AuthProvider>
+      </body>
     </html>
   );
 }

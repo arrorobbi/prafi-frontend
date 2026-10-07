@@ -1,0 +1,294 @@
+/* ---------- brand ---------- */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--orange);
+  flex: none;
+}
+
+.brand img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.brand span {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+
+.brand strong {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.brand em {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--navy);
+}
+
+.brandLight {
+  color: var(--white);
+}
+
+.brandLight em {
+  color: var(--white);
+}
+
+.brandCompact img {
+  width: 48px;
+  height: 48px;
+}
+
+.brandCompact strong {
+  font-size: 1.25rem;
+}
+
+.brandCompact em {
+  font-size: 0.68rem;
+}
+
+/* ---------- page header ---------- */
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  margin-bottom: 28px;
+}
+
+.pageHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+}
+
+.pageHeaderMiddle {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.back {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  color: var(--navy);
+  flex: none;
+}
+
+.back svg {
+  width: 30px;
+  height: 30px;
+}
+
+@media (max-width: 900px) {
+  .pageHeaderBrand {
+    display: none;
+  }
+
+  .pageHeaderLeft {
+    gap: 8px;
+  }
+}
+
+/* ---------- states ---------- */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 16px;
+  color: var(--gray-700);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 40px 16px;
+  text-align: center;
+  color: var(--gray-700);
+  font-size: 0.92rem;
+}
+
+.empty strong {
+  color: var(--navy);
+  font-size: 1.05rem;
+}
+
+/* ---------- pagination ---------- */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+  font-size: 0.85rem;
+}
+
+.pages {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pages button,
+.pages span {
+  display: grid;
+  place-items: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--gray-300);
+  font-size: 0.85rem;
+}
+
+.pages span {
+  background: var(--gray-300);
+}
+
+.pages button svg {
+  width: 12px;
+  height: 12px;
+}
+
+.pages .current {
+  background: #1aa5d9;
+  color: var(--white);
+}
+
+/* ---------- password ---------- */
+.password {
+  position: relative;
+}
+
+.password input {
+  padding-right: 52px;
+}
+
+.password button {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  color: var(--gray-700);
+}
+
+.password button svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ---------- image picker ---------- */
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pickerBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  min-height: 190px;
+  padding: 24px;
+  border-radius: 24px;
+  background: var(--gray-300);
+  color: #8a8a8a;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.pickerBox:hover {
+  filter: brightness(0.97);
+}
+
+.pickerIcon {
+  width: 96px;
+  height: 96px;
+  flex: none;
+}
+
+.pickerBox img {
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 14px;
+  background: var(--white);
+  flex: none;
+}
+
+.pickerBox img.round {
+  border-radius: 50%;
+}
+
+.pickerText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.pickerText strong {
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.1;
+  max-width: 220px;
+}
+
+.pickerText small {
+  font-size: 0.72rem;
+}
+
+.pickerBtn {
+  margin-top: 10px;
+  padding: 8px 20px;
+  background: var(--white);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.78rem;
+}
+
+@media (max-width: 520px) {
+  .pickerBox {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .pickerText {
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand {
+    gap: 6px;
+  }
+
+  .brand img {
+    width: 42px;
+    height: 42px;
+  }
+
+  .brand strong {
+    font-size: 1.15rem;
+  }
+
+  .brand em {
+    font-size: 0.62rem;
+  }
+}

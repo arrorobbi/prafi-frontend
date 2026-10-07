@@ -1,0 +1,212 @@
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 120px;
+  min-height: 46px;
+  padding: 8px 26px;
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  box-shadow: var(--shadow);
+  font-size: 0.95rem;
+}
+
+.tabs button.tabActive {
+  font-weight: 700;
+  box-shadow: 0 0 0 2px var(--orange), var(--shadow);
+}
+
+.tabs b {
+  display: grid;
+  place-items: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 6px;
+  border-radius: var(--radius-pill);
+  background: var(--navy);
+  color: var(--white);
+  font-size: 0.85rem;
+}
+
+.markAll {
+  color: var(--orange);
+  font-size: 0.82rem;
+  text-decoration: underline;
+}
+
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 12px 64px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 22px;
+  border-radius: 14px;
+  background: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.unread .dot {
+  background: var(--navy);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 4px solid currentColor;
+}
+
+.icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+.pending {
+  color: #e7c11b;
+  background: #fbe57a;
+}
+
+.pending svg {
+  color: var(--white);
+}
+
+.success {
+  color: var(--white);
+  background: #13a10e;
+  border-color: #13a10e;
+}
+
+.danger {
+  color: #e53030;
+  background: var(--white);
+}
+
+.info {
+  color: var(--navy);
+  background: #e3effa;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  min-width: 0;
+}
+
+.text strong {
+  font-size: 1rem;
+}
+
+.text span {
+  font-size: 0.88rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.unread .text strong {
+  color: var(--navy);
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  color: var(--gray-500);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.delete {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: var(--gray-500);
+}
+
+.delete:hover {
+  background: var(--gray-200);
+  color: var(--red);
+}
+
+.delete svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 640px) {
+  .tabs {
+    gap: 8px;
+    width: 100%;
+  }
+
+  .tabs button {
+    flex: 1;
+    min-width: 0;
+    padding: 6px 10px;
+    justify-content: center;
+    font-size: 0.82rem;
+  }
+
+  .item {
+    grid-template-columns: 8px 44px minmax(0, 1fr);
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .icon {
+    width: 44px;
+    height: 44px;
+    border-width: 3px;
+  }
+
+  .icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .meta {
+    grid-column: 3;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}

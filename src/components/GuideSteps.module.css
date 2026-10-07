@@ -1,0 +1,85 @@
+.steps {
+  list-style: none;
+  counter-reset: step;
+  display: flex;
+  flex-direction: column;
+  gap: 22px !important;
+  padding: 0 !important;
+}
+
+.step {
+  counter-increment: step;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-left: 46px;
+}
+
+.step::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: var(--white);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* connector line between numbers */
+.step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 15px;
+  top: 38px;
+  bottom: -18px;
+  width: 2px;
+  background: rgba(234, 123, 37, 0.3);
+}
+
+.text {
+  padding-top: 4px;
+}
+
+.figure {
+  display: block;
+  max-width: 640px;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.figure:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.figure img {
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 600px) {
+  .step {
+    padding-left: 38px;
+  }
+
+  .step::before {
+    width: 26px;
+    height: 26px;
+    font-size: 0.82rem;
+  }
+
+  .step:not(:last-child)::after {
+    left: 12px;
+    top: 32px;
+  }
+}

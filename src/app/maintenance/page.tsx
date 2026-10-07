@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import styles from "./page.module.css";
 
-export default function Home() {
+export const metadata: Metadata = {
+  title: { absolute: "Under Construction" },
+  description: "This site is under construction. We'll be live soon.",
+  robots: { index: false },
+};
+
+export default function Maintenance() {
   const year = new Date().getFullYear();
 
   return (

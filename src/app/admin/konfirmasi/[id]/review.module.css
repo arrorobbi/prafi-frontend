@@ -1,0 +1,55 @@
+.layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 36px;
+  align-items: start;
+}
+
+.photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.photo img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 12px;
+  background: var(--gray-200);
+  box-shadow: var(--shadow);
+}
+
+.reason {
+  margin-top: 24px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.actions :global(.btn) {
+  min-width: 240px;
+  border-radius: 2px;
+}
+
+@media (max-width: 760px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .photo {
+    max-width: 260px;
+    margin: 0 auto;
+  }
+
+  .actions :global(.btn) {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+}
