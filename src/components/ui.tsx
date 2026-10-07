@@ -7,13 +7,13 @@ import { STATUS_BADGE, STATUS_LABEL, type ProductStatus } from "@/lib/format";
 import { IconBack, IconChevronLeft, IconChevronRight, IconEye, IconEyeOff, IconImagePlus } from "./Icons";
 import styles from "./ui.module.css";
 
-/** Logo + "PRAFI HUB / Produk Pilihan Ada Disini", as in the designs. */
+/** Logo + "TRANSNIAGA / Produk Pilihan Ada Disini", as in the designs. */
 export function Brand({ light = false, compact = false, href = "/" }: { light?: boolean; compact?: boolean; href?: string }) {
   return (
     <Link href={href} className={`${styles.brand} ${light ? styles.brandLight : ""} ${compact ? styles.brandCompact : ""}`}>
       <img src="/logo.png" alt="" width={64} height={64} />
       <span>
-        <strong>PRAFI HUB</strong>
+        <strong>TRANSNIAGA</strong>
         <em>Produk Pilihan Ada Disini</em>
       </span>
     </Link>

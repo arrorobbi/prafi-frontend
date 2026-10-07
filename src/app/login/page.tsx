@@ -138,11 +138,11 @@ function LoginForm() {
       </form>
       <div className={styles.divider}>ATAU</div>
       <p className={styles.signup}>
-        Baru di Prafi Hub? <Link href="/register">DAFTAR</Link>
+        Baru di Transniaga? <Link href="/register">DAFTAR</Link>
       </p>
       <p className={styles.terms}>
-        Dengan login, kamu menyetujui <Link href="/panduan#ketentuan">Syarat, Ketentuan dan Kebijakan dari Prafi Hub</Link> &amp;{" "}
-        <Link href="/panduan#privasi">Kebijakan Privasi</Link> Prafi Hub
+        Dengan login, kamu menyetujui <Link href="/panduan#ketentuan">Syarat, Ketentuan dan Kebijakan dari Transniaga</Link> &amp;{" "}
+        <Link href="/panduan#privasi">Kebijakan Privasi</Link> Transniaga
       </p>
     </div>
   );

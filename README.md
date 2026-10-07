@@ -1,6 +1,6 @@
-# Prafi Hub — Frontend
+# Transniaga — Frontend
 
-Next.js 15 (App Router, React 19, TypeScript, CSS Modules) frontend for **Prafi Hub**, the UMKM directory of the
+Next.js 15 (App Router, React 19, TypeScript, CSS Modules) frontend for **Transniaga**, the UMKM directory of the
 Prafi transmigration area (Manokwari). It talks to the Prafi API — docs at
 <https://api.transniaga.manokwarikab.go.id/docs>.
 
@@ -42,7 +42,7 @@ in the **backend** `.env` to this site's URL.
 
 | path | who | what |
 | --- | --- | --- |
-| `/` | public | Landing: featured carousel, recommended products, "why Prafi Hub" |
+| `/` | public | Landing: featured carousel, recommended products, "why Transniaga" |
 | `/produk`, `/produk?q=` | public | All approved products + search |
 | `/produk/[id]` | public | Product detail |
 | `/umkm`, `/umkm/[id]` | public | Sellers (derived from approved products) and their products |
