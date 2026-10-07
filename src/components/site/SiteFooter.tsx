@@ -10,9 +10,9 @@ export function SiteFooter() {
         <div className={styles.aboutInner}>
           <Brand light />
           <p>
-            <strong>UMKM PRAFI HUB</strong> dibangun dari semangat gotong royong untuk memajukan perekonomian lokal.
+            <strong>UMKM TRANSNIAGA</strong> dibangun dari semangat gotong royong untuk memajukan perekonomian lokal.
             Sebagai direktori dan marketplace UMKM di Prafi, Manokwari, platform ini dirancang untuk membina serta
-            memperluas jangkauan pasar para pelaku usaha daerah. Melalui Prafi Hub, beli produk lokal kini jadi lebih
+            memperluas jangkauan pasar para pelaku usaha daerah. Melalui Transniaga, beli produk lokal kini jadi lebih
             praktis, sekaligus menjadi bentuk nyata dukungan kita terhadap kemajuan UMKM Prafi.
           </p>
         </div>
@@ -24,7 +24,7 @@ export function SiteFooter() {
           <Link href="/register">Daftar Penjual</Link>
           <Link href="/panduan">Panduan</Link>
         </nav>
-        <span>© {year} Prafi Hub · Kawasan Transmigrasi Prafi, Manokwari</span>
+        <span>© {year} Transniaga · Kawasan Transmigrasi Prafi, Manokwari</span>
       </div>
     </footer>
   );

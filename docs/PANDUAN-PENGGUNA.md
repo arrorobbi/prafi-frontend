@@ -1,7 +1,7 @@
-# Panduan Pengguna Prafi Hub
+# Panduan Pengguna Transniaga
 
-Prafi Hub adalah direktori dan marketplace UMKM Kawasan Transmigrasi Prafi, Manokwari. Panduan ini menjelaskan cara
-memakai Prafi Hub untuk **pengunjung**, **penjual (UMKM)**, dan **administrator**. Versi interaktif tersedia di
+Transniaga adalah direktori dan marketplace UMKM Kawasan Transmigrasi Prafi, Manokwari. Panduan ini menjelaskan cara
+memakai Transniaga untuk **pengunjung**, **penjual (UMKM)**, dan **administrator**. Versi interaktif tersedia di
 halaman `/panduan`.
 
 ---

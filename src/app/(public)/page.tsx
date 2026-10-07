@@ -25,7 +25,7 @@ const REASONS = [
   {
     icon: IconDocs,
     title: "PRODUK TERJAMIN",
-    text: "Seluruh produk telah diverifikasi administrator sebelum tampil di Prafi Hub",
+    text: "Seluruh produk telah diverifikasi administrator sebelum tampil di Transniaga",
     tone: "orange",
   },
 ] as const;
@@ -69,7 +69,7 @@ export default async function HomePage() {
       )}
 
       <section className={`${styles.container} ${styles.reasons}`}>
-        <h2>KENAPA HARUS DI UMKM PRAFI HUB ?</h2>
+        <h2>KENAPA HARUS DI UMKM TRANSNIAGA ?</h2>
         <div className={styles.reasonGrid}>
           {REASONS.map(({ icon: Icon, title, text, tone }) => (
             <div key={title} className={`${styles.reason} ${tone === "navy" ? styles.reasonNavy : ""}`}>

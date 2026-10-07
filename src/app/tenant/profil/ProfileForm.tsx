@@ -74,7 +74,7 @@ export function ProfileForm({
         // The API currently lets only superadmin/admin read categories (403 for tenants)
         setCategoryError(
           err instanceof ApiError && err.status === 403
-            ? "Daftar kategori belum dapat dimuat untuk akun penjual. Hubungi administrator Prafi Hub."
+            ? "Daftar kategori belum dapat dimuat untuk akun penjual. Hubungi administrator Transniaga."
             : errorMessage(err),
         );
         setCategories(profile?.category ? [profile.category] : []);

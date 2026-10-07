@@ -254,7 +254,7 @@ export function RegisterWizard({ kind }: { kind: Kind }) {
       {step === 3 && (
         <div className={styles.thanks}>
           <h2>TERIMA KASIH!</h2>
-          <h3>{kind === "tenant" ? "TELAH MENDAFTAR SEBAGAI PENJUAL DI UMKM PRAFI HUB" : "TELAH MENDAFTAR SEBAGAI ADMIN PRAFI HUB"}</h3>
+          <h3>{kind === "tenant" ? "TELAH MENDAFTAR SEBAGAI PENJUAL DI UMKM TRANSNIAGA" : "TELAH MENDAFTAR SEBAGAI ADMIN TRANSNIAGA"}</h3>
           <p>{kind === "tenant" ? "Data pendaftaran anda telah diterima!" : "Akun menunggu aktivasi Disnakertrans"}</p>
           <div className={styles.buttons}>
             {kind === "tenant" && loggedIn ? (
