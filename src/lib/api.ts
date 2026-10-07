@@ -2,9 +2,11 @@
 
 import type {
   ApiFieldError,
+  ApiLog,
   AppNotification,
   ImageFile,
   LoginResult,
+  LogLevel,
   PageMeta,
   Product,
   Role,
@@ -247,6 +249,24 @@ export const api = {
     markRead: (id: number) => patch<AppNotification>(`/notifications/${id}/read`),
     markAllRead: () => patch<{ updated: number }>("/notifications/read-all"),
     remove: (id: number) => del<null>(`/notifications/${id}`),
+  },
+
+  /** superadmin only: request and error logs, newest first. status: an exact code ("404") or a class ("4xx"). */
+  logs: {
+    list: (
+      q: Paged & {
+        level?: LogLevel;
+        method?: string;
+        status?: string;
+        path?: string;
+        email?: string;
+        errorCode?: string;
+        userId?: string;
+        from?: string;
+        to?: string;
+      } = {},
+    ) => get<ApiLog[]>("/logs", { page: 1, limit: 20, ...q }),
+    get: (id: number) => get<ApiLog>(`/logs/${id}`),
   },
 };
 

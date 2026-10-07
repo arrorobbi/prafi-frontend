@@ -146,3 +146,26 @@ export interface LoginResult {
   tokenType: "Bearer";
   user: User;
 }
+
+export type LogLevel = "info" | "warn" | "error";
+
+/** One API request from GET /api/logs (superadmin). errorStack only comes from GET /api/logs/:id, for 5xx. */
+export interface ApiLog {
+  id: number;
+  level: LogLevel;
+  method: string;
+  path: string;
+  query: string | null;
+  statusCode: number;
+  durationMs: number;
+  userId: string | null;
+  userEmail: string | null;
+  userRole: Role | null;
+  ip: string | null;
+  userAgent: string | null;
+  errorCode: string | null;
+  errorMessage: string | null;
+  errorDetails: unknown;
+  errorStack?: string | null;
+  createdAt: string;
+}

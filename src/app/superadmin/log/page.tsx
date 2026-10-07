@@ -1,0 +1,268 @@
+"use client";
+
+import { useState } from "react";
+import styles from "@/components/dashboard/dashboard.module.css";
+import { ROLE_LABEL } from "@/components/dashboard/UserAccounts";
+import { Modal } from "@/components/Modal";
+import { EmptyState, Loading, PageHeader, Pagination } from "@/components/ui";
+import { api } from "@/lib/api";
+import { formatDate, formatTime } from "@/lib/format";
+import type { ApiLog, LogLevel } from "@/lib/types";
+import { useAsync } from "@/lib/useAsync";
+import s from "./log.module.css";
+
+const LIMIT = 20;
+const METHODS = ["GET", "POST", "PATCH", "PUT", "DELETE"];
+const EMPTY = { level: "", method: "", status: "", path: "", email: "", from: "", to: "" };
+type Filters = typeof EMPTY;
+
+const LEVEL_LABEL: Record<LogLevel, string> = { info: "Info", warn: "Peringatan", error: "Error" };
+
+function statusBadge(code: number) {
+  if (code >= 500) return "badge badge-rejected";
+  if (code >= 400) return "badge badge-pending";
+  if (code >= 300) return "badge badge-inactive";
+  return "badge badge-active";
+}
+
+const when = (iso: string) => `${formatDate(iso)} ${formatTime(iso)}`;
+const who = (log: ApiLog) => (log.userEmail ? `${log.userEmail}${log.userRole ? ` (${ROLE_LABEL[log.userRole]})` : ""}` : "Tamu");
+
+/** Request and error logs of the API (GET /api/logs): superadmin only. */
+export default function LogsPage() {
+  const [draft, setDraft] = useState<Filters>(EMPTY);
+  const [filters, setFilters] = useState<Filters>(EMPTY);
+  const [page, setPage] = useState(1);
+  const [openId, setOpenId] = useState<number | null>(null);
+
+  const { data, loading, error, reload } = useAsync(
+    () =>
+      api.logs.list({
+        page,
+        limit: LIMIT,
+        level: (filters.level || undefined) as LogLevel | undefined,
+        method: filters.method,
+        status: filters.status.trim(),
+        path: filters.path.trim(),
+        email: filters.email.trim(),
+        from: filters.from,
+        to: filters.to,
+      }),
+    [page, filters],
+  );
+
+  const set = (key: keyof Filters) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+    setDraft((f) => ({ ...f, [key]: e.target.value }));
+
+  const apply = (e: React.FormEvent) => {
+    e.preventDefault();
+    setFilters(draft);
+    setPage(1);
+  };
+
+  const clear = () => {
+    setDraft(EMPTY);
+    setFilters(EMPTY);
+    setPage(1);
+  };
+
+  return (
+    <>
+      <PageHeader title="LOG API" />
+      <p className="muted" style={{ marginBottom: 14 }}>
+        Setiap permintaan ke API beserta error-nya, terbaru di atas. Isi permintaan (body) tidak pernah disimpan, dan token
+        pada URL disamarkan.
+      </p>
+
+      <form className={s.filters} onSubmit={apply}>
+        <label className="field">
+          <span className={s.filterLabel}>Level</span>
+          <select className="select" value={draft.level} onChange={set("level")}>
+            <option value="">Semua</option>
+            <option value="info">Info (sukses)</option>
+            <option value="warn">Peringatan (4xx)</option>
+            <option value="error">Error (5xx)</option>
+          </select>
+        </label>
+        <label className="field">
+          <span className={s.filterLabel}>Method</span>
+          <select className="select" value={draft.method} onChange={set("method")}>
+            <option value="">Semua</option>
+            {METHODS.map((m) => (
+              <option key={m}>{m}</option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span className={s.filterLabel}>Status</span>
+          <input className="input" value={draft.status} onChange={set("status")} placeholder="mis. 404 atau 5xx" />
+        </label>
+        <label className="field">
+          <span className={s.filterLabel}>Path</span>
+          <input className="input" value={draft.path} onChange={set("path")} placeholder="mis. /api/tenants" />
+        </label>
+        <label className="field">
+          <span className={s.filterLabel}>Email Pengguna</span>
+          <input className="input" value={draft.email} onChange={set("email")} placeholder="Cari email" />
+        </label>
+        <label className="field">
+          <span className={s.filterLabel}>Dari Tanggal</span>
+          <input className="input" type="date" value={draft.from} onChange={set("from")} />
+        </label>
+        <label className="field">
+          <span className={s.filterLabel}>Sampai Tanggal</span>
+          <input className="input" type="date" value={draft.to} onChange={set("to")} />
+        </label>
+        <div className={s.filterActions}>
+          <button type="submit" className="btn btn-navy">
+            Terapkan
+          </button>
+          <button type="button" className="btn btn-light" onClick={clear}>
+            Reset
+          </button>
+        </div>
+      </form>
+
+      <div className={styles.panel}>
+        <div className={`${styles.toolbar}`}>
+          <span className="muted">{data?.meta ? `${data.meta.total} log` : ""}</span>
+          <span className={styles.toolbarSpacer} />
+          <button type="button" className="btn btn-light btn-sm" onClick={reload} disabled={loading}>
+            {loading ? "Memuat..." : "Muat Ulang"}
+          </button>
+        </div>
+        {loading && !data ? (
+          <Loading />
+        ) : error ? (
+          <div className="alert alert-error">{error}</div>
+        ) : data!.data.length === 0 ? (
+          <EmptyState title="Tidak ada log">Ubah atau reset filter.</EmptyState>
+        ) : (
+          <>
+            <div className="table-wrap">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Waktu</th>
+                    <th>Permintaan</th>
+                    <th>Status</th>
+                    <th>Durasi</th>
+                    <th>Pengguna</th>
+                    <th>Error</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data!.data.map((log) => (
+                    <tr key={log.id}>
+                      <td data-label="Waktu">{when(log.createdAt)}</td>
+                      <td data-label="Permintaan" className={s.mono}>
+                        <span className={s.method}>{log.method}</span> {log.path}
+                        {log.query && <span className={s.query}>?{log.query}</span>}
+                      </td>
+                      <td data-label="Status">
+                        <span className={statusBadge(log.statusCode)}>{log.statusCode}</span>
+                      </td>
+                      <td data-label="Durasi">{log.durationMs} ms</td>
+                      <td data-label="Pengguna" className={styles.wrap}>
+                        {who(log)}
+                      </td>
+                      <td data-label="Error" className={styles.wrap}>
+                        {log.errorCode ? (
+                          <>
+                            <strong>{log.errorCode}</strong>
+                            <br />
+                            {log.errorMessage}
+                          </>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+                      <td data-label="Aksi">
+                        <button type="button" className="btn btn-orange btn-sm" onClick={() => setOpenId(log.id)}>
+                          Detail
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Pagination
+              page={page}
+              totalPages={data!.meta?.totalPages ?? 1}
+              total={data!.meta?.total ?? 0}
+              shown={data!.data.length}
+              noun="log"
+              onChange={setPage}
+            />
+          </>
+        )}
+      </div>
+
+      <LogDetail id={openId} onClose={() => setOpenId(null)} />
+    </>
+  );
+}
+
+/** GET /api/logs/:id: everything about one request, including the stack trace of a 5xx. */
+function LogDetail({ id, onClose }: { id: number | null; onClose: () => void }) {
+  const { data, loading, error } = useAsync(() => (id ? api.logs.get(id) : Promise.resolve(null)), [id]);
+  const log = data?.data;
+
+  return (
+    <Modal open={id !== null} title={`Detail Log #${id ?? ""}`} onClose={onClose} wide>
+      {loading || (!log && !error) ? (
+        <Loading />
+      ) : error ? (
+        <div className="alert alert-error">{error}</div>
+      ) : (
+        log && (
+          <div className="stack">
+            <dl className={s.details}>
+              <dt>Waktu</dt>
+              <dd>{when(log.createdAt)}</dd>
+              <dt>Permintaan</dt>
+              <dd className={s.mono}>
+                <span className={s.method}>{log.method}</span> {log.path}
+                {log.query && `?${log.query}`}
+              </dd>
+              <dt>Status</dt>
+              <dd>
+                <span className={statusBadge(log.statusCode)}>{log.statusCode}</span> {LEVEL_LABEL[log.level]}
+              </dd>
+              <dt>Durasi</dt>
+              <dd>{log.durationMs} ms</dd>
+              <dt>Pengguna</dt>
+              <dd>{who(log)}</dd>
+              <dt>IP</dt>
+              <dd className={s.mono}>{log.ip ?? "-"}</dd>
+              <dt>User Agent</dt>
+              <dd className={s.mono}>{log.userAgent ?? "-"}</dd>
+              {log.errorCode && (
+                <>
+                  <dt>Kode Error</dt>
+                  <dd className={s.mono}>{log.errorCode}</dd>
+                  <dt>Pesan Error</dt>
+                  <dd>{log.errorMessage}</dd>
+                </>
+              )}
+            </dl>
+            {log.errorDetails != null && (
+              <div>
+                <p className={s.filterLabel}>Detail Error</p>
+                <pre className={s.code}>{JSON.stringify(log.errorDetails, null, 2)}</pre>
+              </div>
+            )}
+            {log.errorStack && (
+              <div>
+                <p className={s.filterLabel}>Stack Trace (hanya untuk superadmin)</p>
+                <pre className={s.code}>{log.errorStack}</pre>
+              </div>
+            )}
+          </div>
+        )
+      )}
+    </Modal>
+  );
+}
