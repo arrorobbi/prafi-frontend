@@ -138,11 +138,11 @@ function LoginForm() {
       </form>
       <div className={styles.divider}>ATAU</div>
       <p className={styles.signup}>
-        Baru di Transniaga? <Link href="/register">DAFTAR</Link>
+        Baru di Trans Niaga? <Link href="/register">DAFTAR</Link>
       </p>
       <p className={styles.terms}>
-        Dengan login, kamu menyetujui <Link href="/panduan#ketentuan">Syarat, Ketentuan dan Kebijakan dari Transniaga</Link> &amp;{" "}
-        <Link href="/panduan#privasi">Kebijakan Privasi</Link> Transniaga
+        Dengan login, kamu menyetujui <Link href="/panduan#ketentuan">Syarat, Ketentuan dan Kebijakan dari Trans Niaga</Link> &amp;{" "}
+        <Link href="/panduan#privasi">Kebijakan Privasi</Link> Trans Niaga
       </p>
     </div>
   );

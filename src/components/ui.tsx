@@ -13,7 +13,7 @@ export function Brand({ light = false, compact = false, href = "/" }: { light?: 
     <Link href={href} className={`${styles.brand} ${light ? styles.brandLight : ""} ${compact ? styles.brandCompact : ""}`}>
       <img src="/logo.png" alt="" width={64} height={64} />
       <span>
-        <strong>TRANSNIAGA</strong>
+        <strong>TRANS NIAGA</strong>
         <em>Produk Pilihan Ada Disini</em>
       </span>
     </Link>

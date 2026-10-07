@@ -12,8 +12,8 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: "TRANSNIAGA — Produk Pilihan Ada Disini",
-    template: "%s | TRANSNIAGA",
+    default: "TRANS NIAGA — Produk Pilihan Ada Disini",
+    template: "%s | TRANS NIAGA",
   },
   description:
     "Direktori dan marketplace UMKM Kawasan Transmigrasi Prafi, Manokwari. Temukan produk pilihan dari pelaku usaha lokal.",

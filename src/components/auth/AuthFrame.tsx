@@ -27,7 +27,7 @@ export function HelpBox() {
   return (
     <div className={styles.help}>
       <strong>BUTUH BANTUAN?</strong>
-      <p>Jika ada kendala dalam pendaftaran, hubungi administrator Transniaga.</p>
+      <p>Jika ada kendala dalam pendaftaran, hubungi administrator Trans Niaga.</p>
       <a href="/panduan#hubungi-admin">HUBUNGI ADMIN</a>
     </div>
   );

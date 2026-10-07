@@ -32,7 +32,7 @@ export function notificationMessage(n: AppNotification) {
     case "PRODUCT_UNDER_REVIEW":
       return product ? `Produk "${product}" berhasil diajukan dan menunggu konfirmasi administrator.` : d;
     case "PRODUCT_APPROVED":
-      return product ? `Produk "${product}" telah disetujui dan sekarang aktif di UMKM Transniaga.` : d;
+      return product ? `Produk "${product}" telah disetujui dan sekarang aktif di UMKM Trans Niaga.` : d;
     case "PRODUCT_SUBMITTED": {
       const by = before(d, " created");
       return product ? `${by ?? "Penjual"} mengajukan produk "${product}". Silakan periksa dan konfirmasi.` : d;

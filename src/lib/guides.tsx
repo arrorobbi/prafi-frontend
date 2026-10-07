@@ -34,7 +34,7 @@ function Contact() {
   const wa = ADMIN_CONTACT.whatsapp.replace(/\D/g, "");
   return (
     <>
-      <p>Butuh bantuan pendaftaran, verifikasi produk, atau akun Anda dinonaktifkan? Hubungi administrator Transniaga:</p>
+      <p>Butuh bantuan pendaftaran, verifikasi produk, atau akun Anda dinonaktifkan? Hubungi administrator Trans Niaga:</p>
       <ul>
         {wa && (
           <li>
@@ -141,7 +141,7 @@ export const GUIDES: Guide[] = [
   {
     id: "tambah-produk",
     title: "Panduan Menambahkan Produk",
-    summary: "Langkah-langkah menambahkan produk baru ke Transniaga",
+    summary: "Langkah-langkah menambahkan produk baru ke Trans Niaga",
     icon: IconPlus,
     color: "#13a10e",
     audience: ["public", "tenant"],
@@ -324,7 +324,7 @@ export const GUIDES: Guide[] = [
   {
     id: "ketentuan",
     title: "Syarat & Ketentuan",
-    summary: "Ketentuan penggunaan Transniaga",
+    summary: "Ketentuan penggunaan Trans Niaga",
     icon: IconDocs,
     color: "#4a4a4a",
     audience: ["public", "tenant"],
@@ -332,7 +332,7 @@ export const GUIDES: Guide[] = [
       <ul>
         <li>Penjual wajib memberikan data diri dan data usaha yang benar.</li>
         <li>Setiap produk diverifikasi administrator sebelum tampil dan dapat dinonaktifkan bila melanggar ketentuan.</li>
-        <li>Transaksi dilakukan langsung antara pembeli dan penjual; Transniaga berperan sebagai direktori UMKM.</li>
+        <li>Transaksi dilakukan langsung antara pembeli dan penjual; Trans Niaga berperan sebagai direktori UMKM.</li>
         <li>Akun yang melanggar ketentuan dapat dinonaktifkan oleh administrator.</li>
       </ul>
     ),
@@ -355,7 +355,7 @@ export const GUIDES: Guide[] = [
   {
     id: "hubungi-admin",
     title: "Hubungi Administrator",
-    summary: "Butuh bantuan? Hubungi administrator UMKM Transniaga",
+    summary: "Butuh bantuan? Hubungi administrator UMKM Trans Niaga",
     icon: IconHeadset,
     color: "#e53030",
     audience: ["public", "tenant"],

@@ -126,7 +126,7 @@ export default function ConfirmProductsPage() {
         title="Terima Produk"
         message={
           <>
-            Setujui <strong>{approveTarget?.name}</strong>? Produk akan langsung tampil di halaman utama Transniaga.
+            Setujui <strong>{approveTarget?.name}</strong>? Produk akan langsung tampil di halaman utama Trans Niaga.
           </>
         }
         confirmLabel="Terima Produk"
