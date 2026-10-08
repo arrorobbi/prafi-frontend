@@ -135,8 +135,9 @@ export const GUIDES: Guide[] = [
         <Step image="profil-2-form" alt="Formulir profil toko">
           Pilih logo atau foto toko (JPG/PNG/WEBP, maksimal 5 MB): foto langsung terunggah, tetapi baru tersimpan
           setelah Anda klik <b>SIMPAN PROFIL</b>. Isi nama toko, wilayah (SP 1 – SP 4 atau lainnya),
-          deskripsi, alamat lengkap, jam operasional (hari, jam buka, jam tutup), dan nomor WhatsApp. Tautan Google
-          Maps, Facebook, Instagram, Google Bisnis, dan Shopee boleh dikosongkan.
+          deskripsi, alamat lengkap, jam operasional (hari, jam buka, jam tutup), nomor WhatsApp, dan{" "}
+          <b>tautan Facebook / toko online</b> (wajib, diawali https://). Tautan Google Maps, Instagram, Google Bisnis,
+          dan Shopee boleh dikosongkan.
         </Step>
         <Step image="profil-3-simpan" alt="Tombol simpan profil">
           Klik <b>SIMPAN PROFIL</b>. Profil dapat diubah kapan saja lewat tombol <b>Ubah Profil</b>. Agar dapat

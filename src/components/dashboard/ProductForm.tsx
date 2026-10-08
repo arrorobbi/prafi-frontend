@@ -30,14 +30,14 @@ interface Values {
 }
 
 /** Profile fields the API reports as missing (GET /api/tenants/me → missingFields), as the tenant knows them. */
-const PROFILE_FIELD_LABEL: Record<string, string> = {
+export const PROFILE_FIELD_LABEL: Record<string, string> = {
   name: "Nama Toko",
   description: "Deskripsi",
   address: "Alamat",
   area: "Wilayah",
   operationalHours: "Jam Operasional",
   whatsappLink: "Nomor WhatsApp",
-  fbLink: "Tautan Facebook",
+  fbLink: "Tautan Facebook / Toko Online",
   gmapsLink: "Tautan Google Maps",
   logoId: "Logo Toko",
   faceImageId: "Foto Profil Akun",

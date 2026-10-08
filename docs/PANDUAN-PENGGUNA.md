@@ -62,7 +62,7 @@ halaman `/panduan`.
 2. Pilih logo/foto toko (JPG, PNG, WEBP, atau GIF, maks. 5 MB). Foto langsung terunggah, tetapi baru tersimpan setelah Anda klik **SIMPAN PROFIL**.
 3. Isi nama toko, **wilayah** (SP 1 – SP 4 atau *Lainnya*), deskripsi, dan alamat. (Kategori kini dipilih per produk, bukan di profil toko.)
 4. Isi jam operasional (hari, jam buka, jam tutup) dan nomor WhatsApp.
-5. Tautan Google Maps, Facebook, Instagram, Google Bisnis, dan Shopee boleh dikosongkan.
+5. **Tautan Facebook / Toko Online wajib diisi** (diawali `https://`). Tautan Google Maps, Instagram, Google Bisnis, dan Shopee boleh dikosongkan. Profil tanpa tautan Facebook dianggap belum lengkap, sehingga belum bisa menambah produk.
 
    ![Formulir profil toko](../public/panduan/profil-2-form.jpg)
 

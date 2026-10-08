@@ -3,6 +3,7 @@
 import { useState } from "react";
 import styles from "@/components/dashboard/dashboard.module.css";
 import { IconFacebook, IconGoogle, IconInstagram, IconMapPin, IconPencil, IconShopee, IconWarning, IconWhatsapp } from "@/components/Icons";
+import { PROFILE_FIELD_LABEL } from "@/components/dashboard/ProductForm";
 import { ConfirmDialog } from "@/components/Modal";
 import { useToast } from "@/components/Toast";
 import { Loading, PageHeader, Thumb } from "@/components/ui";
@@ -61,6 +62,9 @@ export default function ShopProfilePage() {
     }
   };
 
+  // The account photo is set in Pengaturan Akun, not here
+  const missingProfile = (profile.missingFields ?? []).filter((f) => f !== "faceImageId");
+
   return (
     <>
       <PageHeader title="PROFIL UMKM" />
@@ -68,7 +72,8 @@ export default function ShopProfilePage() {
         <Alert variant="warning" className="mt">
           <IconWarning />
           <span>
-            Profil belum lengkap. Lengkapi melalui{" "}
+            Profil belum lengkap
+            {missingProfile.length > 0 && <>: {missingProfile.map((f) => PROFILE_FIELD_LABEL[f] ?? f).join(", ")}</>}. Lengkapi melalui{" "}
             <strong>Ubah Profil</strong> agar dapat menambahkan produk baru.
           </span>
         </Alert>

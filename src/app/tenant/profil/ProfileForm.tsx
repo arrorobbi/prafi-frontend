@@ -81,7 +81,8 @@ export function ProfileForm({
     if (!address.trim()) e.address = "Alamat wajib diisi";
     if (!open || !close) e.operationalHours = "Isi jam buka dan tutup";
     if (whatsapp.replace(/\D/g, "").length < 9) e.whatsappLink = "Nomor WhatsApp tidak valid";
-    if (fbLink && !/^https?:\/\//i.test(fbLink)) e.fbLink = "Tautan harus diawali https://";
+    if (!fbLink.trim()) e.fbLink = "Tautan Facebook / toko online wajib diisi";
+    else if (!/^https?:\/\/\S+$/i.test(fbLink.trim())) e.fbLink = "Tautan harus diawali https://";
     if (gmapsLink && !/^https?:\/\//i.test(gmapsLink)) e.gmapsLink = "Tautan harus diawali https://";
     const optionalLinks = { instagramLink, googleBusinessLink, shopeeLink };
     for (const [key, value] of Object.entries(optionalLinks)) {
@@ -104,7 +105,7 @@ export function ProfileForm({
       address: address.trim(),
       operationalHours: `${days.trim() ? `${days.trim()}, ` : ""}${open} - ${close} WIT`,
       whatsappLink: whatsappUrl(whatsapp),
-      fbLink: fbLink.trim() || EMPTY_LINK,
+      fbLink: fbLink.trim(),
       gmapsLink: gmapsLink.trim() || EMPTY_LINK,
       instagramLink: instagramLink.trim() || null,
       googleBusinessLink: googleBusinessLink.trim() || null,
@@ -236,7 +237,7 @@ export function ProfileForm({
           {errors.shopeeLink && <span className="field-error">{errors.shopeeLink}</span>}
         </label>
         <label className="field">
-          <span className="label">Tautan Facebook / Toko Online (opsional)</span>
+          <span className="label">Tautan Facebook / Toko Online (wajib diisi)</span>
           <Input placeholder="https://facebook.com/..." value={fbLink} onChange={(e) => setFbLink(e.target.value)} />
           {errors.fbLink && <span className="field-error">{errors.fbLink}</span>}
         </label>
