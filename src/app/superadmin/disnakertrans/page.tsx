@@ -11,6 +11,9 @@ import { PageHeader, PasswordInput } from "@/components/ui";
 import { api, ApiError, errorMessage } from "@/lib/api";
 import { formatDate, formatTime, splitName } from "@/lib/format";
 import type { Verification } from "@/lib/types";
+import { Button } from "@/components/shadcn/button";
+import { Input } from "@/components/shadcn/input";
+import { Alert } from "@/components/shadcn/alert";
 
 const EMPTY = { fullName: "", phone: "", email: "", password: "", confirm: "" };
 
@@ -74,9 +77,9 @@ export default function DisnakertransAccountsPage() {
           Disnakertrans memeriksa dan mengaktifkan akun admin. Akun yang dibuat di sini langsung aktif, tetapi pemiliknya
           harus membuka tautan aktivasi di email (berlaku 24 jam) sebelum bisa login.
         </p>
-        <button type="button" className="btn btn-navy" onClick={() => setOpen(true)}>
+        <Button type="button" variant="navy" onClick={() => setOpen(true)}>
           <IconPlus /> TAMBAH AKUN
-        </button>
+        </Button>
       </div>
 
       <UserAccounts role="disnakertrans" canResend noun="akun disnakertrans" reloadKey={reloadKey} />
@@ -84,9 +87,9 @@ export default function DisnakertransAccountsPage() {
       <Modal open={open} title="Tambah Akun Disnakertrans" onClose={close} wide>
         {created ? (
           <div className="stack">
-            <div className="alert alert-success">
+            <Alert variant="success">
               Akun <strong>{created.email}</strong> berhasil dibuat.
-            </div>
+            </Alert>
             {created.verification && (
               <p>
                 {created.verification.emailSent
@@ -105,29 +108,29 @@ export default function DisnakertransAccountsPage() {
             )}
             <p>Berikan password akun secara langsung kepada pemiliknya. Password tidak dikirim lewat email.</p>
             <div className={styles.formActions}>
-              <button type="button" className="btn btn-light" onClick={() => setCreated(null)}>
+              <Button type="button" variant="light" onClick={() => setCreated(null)}>
                 Tambah Lagi
-              </button>
-              <button type="button" className="btn btn-navy" onClick={close}>
+              </Button>
+              <Button type="button" variant="navy" onClick={close}>
                 Selesai
-              </button>
+              </Button>
             </div>
           </div>
         ) : (
           <form className={styles.formGrid} onSubmit={submit} noValidate>
             <label className="field">
               <span className="label">Nama Lengkap</span>
-              <input className="input" value={form.fullName} onChange={set("fullName")} placeholder="Masukan nama lengkap" />
+              <Input value={form.fullName} onChange={set("fullName")} placeholder="Masukan nama lengkap" />
               {errors.fullName && <span className="field-error">{errors.fullName}</span>}
             </label>
             <label className="field">
               <span className="label">Nomor Telepon</span>
-              <input className="input" inputMode="tel" value={form.phone} onChange={set("phone")} placeholder="0812-xxxx-xxxx" />
+              <Input inputMode="tel" value={form.phone} onChange={set("phone")} placeholder="0812-xxxx-xxxx" />
               {errors.phone && <span className="field-error">{errors.phone}</span>}
             </label>
             <label className={`field ${styles.full}`}>
               <span className="label">Email</span>
-              <input className="input" type="email" value={form.email} onChange={set("email")} placeholder="Email aktif petugas" />
+              <Input type="email" value={form.email} onChange={set("email")} placeholder="Email aktif petugas" />
               {errors.email && <span className="field-error">{errors.email}</span>}
             </label>
             <label className="field">
@@ -141,12 +144,12 @@ export default function DisnakertransAccountsPage() {
               {errors.confirm && <span className="field-error">{errors.confirm}</span>}
             </label>
             <div className={`${styles.formActions} ${styles.full}`}>
-              <button type="button" className="btn btn-light" onClick={close} disabled={busy}>
+              <Button type="button" variant="light" onClick={close} disabled={busy}>
                 Batal
-              </button>
-              <button type="submit" className="btn btn-navy" disabled={busy}>
+              </Button>
+              <Button type="submit" variant="navy" disabled={busy}>
                 {busy ? "Menyimpan..." : "Buat Akun"}
-              </button>
+              </Button>
             </div>
           </form>
         )}

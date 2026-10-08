@@ -7,42 +7,6 @@
   margin-bottom: 22px;
 }
 
-.tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.tabs button {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 120px;
-  min-height: 46px;
-  padding: 8px 26px;
-  border-radius: var(--radius-pill);
-  background: var(--white);
-  box-shadow: var(--shadow);
-  font-size: 0.95rem;
-}
-
-.tabs button.tabActive {
-  font-weight: 700;
-  box-shadow: 0 0 0 2px var(--orange), var(--shadow);
-}
-
-.tabs b {
-  display: grid;
-  place-items: center;
-  min-width: 30px;
-  height: 30px;
-  padding: 0 6px;
-  border-radius: var(--radius-pill);
-  background: var(--navy);
-  color: var(--white);
-  font-size: 0.85rem;
-}
-
 .markAll {
   color: var(--orange);
   font-size: 0.82rem;
@@ -168,18 +132,6 @@
 }
 
 @media (max-width: 640px) {
-  .tabs {
-    gap: 8px;
-    width: 100%;
-  }
-
-  .tabs button {
-    flex: 1;
-    min-width: 0;
-    padding: 6px 10px;
-    justify-content: center;
-    font-size: 0.82rem;
-  }
 
   .item {
     grid-template-columns: 8px 44px minmax(0, 1fr);

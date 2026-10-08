@@ -213,7 +213,7 @@
     gap: 6px;
   }
 
-  .actions :global(.btn) {
+  .actions :global(.btn-ui) {
     padding: 8px 16px;
   }
 }

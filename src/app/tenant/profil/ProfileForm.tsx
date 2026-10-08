@@ -12,6 +12,11 @@ import { useAuth } from "@/lib/auth";
 import { imageSrc, whatsappUrl } from "@/lib/format";
 import type { TenantCategory, TenantProfile } from "@/lib/types";
 import local from "./profil.module.css";
+import { Button } from "@/components/shadcn/button";
+import { Input } from "@/components/shadcn/input";
+import { Textarea } from "@/components/shadcn/textarea";
+import { NativeSelect } from "@/components/shadcn/native-select";
+import { Alert } from "@/components/shadcn/alert";
 
 /** Areas of the Prafi transmigration zone (from the design); anything else goes in "Lainnya". */
 const AREAS = ["Wilayah SP 1", "Wilayah SP 2", "Wilayah SP 3", "Wilayah SP 4"];
@@ -166,13 +171,13 @@ export function ProfileForm({
       <div className={local.left}>
         <label className="field">
           <span className="label">Nama Usaha/Toko</span>
-          <input className="input" placeholder="Masukan nama usaha/toko" value={name} onChange={(e) => setName(e.target.value)} maxLength={255} />
+          <Input placeholder="Masukan nama usaha/toko" value={name} onChange={(e) => setName(e.target.value)} maxLength={255} />
           {errors.name && <span className="field-error">{errors.name}</span>}
         </label>
         <div className={styles.formGrid}>
           <label className="field">
             <span className="label">Wilayah Usaha/Toko</span>
-            <select className="select" value={area} onChange={(e) => setArea(e.target.value)}>
+            <NativeSelect value={area} onChange={(e) => setArea(e.target.value)}>
               <option value="" disabled>
                 Pilih wilayah
               </option>
@@ -182,15 +187,15 @@ export function ProfileForm({
                 </option>
               ))}
               <option value={OTHER}>Lainnya</option>
-            </select>
+            </NativeSelect>
             {area === OTHER && (
-              <input className="input" placeholder="Nama wilayah" value={otherArea} onChange={(e) => setOtherArea(e.target.value)} />
+              <Input placeholder="Nama wilayah" value={otherArea} onChange={(e) => setOtherArea(e.target.value)} />
             )}
             {errors.area && <span className="field-error">{errors.area}</span>}
           </label>
           <label className="field">
             <span className="label">Kategori Usaha/Toko</span>
-            <select className="select" value={categoryId} onChange={(e) => setCategoryId(e.target.value)} disabled={!categories}>
+            <NativeSelect value={categoryId} onChange={(e) => setCategoryId(e.target.value)} disabled={!categories}>
               <option value="" disabled>
                 {categories ? "Pilih kategori" : "Memuat..."}
               </option>
@@ -199,20 +204,20 @@ export function ProfileForm({
                   {c.name}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
             {errors.tenantCategoryId && <span className="field-error">{errors.tenantCategoryId}</span>}
           </label>
         </div>
         {categoryError && (
-          <div className="alert alert-warning">
+          <Alert variant="warning">
             <IconWarning />
             <span>{categoryError}</span>
-          </div>
+          </Alert>
         )}
         <label className="field">
           <span className="label">Deskripsi Usaha/Toko</span>
-          <textarea
-            className="textarea"
+          <Textarea
+           
             placeholder="Ceritakan tentang usaha/toko anda (maks. 255 karakter)"
             value={description}
             maxLength={255}
@@ -222,15 +227,15 @@ export function ProfileForm({
         </label>
         <label className="field">
           <span className="label">Alamat Usaha/Toko</span>
-          <input className="input" placeholder="Contoh: Jalur 6 Bawah, SP 2, Distrik Prafi, Kab. Manokwari" value={address} maxLength={255} onChange={(e) => setAddress(e.target.value)} />
+          <Input placeholder="Contoh: Jalur 6 Bawah, SP 2, Distrik Prafi, Kab. Manokwari" value={address} maxLength={255} onChange={(e) => setAddress(e.target.value)} />
           {errors.address && <span className="field-error">{errors.address}</span>}
         </label>
         <div className="field">
           <span className="label">Jam Operasional</span>
           <div className={local.hours}>
-            <input className="input" placeholder="Hari (mis. Senin - Jumat)" value={days} onChange={(e) => setDays(e.target.value)} aria-label="Hari operasional" />
-            <input className="input" type="time" value={open} onChange={(e) => setOpen(e.target.value)} aria-label="Jam buka" />
-            <input className="input" type="time" value={close} onChange={(e) => setClose(e.target.value)} aria-label="Jam tutup" />
+            <Input placeholder="Hari (mis. Senin - Jumat)" value={days} onChange={(e) => setDays(e.target.value)} aria-label="Hari operasional" />
+            <Input type="time" value={open} onChange={(e) => setOpen(e.target.value)} aria-label="Jam buka" />
+            <Input type="time" value={close} onChange={(e) => setClose(e.target.value)} aria-label="Jam tutup" />
           </div>
           {errors.operationalHours && <span className="field-error">{errors.operationalHours}</span>}
         </div>
@@ -247,43 +252,43 @@ export function ProfileForm({
         />
         <label className="field">
           <span className="label">Nomor WhatsApp</span>
-          <input className="input" inputMode="tel" placeholder="0812-8899-0067" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
+          <Input inputMode="tel" placeholder="0812-8899-0067" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
           {errors.whatsappLink && <span className="field-error">{errors.whatsappLink}</span>}
         </label>
         <label className="field">
           <span className="label">Tautan Google Maps (opsional)</span>
-          <input className="input" placeholder="https://maps.app.goo.gl/..." value={gmapsLink} onChange={(e) => setGmapsLink(e.target.value)} />
+          <Input placeholder="https://maps.app.goo.gl/..." value={gmapsLink} onChange={(e) => setGmapsLink(e.target.value)} />
           {errors.gmapsLink && <span className="field-error">{errors.gmapsLink}</span>}
         </label>
         <label className="field">
           <span className="label">Tautan Instagram (opsional)</span>
-          <input className="input" placeholder="https://instagram.com/namatoko" value={instagramLink} onChange={(e) => setInstagramLink(e.target.value)} />
+          <Input placeholder="https://instagram.com/namatoko" value={instagramLink} onChange={(e) => setInstagramLink(e.target.value)} />
           {errors.instagramLink && <span className="field-error">{errors.instagramLink}</span>}
         </label>
         <label className="field">
           <span className="label">Tautan Google Bisnis (opsional)</span>
-          <input className="input" placeholder="https://g.page/namatoko" value={googleBusinessLink} onChange={(e) => setGoogleBusinessLink(e.target.value)} />
+          <Input placeholder="https://g.page/namatoko" value={googleBusinessLink} onChange={(e) => setGoogleBusinessLink(e.target.value)} />
           {errors.googleBusinessLink && <span className="field-error">{errors.googleBusinessLink}</span>}
         </label>
         <label className="field">
           <span className="label">Tautan Toko Shopee (opsional)</span>
-          <input className="input" placeholder="https://shopee.co.id/namatoko" value={shopeeLink} onChange={(e) => setShopeeLink(e.target.value)} />
+          <Input placeholder="https://shopee.co.id/namatoko" value={shopeeLink} onChange={(e) => setShopeeLink(e.target.value)} />
           {errors.shopeeLink && <span className="field-error">{errors.shopeeLink}</span>}
         </label>
         <label className="field">
           <span className="label">Tautan Facebook / Toko Online (opsional)</span>
-          <input className="input" placeholder="https://facebook.com/..." value={fbLink} onChange={(e) => setFbLink(e.target.value)} />
+          <Input placeholder="https://facebook.com/..." value={fbLink} onChange={(e) => setFbLink(e.target.value)} />
           {errors.fbLink && <span className="field-error">{errors.fbLink}</span>}
         </label>
         <div className={styles.formActions}>
           {onCancel && (
-            <button type="button" className="btn btn-light" onClick={() => confirmLeave(onCancel, "Batalkan perubahan?")} disabled={busy}>
+            <Button type="button" variant="light" onClick={() => confirmLeave(onCancel, "Batalkan perubahan?")} disabled={busy}>
               Batal
-            </button>
+            </Button>
           )}
-          <button type="submit" className="btn btn-navy btn-lg" disabled={busy || (!profile && !!categoryError && !categories?.length)}>
+          <Button type="submit" variant="navy" size="lg" disabled={busy || (!profile && !!categoryError && !categories?.length)}>
             {busy ? "MENYIMPAN..." : "SIMPAN PROFIL"}
-          </button>
+          </Button>
         </div>
       </div>
     </form>

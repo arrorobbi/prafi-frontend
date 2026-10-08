@@ -7,6 +7,8 @@ import { AuthFrame } from "@/components/auth/AuthFrame";
 import styles from "@/components/auth/auth.module.css";
 import { Loading, PasswordInput } from "@/components/ui";
 import { api, errorMessage } from "@/lib/api";
+import { Button, buttonVariants } from "@/components/shadcn/button";
+import { Alert } from "@/components/shadcn/alert";
 
 /**
  * Opened from the forgot-password email: <FRONTEND_URL>/reset-password?userId=…&token=…
@@ -53,8 +55,8 @@ function ResetForm() {
   if (linkError) {
     return (
       <div className={`${styles.narrow} ${styles.center}`}>
-        <div className="alert alert-error">{linkError}</div>
-        <Link href="/lupa-password" className="btn btn-orange">
+        <Alert variant="destructive">{linkError}</Alert>
+        <Link href="/lupa-password" className={buttonVariants({ variant: "orange" })}>
           Minta Tautan Baru
         </Link>
       </div>
@@ -76,10 +78,10 @@ function ResetForm() {
         <span className="label">Konfirmasi Password</span>
         <PasswordInput placeholder="Ulangi password baru" value={confirm} onChange={(e) => setConfirm(e.target.value)} autoComplete="new-password" />
       </label>
-      {error && <div className="alert alert-error">{error}</div>}
-      <button type="submit" className="btn btn-navy btn-lg" disabled={busy}>
+      {error && <Alert variant="destructive">{error}</Alert>}
+      <Button type="submit" variant="navy" size="lg" disabled={busy}>
         {busy ? "Menyimpan..." : "Simpan Password Baru"}
-      </button>
+      </Button>
     </form>
   );
 }

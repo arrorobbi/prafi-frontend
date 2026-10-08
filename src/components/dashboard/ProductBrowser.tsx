@@ -20,6 +20,11 @@ import { IconSearch } from "../Icons";
 import { Modal } from "../Modal";
 import { EmptyState, Loading, Pagination, StatusBadge, Thumb } from "../ui";
 import styles from "./dashboard.module.css";
+import { Button, buttonVariants } from "@/components/shadcn/button";
+import { NativeSelect } from "@/components/shadcn/native-select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table";
+import { Alert } from "@/components/shadcn/alert";
+import { PillTabs } from "./PillTabs";
 
 const PER_PAGE = 10;
 const TABS: [ProductStatus | "all", string][] = [
@@ -79,13 +84,7 @@ export function ProductBrowser({ detailHref }: { detailHref?: (p: Product) => st
 
   return (
     <>
-      <div className={styles.tabs}>
-        {TABS.map(([key, label]) => (
-          <button key={key} type="button" className={tab === key ? styles.tabActive : ""} onClick={() => reset(setTab)(key)}>
-            {label}
-          </button>
-        ))}
-      </div>
+      <PillTabs label="Status produk" value={tab} onChange={(key) => reset(setTab)(key)} items={TABS.map(([value, label]) => ({ value, label }))} />
       <div className={styles.toolbar}>
         <label className={styles.search}>
           <span className="sr-only">Cari produk</span>
@@ -93,78 +92,78 @@ export function ProductBrowser({ detailHref }: { detailHref?: (p: Product) => st
           <IconSearch />
         </label>
         <span className={styles.toolbarSpacer} />
-        <select className={styles.filter} value={category} onChange={(e) => reset(setCategory)(e.target.value)} aria-label="Kategori">
+        <NativeSelect wrapperClassName="w-auto max-sm:w-full" className={"h-[38px] min-w-[200px] rounded-full border-0 bg-brand-orange pr-11 pl-5 text-[0.88rem] font-medium text-white [&>option]:text-foreground"} value={category} onChange={(e) => reset(setCategory)(e.target.value)} aria-label="Kategori">
           <option value="">Semua Kategori</option>
           {categories.map((c) => (
             <option key={c} value={c}>
               {c}
             </option>
           ))}
-        </select>
-        <select className={styles.filter} value={seller} onChange={(e) => reset(setSeller)(e.target.value)} aria-label="Penjual">
+        </NativeSelect>
+        <NativeSelect wrapperClassName="w-auto max-sm:w-full" className={"h-[38px] min-w-[200px] rounded-full border-0 bg-brand-orange pr-11 pl-5 text-[0.88rem] font-medium text-white [&>option]:text-foreground"} value={seller} onChange={(e) => reset(setSeller)(e.target.value)} aria-label="Penjual">
           <option value="">Semua Penjual</option>
           {sellers.map(([id, name]) => (
             <option key={id} value={id}>
               {name}
             </option>
           ))}
-        </select>
+        </NativeSelect>
       </div>
 
       <div className={styles.panel}>
         {loading && !data ? (
           <Loading />
         ) : error ? (
-          <div className="alert alert-error">{error}</div>
+          <Alert variant="destructive">{error}</Alert>
         ) : list.length === 0 ? (
           <EmptyState title="Tidak ada produk">Ubah filter atau kata kunci pencarian.</EmptyState>
         ) : (
           <>
             <div className="table-wrap">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Foto</th>
-                    <th>Nama Produk</th>
-                    <th>Nama Penjual</th>
-                    <th>Kategori</th>
-                    <th>Tanggal Pengajuan</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table className="table">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Foto</TableHead>
+                    <TableHead>Nama Produk</TableHead>
+                    <TableHead>Nama Penjual</TableHead>
+                    <TableHead>Kategori</TableHead>
+                    <TableHead>Tanggal Pengajuan</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="col-actions">Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {shown.map((p) => (
-                    <tr key={p.id}>
-                      <td data-label="">
+                    <TableRow key={p.id}>
+                      <TableCell data-label="">
                         <Thumb src={imageSrc(p.image)} alt={p.name} className="thumb" />
-                      </td>
-                      <td data-label="Nama Produk">{p.name}</td>
-                      <td data-label="Nama Penjual">{sellerName(p)}</td>
-                      <td data-label="Kategori">{categoryByOwner.get(p.tenantId) || "-"}</td>
-                      <td data-label="Tanggal">
+                      </TableCell>
+                      <TableCell data-label="Nama Produk">{p.name}</TableCell>
+                      <TableCell data-label="Nama Penjual">{sellerName(p)}</TableCell>
+                      <TableCell data-label="Kategori">{categoryByOwner.get(p.tenantId) || "-"}</TableCell>
+                      <TableCell data-label="Tanggal">
                         {formatDate(p.createdAt)}
                         <br />
                         {formatTime(p.createdAt)}
-                      </td>
-                      <td data-label="Status">
+                      </TableCell>
+                      <TableCell data-label="Status">
                         <StatusBadge status={productStatus(p)} />
-                      </td>
-                      <td data-label="">
+                      </TableCell>
+                      <TableCell data-label="">
                         {detailHref ? (
-                          <Link href={detailHref(p)} className="btn btn-blue btn-sm">
+                          <Link href={detailHref(p)} className={buttonVariants({ variant: "blue", size: "sm" })}>
                             Lihat Detail
                           </Link>
                         ) : (
-                          <button type="button" className="btn btn-blue btn-sm" onClick={() => setDetail(p)}>
+                          <Button type="button" variant="blue" size="sm" onClick={() => setDetail(p)}>
                             Lihat Detail
-                          </button>
+                          </Button>
                         )}
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
             <Pagination page={current} totalPages={totalPages} total={list.length} shown={shown.length} onChange={setPage} />
           </>

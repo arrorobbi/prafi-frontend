@@ -1,7 +1,16 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import styles from "./Modal.module.css";
+import { cn } from "@/lib/utils";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./shadcn/alert-dialog";
+import { Button } from "./shadcn/button";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./shadcn/dialog";
 
 interface ModalProps {
   open: boolean;
@@ -12,37 +21,21 @@ interface ModalProps {
   wide?: boolean;
 }
 
-/** Accessible dialog built on <dialog>. */
+/** The site's popup, built on the shadcn Dialog (focus trap, Esc / click outside closes, scrolls when tall). */
 export function Modal({ open, title, onClose, children, footer, wide }: ModalProps) {
-  const ref = useRef<HTMLDialogElement>(null);
-
-  useEffect(() => {
-    const dialog = ref.current;
-    if (!dialog) return;
-    if (open && !dialog.open) dialog.showModal();
-    if (!open && dialog.open) dialog.close();
-  }, [open]);
-
   return (
-    <dialog
-      ref={ref}
-      className={`${styles.dialog} ${wide ? styles.wide : ""}`}
-      onClose={onClose}
-      onClick={(e) => {
-        if (e.target === ref.current) onClose();
-      }}
-    >
-      <div className={styles.body}>
-        <header className={styles.header}>
-          <h2>{title}</h2>
-          <button type="button" className={styles.x} aria-label="Tutup" onClick={onClose}>
-            ×
-          </button>
-        </header>
-        <div className={styles.content}>{children}</div>
-        {footer && <footer className={styles.footer}>{footer}</footer>}
-      </div>
-    </dialog>
+    <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
+      <DialogContent
+        aria-describedby={undefined}
+        className={cn("max-h-[90dvh] overflow-y-auto rounded-[20px] p-6", wide ? "sm:max-w-3xl" : "sm:max-w-lg")}
+      >
+        <DialogHeader>
+          <DialogTitle className="pr-6 text-lg font-bold text-brand-navy">{title}</DialogTitle>
+        </DialogHeader>
+        <div className="min-w-0">{children}</div>
+        {footer && <DialogFooter className="gap-2">{footer}</DialogFooter>}
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -57,24 +50,29 @@ interface ConfirmProps {
   onClose: () => void;
 }
 
+/**
+ * "Are you sure?" built on the shadcn AlertDialog. The confirm button doesn't close it by itself, so it stays open
+ * (showing "Memproses...") until the action finishes and the caller closes it.
+ */
 export function ConfirmDialog({ open, title, message, confirmLabel = "Ya, lanjutkan", danger, busy, onConfirm, onClose }: ConfirmProps) {
   return (
-    <Modal
-      open={open}
-      title={title}
-      onClose={onClose}
-      footer={
-        <>
-          <button type="button" className="btn btn-light" onClick={onClose} disabled={busy}>
+    <AlertDialog open={open} onOpenChange={(next) => !next && !busy && onClose()}>
+      <AlertDialogContent className="rounded-[20px]">
+        <AlertDialogHeader>
+          <AlertDialogTitle className="text-lg font-bold text-brand-navy">{title}</AlertDialogTitle>
+          <AlertDialogDescription asChild>
+            <div className="text-[0.95rem] leading-relaxed text-foreground">{message}</div>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter className="gap-2">
+          <Button variant="light" onClick={onClose} disabled={busy}>
             Batal
-          </button>
-          <button type="button" className={`btn ${danger ? "btn-red" : "btn-navy"}`} onClick={onConfirm} disabled={busy}>
+          </Button>
+          <Button variant={danger ? "red" : "navy"} onClick={onConfirm} disabled={busy}>
             {busy ? "Memproses..." : confirmLabel}
-          </button>
-        </>
-      }
-    >
-      <div className={styles.message}>{message}</div>
-    </Modal>
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

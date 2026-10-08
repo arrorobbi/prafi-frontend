@@ -10,6 +10,7 @@ import type { Product } from "@/lib/types";
 import { IconClose, IconMenu, IconSearch, IconStore } from "../Icons";
 import { Brand } from "../ui";
 import styles from "./SiteHeader.module.css";
+import { buttonVariants } from "@/components/shadcn/button";
 
 const NAV = [
   { href: "/", label: "Beranda" },
@@ -158,11 +159,11 @@ export function SiteHeader() {
           </div>
 
           {status === "authenticated" && user ? (
-            <Link href={roleHome(user.role)} className="btn btn-orange">
+            <Link href={roleHome(user.role)} className={buttonVariants({ variant: "orange" })}>
               Dashboard
             </Link>
           ) : (
-            <Link href="/login" className="btn btn-orange">
+            <Link href="/login" className={buttonVariants({ variant: "orange" })}>
               Login
             </Link>
           )}

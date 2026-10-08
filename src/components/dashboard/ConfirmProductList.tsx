@@ -12,6 +12,9 @@ import { api, fetchAll } from "@/lib/api";
 import { formatDate, imageSrc, productStatus, sellerName } from "@/lib/format";
 import type { Product } from "@/lib/types";
 import { useAsync } from "@/lib/useAsync";
+import { Button, buttonVariants } from "@/components/shadcn/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table";
+import { Alert } from "@/components/shadcn/alert";
 
 const PER_PAGE = 10;
 
@@ -62,62 +65,62 @@ export function ConfirmProductList({ base }: { base: string }) {
         {loading && !data ? (
           <Loading />
         ) : error ? (
-          <div className="alert alert-error">{error}</div>
+          <Alert variant="destructive">{error}</Alert>
         ) : list.length === 0 ? (
           <EmptyState title="Tidak ada produk yang menunggu konfirmasi">Produk baru dari penjual akan muncul di sini.</EmptyState>
         ) : (
           <>
             <div className="table-wrap">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Foto</th>
-                    <th>Nama Produk</th>
-                    <th>Nama Penjual</th>
-                    <th>Kategori</th>
-                    <th>Tanggal Pengajuan</th>
-                    <th>Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table className="table">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Foto</TableHead>
+                    <TableHead>Nama Produk</TableHead>
+                    <TableHead>Nama Penjual</TableHead>
+                    <TableHead>Kategori</TableHead>
+                    <TableHead>Tanggal Pengajuan</TableHead>
+                    <TableHead className="col-actions">Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {shown.map((p) => (
-                    <tr key={p.id}>
-                      <td data-label="">
+                    <TableRow key={p.id}>
+                      <TableCell data-label="">
                         <Thumb src={imageSrc(p.image)} alt={p.name} className="thumb" />
-                      </td>
-                      <td data-label="Nama Produk">{p.name}</td>
-                      <td data-label="Nama Penjual">{sellerName(p)}</td>
-                      <td data-label="Kategori">{data?.categoryByOwner.get(p.tenantId) ?? "-"}</td>
-                      <td data-label="Tanggal Pengajuan">{formatDate(p.updatedAt)}</td>
-                      <td data-label="">
+                      </TableCell>
+                      <TableCell data-label="Nama Produk">{p.name}</TableCell>
+                      <TableCell data-label="Nama Penjual">{sellerName(p)}</TableCell>
+                      <TableCell data-label="Kategori">{data?.categoryByOwner.get(p.tenantId) ?? "-"}</TableCell>
+                      <TableCell data-label="Tanggal Pengajuan">{formatDate(p.updatedAt)}</TableCell>
+                      <TableCell data-label="">
                         <span className="actions">
-                          <Link href={`${base}/${p.id}`} className="btn btn-blue btn-sm">
+                          <Link href={`${base}/${p.id}`} className={buttonVariants({ variant: "blue", size: "sm" })}>
                             Lihat Detail
                           </Link>
-                          <button
+                          <Button
                             type="button"
-                            className="icon-btn icon-btn-green"
+                            variant="icon-green" size="icon"
                             aria-label={`Terima ${p.name}`}
                             title="Terima"
                             onClick={() => setApproveTarget(p)}
                           >
                             <IconCheck />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
-                            className="icon-btn icon-btn-red"
+                            variant="icon-red" size="icon"
                             aria-label={`Tolak ${p.name}`}
                             title="Tolak"
                             onClick={() => setRejectTarget(p)}
                           >
                             <IconClose />
-                          </button>
+                          </Button>
                         </span>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
             <Pagination page={current} totalPages={totalPages} total={list.length} shown={shown.length} onChange={setPage} />
           </>

@@ -6,6 +6,8 @@ import { useAuth } from "@/lib/auth";
 import { DEACTIVATE_PREFIX, REJECT_PREFIX } from "@/lib/format";
 import { Modal } from "../Modal";
 import { useToast } from "../Toast";
+import { Button } from "@/components/shadcn/button";
+import { Textarea } from "@/components/shadcn/textarea";
 
 const MAX_REASON = 255;
 
@@ -70,17 +72,17 @@ export function ReasonDialog({
       onClose={onClose}
       footer={
         <>
-          <button type="button" className="btn btn-light" onClick={onClose} disabled={busy}>
+          <Button type="button" variant="light" onClick={onClose} disabled={busy}>
             Batal
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className="btn btn-red"
+            variant="red"
             disabled={busy || (required && !reason.trim())}
             onClick={() => onSubmit(reason)}
           >
             {busy ? "Memproses..." : mode === "reject" ? "Tolak Produk" : "Nonaktifkan"}
-          </button>
+          </Button>
         </>
       }
     >
@@ -92,8 +94,8 @@ export function ReasonDialog({
         )}
         <label className="field">
           <span className="label">{mode === "reject" ? "Alasan Penolakan" : "Alasan (opsional)"}</span>
-          <textarea
-            className="textarea"
+          <Textarea
+           
             placeholder={mode === "reject" ? "Tuliskan alasan penolakan produk ini" : "Tuliskan alasan produk dinonaktifkan"}
             maxLength={MAX_REASON - prefix.length}
             value={reason}

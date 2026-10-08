@@ -15,6 +15,7 @@ halaman `/panduan`.
 
 - Menu **Produk** menampilkan semua produk; menu **UMKM** menampilkan daftar toko beserta produknya.
 - Klik produk untuk melihat detail: harga, deskripsi, informasi produk, ulasan pembeli, dan toko penjualnya. Siapa pun dapat memberi bintang dan ulasan tanpa login.
+- Di halaman produk, tombol **Hubungi & Kunjungi Toko** (WhatsApp, Shopee, Instagram, Google Bisnis, Facebook, Lokasi) hanya muncul untuk tautan yang diisi penjual.
 - Klik nama toko atau **Lihat UMKM** untuk membuka halaman UMKM: profil, alamat, jam buka, tombol WhatsApp/Instagram/Shopee/Google Bisnis, jumlah produk, rata-rata bintang, dan semua produknya.
 
   ![Detail produk](../public/panduan/pengunjung-3-detail.jpg)
@@ -175,7 +176,7 @@ Penjual menerima notifikasi untuk setiap perubahan pada produknya:
 
 | Menu | Fungsi |
 | --- | --- |
-| Dashboard | Ringkasan: total UMKM, total produk, menunggu verifikasi, aktif, ditolak, dinonaktifkan (dapat disaring per rentang waktu) |
+| Dashboard | Ringkasan: total UMKM, total produk, menunggu verifikasi, aktif, ditolak, dinonaktifkan (dapat disaring per rentang waktu), dan grafik **Statistik**: aktivitas per hari, status produk, UMKM per kategori, akun penjual (7 / 30 / 90 hari) |
 | Konfirmasi Produk | Daftar produk yang menunggu keputusan. ✔ untuk menerima, ✖ untuk menolak dengan alasan, atau **Lihat Detail** |
 | Manajemen Produk | Semua produk dengan tab status, pencarian, filter kategori, dan filter penjual |
 | Kategori UMKM | Tambah, ubah, dan hapus kategori toko. Kategori yang masih dipakai tidak bisa dihapus |
@@ -212,7 +213,7 @@ yang diberikan superadmin.
 
 | Menu | Fungsi |
 | --- | --- |
-| Dashboard | Jumlah admin, admin belum aktif, UMKM, dan produk |
+| Dashboard | Jumlah admin, admin belum aktif, UMKM, dan produk, serta grafik **Statistik** (aktivitas, status produk, UMKM per kategori, akun admin) |
 | Aktivasi Admin | Aktifkan atau nonaktifkan akun admin (alasan opsional). Admin baru hanya bisa login setelah diaktifkan |
 | Konfirmasi Produk | Menyetujui, menolak (dengan alasan), atau menonaktifkan produk — sama seperti admin |
 | Data Produk / Data UMKM | Melihat semua produk dan profil toko; produk dibuka ke halaman konfirmasinya |
@@ -229,11 +230,11 @@ Akun superadmin dibuat oleh pengelola server. Superadmin **hanya membaca** data,
 
 | Menu | Fungsi |
 | --- | --- |
-| Dashboard | Ringkasan akun per role, produk, dan akun terbaru |
+| Dashboard | Ringkasan akun per role, produk, dan akun terbaru, serta grafik **Statistik** (aktivitas, status produk, UMKM per kategori, akun per role) |
 | Akun Disnakertrans | **TAMBAH AKUN**: isi nama, telepon, email, dan password. Sistem mengirim tautan aktivasi ke email; berikan password secara langsung. Bila tautan kedaluwarsa, klik **Kirim Ulang Verifikasi** |
 | Semua Pengguna | Semua akun, disaring per role |
 | Data Produk / Data UMKM / Kategori UMKM | Melihat data (hanya baca) |
-| Log API | Catatan setiap penambahan, perubahan, dan penghapusan data **oleh pengguna yang login**, serta **semua aktivitas akun** (login, password/email salah, daftar, OTP, lupa/reset password, logout) termasuk dari tamu beserta **email yang dicoba**, baik yang berhasil maupun yang gagal. Permintaan baca dan permintaan tamu lainnya (ulasan, bot) tidak dicatat. Isi: siapa, kapan, field yang dikirim, dan ringkasan hasil atau error-nya. Filter **Hasil** (Berhasil / Gagal), method, status, path, email (pengguna atau email yang dicoba), dan tanggal. Log baru muncul otomatis (tanda **● Live**) |
+| Log API | Catatan setiap penambahan, perubahan, dan penghapusan data **oleh pengguna yang login**, serta **semua aktivitas akun** (login, password/email salah, daftar, OTP, lupa/reset password, logout) termasuk dari tamu beserta **email yang dicoba**, baik yang berhasil maupun yang gagal. Permintaan baca dan permintaan tamu lainnya (ulasan, bot) tidak dicatat. Isi: siapa, kapan, field yang dikirim, dan ringkasan hasil atau error-nya. Filter **Hasil** (Berhasil / Gagal), method, status, path, email (pengguna atau email yang dicoba), dan tanggal. Log baru muncul otomatis (tanda **● Live**). **Grafik Log**: permintaan per hari (berhasil / gagal), per method, endpoint terbanyak, error terbanyak |
 | Notifikasi | Akun baru, produk baru, serta akun yang dinonaktifkan dan produk tayang yang diturunkan |
 
 ![Tambah akun Disnakertrans](../public/panduan/superadmin-1-tambah.jpg)

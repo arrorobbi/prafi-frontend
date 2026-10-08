@@ -59,8 +59,17 @@ export interface ProductOwner {
   firstName: string;
   lastName: string;
   email?: string;
-  /** Public product responses: the owner's UMKM profile, for "Lihat UMKM" */
-  tenant?: { id: string; name: string } | null;
+  /** Public product responses: the owner's UMKM profile, for "Lihat UMKM" and its contact buttons */
+  tenant?: {
+    id: string;
+    name: string;
+    whatsappLink?: string | null;
+    instagramLink?: string | null;
+    shopeeLink?: string | null;
+    googleBusinessLink?: string | null;
+    fbLink?: string | null;
+    gmapsLink?: string | null;
+  } | null;
 }
 
 export interface Product {
@@ -232,4 +241,28 @@ export interface LogSummary {
   count?: number;
   user?: { email?: string; firstName?: string; lastName?: string };
   approval?: { isActive?: boolean; reason?: string };
+}
+
+/** GET /api/stats/overview: dashboard chart numbers (user numbers only for the roles the caller may list) */
+export interface StatsOverview {
+  days: number;
+  timezone: string;
+  products: { total: number; byStatus: { active: number; pending: number; rejected: number; inactive: number } };
+  tenants: { total: number; byCategory: { name: string; count: number }[]; byArea: { area: string; count: number }[] };
+  users: { roles: Role[]; total: number; byRole: { role: Role; active: number; inactive: number }[] };
+  perDay: { date: string; products: number; tenants: number; users: number }[];
+}
+
+/** GET /api/logs/stats: API log chart numbers (superadmin) */
+export interface LogStats {
+  days: number;
+  timezone: string;
+  total: number;
+  success: number;
+  failed: number;
+  perDay: { date: string; success: number; failed: number }[];
+  byMethod: { method: string; count: number }[];
+  byRole: { role: string; count: number }[];
+  topEndpoints: { endpoint: string; count: number; failed: number }[];
+  topErrors: { errorCode: string; count: number }[];
 }

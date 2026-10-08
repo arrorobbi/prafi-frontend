@@ -6,11 +6,13 @@ import type {
   AppNotification,
   ImageFile,
   LoginResult,
+  LogStats,
   LogLevel,
   PageMeta,
   Product,
   PublicTenant,
   RatingSummary,
+  StatsOverview,
   Review,
   Role,
   TenantCategory,
@@ -345,6 +347,13 @@ export const api = {
       } = {},
     ) => get<ApiLog[]>("/logs", { page: 1, limit: 20, ...q }),
     get: (id: number) => get<ApiLog>(`/logs/${id}`),
+    /** Chart numbers for the last `days` days */
+    stats: (days = 14) => get<LogStats>("/logs/stats", { days }),
+  },
+
+  /** superadmin, disnakertrans, admin: dashboard chart numbers for the last `days` days */
+  stats: {
+    overview: (days = 30) => get<StatsOverview>("/stats/overview", { days }),
   },
 };
 

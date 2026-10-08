@@ -10,6 +10,9 @@ import { Modal } from "../Modal";
 import { EmptyState, Loading, Pagination, Thumb } from "../ui";
 import styles from "./dashboard.module.css";
 import local from "./TenantProfiles.module.css";
+import { Button, buttonVariants } from "@/components/shadcn/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table";
+import { Alert } from "@/components/shadcn/alert";
 
 const LIMIT = 10;
 const isLink = (v?: string) => !!v && v !== "-";
@@ -25,42 +28,42 @@ export function TenantProfiles() {
       {loading && !data ? (
         <Loading />
       ) : error ? (
-        <div className="alert alert-error">{error}</div>
+        <Alert variant="destructive">{error}</Alert>
       ) : data!.data.length === 0 ? (
         <EmptyState title="Belum ada profil toko">Penjual membuat profil toko dari dashboard mereka.</EmptyState>
       ) : (
         <>
           <div className="table-wrap">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Logo</th>
-                  <th>Nama Toko</th>
-                  <th>Kategori</th>
-                  <th>Wilayah</th>
-                  <th>Pemilik</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table className="table">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Logo</TableHead>
+                  <TableHead>Nama Toko</TableHead>
+                  <TableHead>Kategori</TableHead>
+                  <TableHead>Wilayah</TableHead>
+                  <TableHead>Pemilik</TableHead>
+                  <TableHead className="col-actions">Aksi</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {data!.data.map((t) => (
-                  <tr key={t.id}>
-                    <td data-label="">
+                  <TableRow key={t.id}>
+                    <TableCell data-label="">
                       <Thumb src={imageSrc(t.logo)} alt={t.name} className="thumb" />
-                    </td>
-                    <td data-label="Nama Toko">{t.name}</td>
-                    <td data-label="Kategori">{t.category?.name ?? "-"}</td>
-                    <td data-label="Wilayah">{t.area}</td>
-                    <td data-label="Pemilik">{fullName(t.owner)}</td>
-                    <td data-label="">
-                      <button type="button" className="btn btn-blue btn-sm" onClick={() => setDetail(t)}>
+                    </TableCell>
+                    <TableCell data-label="Nama Toko">{t.name}</TableCell>
+                    <TableCell data-label="Kategori">{t.category?.name ?? "-"}</TableCell>
+                    <TableCell data-label="Wilayah">{t.area}</TableCell>
+                    <TableCell data-label="Pemilik">{fullName(t.owner)}</TableCell>
+                    <TableCell data-label="">
+                      <Button type="button" variant="blue" size="sm" onClick={() => setDetail(t)}>
                         Lihat Detail
-                      </button>
-                    </td>
-                  </tr>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
           <Pagination
             page={page}
@@ -95,17 +98,17 @@ export function TenantProfiles() {
             </dl>
             <div className={local.links}>
               {isLink(detail.whatsappLink) && (
-                <a href={detail.whatsappLink} target="_blank" rel="noreferrer" className="btn btn-green btn-sm">
+                <a href={detail.whatsappLink} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "green", size: "sm" })}>
                   <IconWhatsapp /> WhatsApp
                 </a>
               )}
               {isLink(detail.gmapsLink) && (
-                <a href={detail.gmapsLink} target="_blank" rel="noreferrer" className="btn btn-navy btn-sm">
+                <a href={detail.gmapsLink} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "navy", size: "sm" })}>
                   <IconMapPin /> Lokasi
                 </a>
               )}
               {isLink(detail.fbLink) && (
-                <a href={detail.fbLink} target="_blank" rel="noreferrer" className="btn btn-light btn-sm">
+                <a href={detail.fbLink} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "light", size: "sm" })}>
                   <IconFacebook /> Facebook
                 </a>
               )}

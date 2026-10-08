@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import styles from "@/components/dashboard/dashboard.module.css";
 import { StatCard } from "@/components/dashboard/StatCard";
@@ -10,6 +11,16 @@ import { api, fetchAll } from "@/lib/api";
 import { formatDate, formatNumber, fullName } from "@/lib/format";
 import { countUsers, productAndShopStats } from "@/lib/staffStats";
 import { useAsync } from "@/lib/useAsync";
+import { buttonVariants } from "@/components/shadcn/button";
+import { Badge } from "@/components/shadcn/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table";
+import { Alert } from "@/components/shadcn/alert";
+
+/** The charts (Recharts) load separately, so the page shows right away */
+const DashboardStats = dynamic(() => import("@/components/dashboard/StatsCharts").then((m) => m.DashboardStats), {
+  ssr: false,
+  loading: () => <Loading label="Memuat grafik..." />,
+});
 
 export default function SuperadminDashboardPage() {
   const { data, loading, error } = useAsync(async () => {
@@ -36,7 +47,7 @@ export default function SuperadminDashboardPage() {
       {loading ? (
         <Loading />
       ) : error ? (
-        <div className="alert alert-error">{error}</div>
+        <Alert variant="destructive">{error}</Alert>
       ) : (
         <>
           <h2 className={styles.sectionTitle}>Pengguna</h2>
@@ -56,43 +67,45 @@ export default function SuperadminDashboardPage() {
           <section className={`${styles.panel} mt`}>
             <h2 className={styles.sectionTitle}>Akun Terbaru</h2>
             <div className="table-wrap">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Nama</th>
-                    <th>Role</th>
-                    <th>Email</th>
-                    <th>Terdaftar</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table className="table">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nama</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Terdaftar</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {data!.latest.map((u) => (
-                    <tr key={u.id}>
-                      <td data-label="Nama">{u.tenantName || fullName(u)}</td>
-                      <td data-label="Role">{ROLE_LABEL[u.role]}</td>
-                      <td data-label="Email" className={styles.wrap}>
+                    <TableRow key={u.id}>
+                      <TableCell data-label="Nama">{u.tenantName || fullName(u)}</TableCell>
+                      <TableCell data-label="Role">{ROLE_LABEL[u.role]}</TableCell>
+                      <TableCell data-label="Email" className={styles.wrap}>
                         {u.email}
-                      </td>
-                      <td data-label="Terdaftar">{formatDate(u.createdAt)}</td>
-                      <td data-label="Status">
-                        <span className={`badge ${u.approval?.isActive ? "badge-active" : "badge-pending"}`}>
+                      </TableCell>
+                      <TableCell data-label="Terdaftar">{formatDate(u.createdAt)}</TableCell>
+                      <TableCell data-label="Status">
+                        <Badge variant={u.approval?.isActive ? "active" : "pending"}>
                           {u.approval?.isActive ? "Aktif" : "Belum Aktif"}
-                        </span>
-                      </td>
-                    </tr>
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
             <div className={`${styles.formActions} mt`}>
-              <Link href="/superadmin/pengguna" className="btn btn-orange btn-sm">
+              <Link href="/superadmin/pengguna" className={buttonVariants({ variant: "orange", size: "sm" })}>
                 Lihat semua pengguna
               </Link>
             </div>
           </section>
         </>
       )}
+
+      <DashboardStats />
     </>
   );
 }

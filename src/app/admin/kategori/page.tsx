@@ -9,6 +9,11 @@ import { api, ApiError, errorMessage, fetchAll } from "@/lib/api";
 import type { TenantCategory } from "@/lib/types";
 import { useAsync } from "@/lib/useAsync";
 import styles from "./kategori.module.css";
+import { Button } from "@/components/shadcn/button";
+import { Input } from "@/components/shadcn/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table";
+import { Alert } from "@/components/shadcn/alert";
+import { Card } from "@/components/shadcn/card";
 
 /** Tenant (UMKM) categories: GET/POST/PATCH/DELETE /api/tenant-categories. */
 export default function CategoriesPage() {
@@ -82,48 +87,48 @@ export default function CategoriesPage() {
       <PageHeader title="KATEGORI UMKM" />
       <div className={styles.layout}>
         <div>
-          <button type="button" className={`btn btn-navy ${styles.add}`} onClick={() => startEdit(null)}>
+          <Button type="button" variant="navy" className={styles.add} onClick={() => startEdit(null)}>
             <IconPlus /> TAMBAH KATEGORI
-          </button>
+          </Button>
           {loading && !data ? (
             <Loading />
           ) : error ? (
-            <div className="alert alert-error">{error}</div>
+            <Alert variant="destructive">{error}</Alert>
           ) : data!.categories.length === 0 ? (
-            <div className="card">
+            <Card>
               <EmptyState title="Belum ada kategori">Tambahkan kategori agar penjual dapat membuat profil toko.</EmptyState>
-            </div>
+            </Card>
           ) : (
             <div className={styles.tableBox}>
-              <table className={styles.grid}>
-                <thead>
-                  <tr>
-                    <th>NO</th>
-                    <th>NAMA KATEGORI</th>
-                    <th>JUMLAH UMKM</th>
-                    <th>AKSI</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table className={styles.grid}>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>NO</TableHead>
+                    <TableHead>NAMA KATEGORI</TableHead>
+                    <TableHead>JUMLAH UMKM</TableHead>
+                    <TableHead>AKSI</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {data!.categories.map((c, i) => (
-                    <tr key={c.id} className={editing?.id === c.id ? styles.editingRow : ""}>
-                      <td>{i + 1}</td>
-                      <td>{c.name.toUpperCase()}</td>
-                      <td>{data!.counts.get(c.id) ?? 0}</td>
-                      <td>
+                    <TableRow key={c.id} className={editing?.id === c.id ? styles.editingRow : ""}>
+                      <TableCell>{i + 1}</TableCell>
+                      <TableCell>{c.name.toUpperCase()}</TableCell>
+                      <TableCell>{data!.counts.get(c.id) ?? 0}</TableCell>
+                      <TableCell>
                         <span className="actions">
-                          <button type="button" className="icon-btn" aria-label={`Ubah ${c.name}`} onClick={() => startEdit(c)}>
+                          <Button type="button" variant="icon" size="icon" aria-label={`Ubah ${c.name}`} onClick={() => startEdit(c)}>
                             <IconPencil />
-                          </button>
-                          <button type="button" className="icon-btn" aria-label={`Hapus ${c.name}`} onClick={() => setDeleting(c)}>
+                          </Button>
+                          <Button type="button" variant="icon" size="icon" aria-label={`Hapus ${c.name}`} onClick={() => setDeleting(c)}>
                             <IconTrash />
-                          </button>
+                          </Button>
                         </span>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           )}
         </div>
@@ -132,17 +137,17 @@ export default function CategoriesPage() {
           <h2>{editing ? "EDIT KATEGORI" : "TAMBAH KATEGORI"}</h2>
           <label className="field">
             <span className={styles.formLabel}>Nama Kategori</span>
-            <input className="input input-white" placeholder="Masukan nama kategori" value={name} onChange={(e) => setName(e.target.value)} />
+            <Input placeholder="Masukan nama kategori" value={name} onChange={(e) => setName(e.target.value)} />
           </label>
-          {formError && <div className="alert alert-error">{formError}</div>}
+          {formError && <Alert variant="destructive">{formError}</Alert>}
           <p className={styles.note}>Kategori dipakai penjual saat membuat profil toko (mis. Makanan Berat, Minuman, Kerajinan Tangan).</p>
           <div className={styles.formButtons}>
-            <button type="submit" className="btn btn-green" disabled={saving}>
+            <Button type="submit" variant="green" disabled={saving}>
               {saving ? "Menyimpan..." : "Simpan"}
-            </button>
-            <button type="button" className="btn btn-red" onClick={() => startEdit(null)} disabled={saving}>
+            </Button>
+            <Button type="button" variant="red" onClick={() => startEdit(null)} disabled={saving}>
               Batal
-            </button>
+            </Button>
           </div>
         </form>
       </div>

@@ -9,6 +9,12 @@ import { ConfirmDialog } from "../Modal";
 import { useToast } from "../Toast";
 import { EmptyState, Loading, Pagination } from "../ui";
 import styles from "./dashboard.module.css";
+import { Button, buttonVariants } from "@/components/shadcn/button";
+import { Input } from "@/components/shadcn/input";
+import { Badge } from "@/components/shadcn/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table";
+import { Alert } from "@/components/shadcn/alert";
+import { PillTabs } from "./PillTabs";
 
 const LIMIT = 10;
 
@@ -21,9 +27,9 @@ export const ROLE_LABEL: Record<Role, string> = {
 
 /** Account status from approval + reason (admins wait for a disnakertrans after sign-up). */
 function accountStatus(u: User) {
-  if (u.approval?.isActive) return { label: "Aktif", className: "badge badge-active" };
-  if (!u.approval || u.approval.reason?.startsWith("Waiting")) return { label: "Menunggu Aktivasi", className: "badge badge-pending" };
-  return { label: "Nonaktif", className: "badge badge-inactive" };
+  if (u.approval?.isActive) return { label: "Aktif", variant: "active" as const };
+  if (!u.approval || u.approval.reason?.startsWith("Waiting")) return { label: "Menunggu Aktivasi", variant: "pending" as const };
+  return { label: "Nonaktif", variant: "inactive" as const };
 }
 
 /**
@@ -92,74 +98,70 @@ export function UserAccounts({
   return (
     <>
       {roleTabs && (
-        <div className={styles.tabs}>
-          <button type="button" className={!tab ? styles.tabActive : ""} onClick={() => selectTab("")}>
-            Semua
-          </button>
-          {roleTabs.map((r) => (
-            <button key={r} type="button" className={tab === r ? styles.tabActive : ""} onClick={() => selectTab(r)}>
-              {ROLE_LABEL[r]}
-            </button>
-          ))}
-        </div>
+        <PillTabs<Role | "">
+          label="Role akun"
+          value={tab}
+          onChange={selectTab}
+          items={[{ value: "", label: "Semua" }, ...roleTabs.map((r) => ({ value: r, label: ROLE_LABEL[r] }))]}
+        />
       )}
       <div className={styles.panel}>
         {loading && !data ? (
           <Loading />
         ) : error ? (
-          <div className="alert alert-error">{error}</div>
+          <Alert variant="destructive">{error}</Alert>
         ) : data!.data.length === 0 ? (
           <EmptyState title={`Belum ada ${noun}`} />
         ) : (
           <>
             <div className="table-wrap">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Nama</th>
-                    {showRole && <th>Role</th>}
-                    {showTenant && <th>Nama Toko</th>}
-                    <th>Email</th>
-                    <th>Telepon</th>
-                    <th>Terdaftar</th>
-                    <th>Verifikasi</th>
-                    <th>Status</th>
-                    {(approvable || canResend) && <th>Aksi</th>}
-                  </tr>
-                </thead>
-                <tbody>
+              <Table className="table">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nama</TableHead>
+                    {showRole && <TableHead>Role</TableHead>}
+                    {showTenant && <TableHead>Nama Toko</TableHead>}
+                    <TableHead>Email</TableHead>
+                    <TableHead>Telepon</TableHead>
+                    <TableHead>Terdaftar</TableHead>
+                    <TableHead>Verifikasi</TableHead>
+                    <TableHead>Status</TableHead>
+                    {(approvable || canResend) && <TableHead className="col-actions">Aksi</TableHead>}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {data!.data.map((u) => {
                     const status = accountStatus(u);
                     return (
-                      <tr key={u.id}>
-                        <td data-label="Nama">{fullName(u)}</td>
-                        {showRole && <td data-label="Role">{ROLE_LABEL[u.role]}</td>}
-                        {showTenant && <td data-label="Nama Toko">{u.tenantName ?? "-"}</td>}
-                        <td data-label="Email" className={styles.wrap}>
+                      <TableRow key={u.id}>
+                        <TableCell data-label="Nama">{fullName(u)}</TableCell>
+                        {showRole && <TableCell data-label="Role">{ROLE_LABEL[u.role]}</TableCell>}
+                        {showTenant && <TableCell data-label="Nama Toko">{u.tenantName ?? "-"}</TableCell>}
+                        <TableCell data-label="Email" className={styles.wrap}>
                           {u.email}
-                        </td>
-                        <td data-label="Telepon">{u.phoneNumber}</td>
-                        <td data-label="Terdaftar">{formatDate(u.createdAt)}</td>
-                        <td data-label="Verifikasi">
-                          <span className={`badge ${u.mailActive ? "badge-active" : "badge-pending"}`}>
+                        </TableCell>
+                        <TableCell data-label="Telepon">{u.phoneNumber}</TableCell>
+                        <TableCell data-label="Terdaftar">{formatDate(u.createdAt)}</TableCell>
+                        <TableCell data-label="Verifikasi">
+                          <Badge variant={u.mailActive ? "active" : "pending"}>
                             {u.mailActive ? "Terverifikasi" : "Belum"}
-                          </span>
-                        </td>
-                        <td data-label="Status">
-                          <span className={status.className}>{status.label}</span>
+                          </Badge>
+                        </TableCell>
+                        <TableCell data-label="Status">
+                          <Badge variant={status.variant}>{status.label}</Badge>
                           {u.approval?.reason && !u.approval.reason.startsWith("Waiting") && !/^(Activ|Deactiv)ated|^Active on/.test(u.approval.reason) && (
                             <small className={styles.note}>
                               {u.approval.reason}
                             </small>
                           )}
-                        </td>
+                        </TableCell>
                         {(approvable || canResend) && (
-                          <td data-label="">
+                          <TableCell data-label="">
                             <span className="actions">
                               {approvable && (
                                 <button
                                   type="button"
-                                  className={`btn btn-sm ${u.approval?.isActive ? "btn-red" : "btn-green"}`}
+                                  className={buttonVariants({ size: "sm", variant: u.approval?.isActive ? "red" : "green" })}
                                   onClick={() => {
                                     setReason("");
                                     setTarget(u);
@@ -169,18 +171,18 @@ export function UserAccounts({
                                 </button>
                               )}
                               {canResend && !u.mailActive && (
-                                <button type="button" className="btn btn-blue btn-sm" onClick={() => resend(u)}>
+                                <Button type="button" variant="blue" size="sm" onClick={() => resend(u)}>
                                   Kirim Ulang Verifikasi
-                                </button>
+                                </Button>
                               )}
                             </span>
-                          </td>
+                          </TableCell>
                         )}
-                      </tr>
+                      </TableRow>
                     );
                   })}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
             <Pagination
               page={page}
@@ -209,11 +211,11 @@ export function UserAccounts({
               Akun: <strong>{target?.tenantName || fullName(target)}</strong> ({target?.email})
             </p>
             {target && !target.mailActive && !active && (
-              <div className="alert alert-warning">Email akun ini belum diverifikasi; pengguna tetap harus memverifikasi email sebelum bisa login.</div>
+              <Alert variant="warning">Email akun ini belum diverifikasi; pengguna tetap harus memverifikasi email sebelum bisa login.</Alert>
             )}
             <label className="field">
               <span className="label">Alasan (opsional)</span>
-              <input className="input" value={reason} maxLength={255} onChange={(e) => setReason(e.target.value)} />
+              <Input value={reason} maxLength={255} onChange={(e) => setReason(e.target.value)} />
             </label>
           </div>
         }

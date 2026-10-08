@@ -5,8 +5,13 @@ import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { STATUS_BADGE, STATUS_LABEL, type ProductStatus } from "@/lib/format";
 import { IconBack, IconChevronLeft, IconChevronRight, IconEye, IconEyeOff, IconImagePlus } from "./Icons";
+import { canGoBack } from "@/lib/navHistory";
 import { useLeaveGuard } from "./LeaveGuard";
 import styles from "./ui.module.css";
+import { Input } from "./shadcn/input";
+import { cn } from "@/lib/utils";
+import { Badge } from "./shadcn/badge";
+import { Button } from "./shadcn/button";
 
 /** Logo + "TRANSNIAGA / Produk Pilihan Ada Disini", as in the designs. */
 export function Brand({ light = false, compact = false, href = "/" }: { light?: boolean; compact?: boolean; href?: string }) {
@@ -43,7 +48,8 @@ export function PageHeader({
           type="button"
           className={styles.back}
           aria-label="Kembali"
-          onClick={() => confirmLeave(() => (backHref ? router.push(backHref) : router.back()))}
+          // Back to the previous page of this site; opened directly (link, new tab) → the fallback page
+          onClick={() => confirmLeave(() => (canGoBack() ? router.back() : router.push(backHref ?? "/")))}
         >
           <IconBack />
         </button>
@@ -78,10 +84,13 @@ export function EmptyState({ title, children }: { title: string; children?: Reac
 }
 
 export function StatusBadge({ status }: { status: ProductStatus }) {
-  return <span className={STATUS_BADGE[status]}>{STATUS_LABEL[status]}</span>;
+  return <Badge variant={STATUS_BADGE[status]}>{STATUS_LABEL[status]}</Badge>;
 }
 
 /** "Menampilkan x dari y data" + ◀ 1 2 3 … n ▶ */
+/** Page buttons: small square shadcn Buttons */
+const PAGE_BTN = { type: "button" as const, size: "sm" as const, shape: "square" as const, className: "h-8 min-h-8 min-w-8 px-2 font-medium normal-case" };
+
 export function Pagination({
   page,
   totalPages,
@@ -109,41 +118,40 @@ export function Pagination({
       </span>
       {totalPages > 1 && (
         <nav aria-label="Halaman" className={styles.pages}>
-          <button type="button" aria-label="Sebelumnya" disabled={page <= 1} onClick={() => onChange(page - 1)}>
+          <Button {...PAGE_BTN} variant="light" aria-label="Sebelumnya" disabled={page <= 1} onClick={() => onChange(page - 1)}>
             <IconChevronLeft />
-          </button>
+          </Button>
           {pages.map((p, i) =>
             p === "…" ? (
-              <span key={`gap${i}`}>…</span>
+              <span key={`gap${i}`} className="px-1 text-muted-foreground">
+                …
+              </span>
             ) : (
-              <button
-                type="button"
+              <Button
+                {...PAGE_BTN}
                 key={p}
-                className={p === page ? styles.current : ""}
+                variant={p === page ? "navy" : "light"}
                 aria-current={p === page ? "page" : undefined}
                 onClick={() => onChange(p)}
               >
                 {p}
-              </button>
+              </Button>
             ),
           )}
-          <button type="button" aria-label="Berikutnya" disabled={page >= totalPages} onClick={() => onChange(page + 1)}>
+          <Button {...PAGE_BTN} variant="light" aria-label="Berikutnya" disabled={page >= totalPages} onClick={() => onChange(page + 1)}>
             <IconChevronRight />
-          </button>
+          </Button>
         </nav>
       )}
     </div>
   );
 }
 
-export function PasswordInput({
-  className = "input",
-  ...props
-}: React.InputHTMLAttributes<HTMLInputElement>) {
+export function PasswordInput({ className, ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
   const [visible, setVisible] = useState(false);
   return (
     <div className={styles.password}>
-      <input {...props} className={className} type={visible ? "text" : "password"} />
+      <Input {...props} className={cn("pr-12", className)} type={visible ? "text" : "password"} />
       <button
         type="button"
         aria-label={visible ? "Sembunyikan password" : "Tampilkan password"}

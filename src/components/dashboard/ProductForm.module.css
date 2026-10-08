@@ -20,7 +20,7 @@
   justify-content: flex-end;
 }
 
-.actions :global(.btn) {
+.actions :global(.btn-ui) {
   min-width: 280px;
   font-size: 1.15rem;
   font-weight: 700;
@@ -31,7 +31,7 @@
     grid-template-columns: 1fr;
   }
 
-  .actions :global(.btn) {
+  .actions :global(.btn-ui) {
     width: 100%;
     min-width: 0;
   }
@@ -45,14 +45,6 @@
   border-radius: var(--radius-sm);
   background: var(--gray-100);
   cursor: pointer;
-}
-
-.check input {
-  flex: none;
-  width: 20px;
-  height: 20px;
-  margin-top: 2px;
-  accent-color: var(--orange);
 }
 
 .check span {

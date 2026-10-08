@@ -5,6 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { IconWarning } from "./Icons";
 import { Modal } from "./Modal";
 import styles from "./LeaveGuard.module.css";
+import { Button } from "@/components/shadcn/button";
 
 /**
  * Asks before leaving a form that has an uploaded-but-unsaved photo. "Setuju" runs each guard's onLeave
@@ -144,12 +145,12 @@ export function LeaveGuardProvider({ children, onUnload }: { children: React.Rea
             <strong>Lanjut Suntingan</strong> lalu klik <strong>Simpan</strong> bila ingin menyimpannya.
           </p>
           <div className={styles.actions}>
-            <button type="button" className="btn btn-orange" onClick={() => setPending(null)} disabled={leaving} autoFocus>
+            <Button type="button" variant="orange" onClick={() => setPending(null)} disabled={leaving} autoFocus>
               Lanjut Suntingan
-            </button>
-            <button type="button" className="btn btn-light" onClick={agree} disabled={leaving}>
+            </Button>
+            <Button type="button" variant="light" onClick={agree} disabled={leaving}>
               {leaving ? "Menghapus foto..." : "Setuju"}
-            </button>
+            </Button>
           </div>
         </div>
       </Modal>

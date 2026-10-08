@@ -7,6 +7,7 @@ import type { Product } from "@/lib/types";
 import { IconChevronLeft, IconChevronRight } from "../Icons";
 import { Thumb } from "../ui";
 import styles from "./HeroCarousel.module.css";
+import { buttonVariants } from "@/components/shadcn/button";
 
 /** Big centre slide with the neighbours peeking on each side, as in the landing design. */
 export function HeroCarousel({ products }: { products: Product[] }) {
@@ -27,7 +28,7 @@ export function HeroCarousel({ products }: { products: Product[] }) {
       <div className={styles.placeholder}>
         <img src="/logo.png" alt="" />
         <p>Produk UMKM Prafi akan segera tampil di sini.</p>
-        <Link href="/register" className="btn btn-orange">
+        <Link href="/register" className={buttonVariants({ variant: "orange" })}>
           Daftar sebagai Penjual
         </Link>
       </div>

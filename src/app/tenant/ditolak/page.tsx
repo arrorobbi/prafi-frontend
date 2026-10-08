@@ -11,6 +11,9 @@ import { api, errorMessage, fetchAll } from "@/lib/api";
 import { approvalReason, formatDate, imageSrc, productStatus } from "@/lib/format";
 import type { Product } from "@/lib/types";
 import { useAsync } from "@/lib/useAsync";
+import { Button, buttonVariants } from "@/components/shadcn/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table";
+import { Alert } from "@/components/shadcn/alert";
 
 const PER_PAGE = 10;
 
@@ -48,56 +51,56 @@ export default function RejectedProductsPage() {
   return (
     <>
       <PageHeader title="PRODUK DITOLAK" />
-      <div className="alert alert-warning" style={{ maxWidth: 560, marginBottom: 20 }}>
+      <Alert variant="warning" style={{ maxWidth: 560, marginBottom: 20 }}>
         <IconWarning />
         <span>Perbaiki sesuai alasan penolakan, lalu ajukan kembali produk anda agar dapat diverifikasi.</span>
-      </div>
+      </Alert>
 
       <div className={styles.panel}>
         {loading && !data ? (
           <Loading />
         ) : error ? (
-          <div className="alert alert-error">{error}</div>
+          <Alert variant="destructive">{error}</Alert>
         ) : list.length === 0 ? (
           <EmptyState title="Tidak ada produk yang ditolak">Produk yang ditolak administrator akan muncul di sini.</EmptyState>
         ) : (
           <>
             <div className="table-wrap">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Foto</th>
-                    <th>Nama Produk</th>
-                    <th>Tanggal Ditolak</th>
-                    <th>Alasan Penolakan</th>
-                    <th>Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table className="table">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Foto</TableHead>
+                    <TableHead>Nama Produk</TableHead>
+                    <TableHead>Tanggal Ditolak</TableHead>
+                    <TableHead>Alasan Penolakan</TableHead>
+                    <TableHead className="col-actions">Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {shown.map((p) => (
-                    <tr key={p.id}>
-                      <td data-label="">
+                    <TableRow key={p.id}>
+                      <TableCell data-label="">
                         <Thumb src={imageSrc(p.image)} alt={p.name} className="thumb" />
-                      </td>
-                      <td data-label="Nama Produk">{p.name}</td>
-                      <td data-label="Tanggal">{formatDate(p.approval?.updatedAt)}</td>
-                      <td data-label="Alasan">
+                      </TableCell>
+                      <TableCell data-label="Nama Produk">{p.name}</TableCell>
+                      <TableCell data-label="Tanggal">{formatDate(p.approval?.updatedAt)}</TableCell>
+                      <TableCell data-label="Alasan">
                         {approvalReason(p) || (productStatus(p) === "inactive" ? "Dinonaktifkan administrator" : "-")}
-                      </td>
-                      <td data-label="">
+                      </TableCell>
+                      <TableCell data-label="">
                         <span className="actions">
-                          <Link href={`/tenant/produk/${p.id}/edit`} className="icon-btn icon-btn-yellow" aria-label={`Perbaiki ${p.name}`}>
+                          <Link href={`/tenant/produk/${p.id}/edit`} className={buttonVariants({ variant: "icon-yellow", size: "icon" })} aria-label={`Perbaiki ${p.name}`}>
                             <IconPencil />
                           </Link>
-                          <button type="button" className="icon-btn icon-btn-red" aria-label={`Hapus ${p.name}`} onClick={() => setDeleting(p)}>
+                          <Button type="button" variant="icon-red" size="icon" aria-label={`Hapus ${p.name}`} onClick={() => setDeleting(p)}>
                             <IconTrash />
-                          </button>
+                          </Button>
                         </span>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
             <Pagination page={current} totalPages={totalPages} total={list.length} shown={shown.length} noun="produk yang ditolak" onChange={setPage} />
           </>

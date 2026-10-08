@@ -5,6 +5,8 @@ import { useState } from "react";
 import { AuthFrame } from "@/components/auth/AuthFrame";
 import styles from "@/components/auth/auth.module.css";
 import { api, errorMessage } from "@/lib/api";
+import { buttonVariants, Button } from "@/components/shadcn/button";
+import { Alert } from "@/components/shadcn/alert";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -32,12 +34,12 @@ export default function ForgotPasswordPage() {
         <h2>ATUR ULANG PASSWORD</h2>
         {sent ? (
           <>
-            <div className={`alert alert-success ${styles.cardAlert}`}>{sent}</div>
+            <Alert variant="success" className={styles.cardAlert}>{sent}</Alert>
             <p className={styles.terms} style={{ maxWidth: 460, fontSize: "0.85rem" }}>
               Buka email Anda dan klik tautan atur ulang kata sandi. Tidak menerima email? Periksa folder spam atau coba lagi
               setelah 1 menit.
             </p>
-            <Link href="/login" className="btn btn-navy">
+            <Link href="/login" className={buttonVariants({ variant: "navy" })}>
               Kembali ke Login
             </Link>
           </>
@@ -48,10 +50,10 @@ export default function ForgotPasswordPage() {
               <span className="sr-only">Email</span>
               <input type="email" required placeholder="Email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
             </label>
-            {error && <div className={`alert alert-error ${styles.cardAlert}`}>{error}</div>}
-            <button type="submit" className={`btn btn-navy btn-lg ${styles.loginBtn}`} disabled={busy}>
+            {error && <Alert variant="destructive" className={styles.cardAlert}>{error}</Alert>}
+            <Button type="submit" variant="navy" size="lg" className={styles.loginBtn} disabled={busy}>
               {busy ? "Mengirim..." : "Kirim Tautan"}
-            </button>
+            </Button>
           </form>
         )}
       </div>

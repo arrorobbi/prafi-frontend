@@ -48,7 +48,7 @@
   gap: 10px;
 }
 
-.actions :global(.btn) {
+.actions :global(.btn-ui) {
   min-width: 160px;
   border-radius: 2px;
   font-size: 0.72rem;
@@ -79,7 +79,7 @@
     flex-direction: row;
   }
 
-  .actions :global(.btn) {
+  .actions :global(.btn-ui) {
     flex: 1;
     min-width: 0;
   }

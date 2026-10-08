@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useState } from "react";
 import styles from "@/components/dashboard/dashboard.module.css";
@@ -10,6 +11,15 @@ import { Loading, PageHeader, Thumb } from "@/components/ui";
 import { api, fetchAll } from "@/lib/api";
 import { formatDate, formatNumber, imageSrc, productStatus, sellerName } from "@/lib/format";
 import { useAsync } from "@/lib/useAsync";
+import { buttonVariants } from "@/components/shadcn/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table";
+import { Alert } from "@/components/shadcn/alert";
+
+/** The charts (Recharts) load separately, so the page shows right away */
+const DashboardStats = dynamic(() => import("@/components/dashboard/StatsCharts").then((m) => m.DashboardStats), {
+  ssr: false,
+  loading: () => <Loading label="Memuat grafik..." />,
+});
 
 export default function AdminDashboardPage() {
   const [range, setRange] = useState<Range>("all");
@@ -39,7 +49,7 @@ export default function AdminDashboardPage() {
       {loading ? (
         <Loading />
       ) : error ? (
-        <div className="alert alert-error">{error}</div>
+        <Alert variant="destructive">{error}</Alert>
       ) : (
         <>
           <div className={styles.stats}>
@@ -57,44 +67,46 @@ export default function AdminDashboardPage() {
               <p className="muted">Tidak ada produk yang menunggu konfirmasi.</p>
             ) : (
               <div className="table-wrap">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Foto</th>
-                      <th>Nama Produk</th>
-                      <th>Nama Penjual</th>
-                      <th>Tanggal Pengajuan</th>
-                      <th>Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                <Table className="table">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Foto</TableHead>
+                      <TableHead>Nama Produk</TableHead>
+                      <TableHead>Nama Penjual</TableHead>
+                      <TableHead>Tanggal Pengajuan</TableHead>
+                      <TableHead className="col-actions">Aksi</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {pending.map((p) => (
-                      <tr key={p.id}>
-                        <td data-label="">
+                      <TableRow key={p.id}>
+                        <TableCell data-label="">
                           <Thumb src={imageSrc(p.image)} alt={p.name} className="thumb" />
-                        </td>
-                        <td data-label="Nama Produk">{p.name}</td>
-                        <td data-label="Nama Penjual">{sellerName(p)}</td>
-                        <td data-label="Tanggal">{formatDate(p.createdAt)}</td>
-                        <td data-label="">
-                          <Link href={`/admin/konfirmasi/${p.id}`} className="btn btn-blue btn-sm">
+                        </TableCell>
+                        <TableCell data-label="Nama Produk">{p.name}</TableCell>
+                        <TableCell data-label="Nama Penjual">{sellerName(p)}</TableCell>
+                        <TableCell data-label="Tanggal">{formatDate(p.createdAt)}</TableCell>
+                        <TableCell data-label="">
+                          <Link href={`/admin/konfirmasi/${p.id}`} className={buttonVariants({ variant: "blue", size: "sm" })}>
                             Lihat Detail
                           </Link>
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
             )}
             <div className={`${styles.formActions} mt`}>
-              <Link href="/admin/konfirmasi" className="btn btn-orange btn-sm">
+              <Link href="/admin/konfirmasi" className={buttonVariants({ variant: "orange", size: "sm" })}>
                 Lihat semua
               </Link>
             </div>
           </section>
         </>
       )}
+
+      <DashboardStats />
     </>
   );
 }

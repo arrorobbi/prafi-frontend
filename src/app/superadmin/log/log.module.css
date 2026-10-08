@@ -6,15 +6,6 @@
   margin-bottom: 18px;
 }
 
-.filters :global(.input),
-.filters :global(.select) {
-  min-height: 40px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  background-color: var(--white);
-  box-shadow: var(--shadow);
-}
-
 .filterLabel {
   font-size: 0.8rem;
   font-weight: 600;

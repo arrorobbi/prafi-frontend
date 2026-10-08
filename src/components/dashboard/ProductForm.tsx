@@ -13,6 +13,11 @@ import { useToast } from "../Toast";
 import { ImagePicker } from "../ui";
 import { usePendingImage } from "../UploadDialog";
 import styles from "./ProductForm.module.css";
+import { Button, buttonVariants } from "@/components/shadcn/button";
+import { Input } from "@/components/shadcn/input";
+import { Textarea } from "@/components/shadcn/textarea";
+import { Alert } from "@/components/shadcn/alert";
+import { Checkbox } from "../shadcn/checkbox";
 
 interface Values {
   name: string;
@@ -148,7 +153,7 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
     <form className={styles.form} onSubmit={submit} noValidate>
       {photo.dialog}
       {blocked && (
-        <div className={`alert alert-warning ${styles.full}`}>
+        <Alert variant="warning" className={styles.full}>
           <IconWarning />
           <span>
             <strong>Lengkapi data Anda dulu sebelum menambahkan produk.</strong>{" "}
@@ -158,18 +163,18 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
             {missing.includes("faceImageId") && "Foto profil akun belum diunggah."}
             <span className={styles.fixLinks}>
               {profileMissing.length > 0 && (
-                <Link href="/tenant/profil" className="btn btn-navy btn-sm">
+                <Link href="/tenant/profil" className={buttonVariants({ variant: "navy", size: "sm" })}>
                   Buka Profil UMKM
                 </Link>
               )}
               {missing.includes("faceImageId") && (
-                <Link href="/tenant/pengaturan" className="btn btn-orange btn-sm">
+                <Link href="/tenant/pengaturan" className={buttonVariants({ variant: "orange", size: "sm" })}>
                   Unggah Foto Profil
                 </Link>
               )}
             </span>
           </span>
-        </div>
+        </Alert>
       )}
       <div className={styles.picker}>
         <ImagePicker
@@ -183,13 +188,13 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
       <div className={styles.side}>
         <label className="field">
           <span className="label">Nama Produk</span>
-          <input className="input" placeholder="Masukan nama produk" value={values.name} onChange={set("name")} maxLength={255} />
+          <Input placeholder="Masukan nama produk" value={values.name} onChange={set("name")} maxLength={255} />
           {errors.name && <span className="field-error">{errors.name}</span>}
         </label>
         <label className="field">
           <span className="label">Harga (Rp)</span>
-          <input
-            className="input"
+          <Input
+           
             inputMode="numeric"
             placeholder="Contoh: 25000"
             value={values.price ? Number(values.price).toLocaleString("id-ID") : ""}
@@ -199,10 +204,10 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
           {errors.price && <span className="field-error">{errors.price}</span>}
         </label>
         <label className={styles.check}>
-          <input
-            type="checkbox"
+          <Checkbox
             checked={values.isRecommended}
-            onChange={(e) => setValues((v) => ({ ...v, isRecommended: e.target.checked }))}
+            onCheckedChange={(checked) => setValues((v) => ({ ...v, isRecommended: checked === true }))}
+            className="mt-0.5 size-5 border-brand-orange data-[state=checked]:border-brand-orange data-[state=checked]:bg-brand-orange"
           />
           <span>
             <strong>Jadikan produk rekomendasi</strong>
@@ -212,14 +217,14 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
       </div>
       <label className={`field ${styles.full}`}>
         <span className="label">Deskripsi Produk</span>
-        <textarea className="textarea" placeholder="Jelaskan produk anda secara singkat....." value={values.description} onChange={set("description")} maxLength={255} />
+        <Textarea placeholder="Jelaskan produk anda secara singkat....." value={values.description} onChange={set("description")} maxLength={255} />
         {errors.description && <span className="field-error">{errors.description}</span>}
         <span className="hint">{values.description.length}/255 karakter</span>
       </label>
       <label className={`field ${styles.full}`}>
         <span className="label">Informasi Produk</span>
-        <textarea
-          className="textarea"
+        <Textarea
+         
           placeholder="Informasi detail produk (bahan, ukuran, cara penggunaan, keunggulan, dll)"
           value={values.details}
           onChange={set("details")}
@@ -229,9 +234,9 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
         <span className="hint">{values.details.length}/255 karakter</span>
       </label>
       <div className={styles.actions}>
-        <button type="submit" className="btn btn-orange btn-lg" disabled={busy || blocked || photo.uploading}>
+        <Button type="submit" variant="orange" size="lg" disabled={busy || blocked || photo.uploading}>
           {busy ? "Menyimpan..." : !product ? "Ajukan Produk" : resubmit ? "Simpan & Ajukan Ulang" : "Simpan Perubahan"}
-        </button>
+        </Button>
       </div>
     </form>
   );

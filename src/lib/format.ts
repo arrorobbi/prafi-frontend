@@ -79,11 +79,12 @@ export const STATUS_LABEL: Record<ProductStatus, string> = {
   inactive: "Dinonaktifkan",
 };
 
-export const STATUS_BADGE: Record<ProductStatus, string> = {
-  active: "badge badge-active",
-  pending: "badge badge-pending",
-  rejected: "badge badge-rejected",
-  inactive: "badge badge-inactive",
+/** The shadcn Badge variant for each product status */
+export const STATUS_BADGE: Record<ProductStatus, "active" | "pending" | "rejected" | "inactive"> = {
+  active: "active",
+  pending: "pending",
+  rejected: "rejected",
+  inactive: "inactive",
 };
 
 /** The reason an admin typed, without the status prefix. */

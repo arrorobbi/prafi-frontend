@@ -11,6 +11,8 @@ import { imageSrc } from "@/lib/format";
 import { useTenantProfile } from "@/lib/tenantProfile";
 import { ProfileForm } from "./ProfileForm";
 import local from "./profil.module.css";
+import { Button, buttonVariants } from "@/components/shadcn/button";
+import { Alert } from "@/components/shadcn/alert";
 
 const isLink = (v?: string | null) => !!v && v !== "-";
 
@@ -28,10 +30,10 @@ export default function ShopProfilePage() {
       <>
         <PageHeader title={profile ? "UBAH PROFIL UMKM" : "BUAT PROFIL UMKM"} />
         {!profile && (
-          <div className="alert alert-info" style={{ marginBottom: 24 }}>
+          <Alert variant="info" style={{ marginBottom: 24 }}>
             Lengkapi profil toko Anda. Data ini membantu administrator memverifikasi usaha Anda dan membantu pembeli
             menghubungi Anda.
-          </div>
+          </Alert>
         )}
         <ProfileForm
           profile={profile}
@@ -63,20 +65,20 @@ export default function ShopProfilePage() {
     <>
       <PageHeader title="PROFIL UMKM" />
       {profile.isComplete === false && (
-        <div className="alert alert-warning mt">
+        <Alert variant="warning" className="mt">
           <IconWarning />
           <span>
             Profil belum lengkap. Lengkapi melalui{" "}
             <strong>Ubah Profil</strong> agar dapat menambahkan produk baru.
           </span>
-        </div>
+        </Alert>
       )}
       <div className={styles.splitCard}>
         <div className={styles.logoCard}>
           <Thumb src={imageSrc(profile.logo)} alt={`Logo ${profile.name}`} />
-          <button type="button" className="btn btn-navy" onClick={() => setEditing(true)}>
+          <Button type="button" variant="navy" onClick={() => setEditing(true)}>
             <IconPencil /> Ubah Profil
-          </button>
+          </Button>
         </div>
         <div className="stack">
           <div className="field">
@@ -111,41 +113,41 @@ export default function ShopProfilePage() {
 
       <div className={`${styles.linkRow} mt`}>
         {isLink(profile.whatsappLink) && (
-          <a href={profile.whatsappLink} target="_blank" rel="noreferrer" className="btn btn-green btn-lg">
+          <a href={profile.whatsappLink} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "green", size: "lg" })}>
             <IconWhatsapp /> HUBUNGI PENJUAL
           </a>
         )}
         {isLink(profile.gmapsLink) && (
-          <a href={profile.gmapsLink} target="_blank" rel="noreferrer" className="btn btn-navy btn-lg">
+          <a href={profile.gmapsLink} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "navy", size: "lg" })}>
             <IconMapPin /> CEK LOKASI UMKM
           </a>
         )}
         {isLink(profile.fbLink) && (
-          <a href={profile.fbLink} target="_blank" rel="noreferrer" className="btn btn-orange btn-lg">
+          <a href={profile.fbLink} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "orange", size: "lg" })}>
             <IconFacebook /> KUNJUNGI TOKO
           </a>
         )}
         {isLink(profile.instagramLink) && (
-          <a href={profile.instagramLink!} target="_blank" rel="noreferrer" className="btn btn-navy btn-lg">
+          <a href={profile.instagramLink!} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "navy", size: "lg" })}>
             <IconInstagram /> INSTAGRAM
           </a>
         )}
         {isLink(profile.googleBusinessLink) && (
-          <a href={profile.googleBusinessLink!} target="_blank" rel="noreferrer" className="btn btn-blue btn-lg">
+          <a href={profile.googleBusinessLink!} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "blue", size: "lg" })}>
             <IconGoogle /> GOOGLE BISNIS
           </a>
         )}
         {isLink(profile.shopeeLink) && (
-          <a href={profile.shopeeLink!} target="_blank" rel="noreferrer" className="btn btn-orange btn-lg">
+          <a href={profile.shopeeLink!} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "orange", size: "lg" })}>
             <IconShopee /> SHOPEE
           </a>
         )}
       </div>
 
       <div className={local.danger}>
-        <button type="button" className="btn btn-light btn-sm" onClick={() => setDeleting(true)}>
+        <Button type="button" variant="light" size="sm" onClick={() => setDeleting(true)}>
           Hapus profil toko
-        </button>
+        </Button>
       </div>
 
       <ConfirmDialog

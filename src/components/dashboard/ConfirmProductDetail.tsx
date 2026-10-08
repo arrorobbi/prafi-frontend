@@ -10,6 +10,9 @@ import { api, fetchAll } from "@/lib/api";
 import { approvalReason, DEACTIVATE_PREFIX, formatDate, formatRupiah, imageSrc, productStatus, REJECT_PREFIX, sellerName } from "@/lib/format";
 import { useAsync } from "@/lib/useAsync";
 import local from "./ConfirmProductDetail.module.css";
+import { Button } from "@/components/shadcn/button";
+import { Textarea } from "@/components/shadcn/textarea";
+import { Alert } from "@/components/shadcn/alert";
 
 /**
  * Product detail for an approver (admin or disnakertrans): approve, reject (with reason) or take down.
@@ -34,7 +37,7 @@ export function ConfirmProductDetail({ base }: { base: string }) {
     return (
       <>
         <PageHeader title="KONFIRMASI PRODUK" backHref={base} />
-        <div className="alert alert-error">{error ?? "Produk tidak ditemukan"}</div>
+        <Alert variant="destructive">{error ?? "Produk tidak ditemukan"}</Alert>
       </>
     );
 
@@ -105,19 +108,19 @@ export function ConfirmProductDetail({ base }: { base: string }) {
       </div>
 
       {lastReason && status !== "active" && (
-        <div className="alert alert-warning mt">
+        <Alert variant="warning" className="mt">
           <IconWarning />
           <span>
             Keputusan sebelumnya: <strong>{lastReason}</strong>
             {status === "pending" && " — produk telah diperbarui penjual dan diajukan ulang."}
           </span>
-        </div>
+        </Alert>
       )}
 
       <label className={`field ${local.reason}`}>
         <span className="label">{status === "active" ? "Alasan Penonaktifan" : "Alasan Penolakan"}</span>
-        <textarea
-          className="textarea"
+        <Textarea
+         
           placeholder={status === "active" ? "Tuliskan alasan produk ini dinonaktifkan (opsional)" : "Tuliskan alasan penolakan produk ini"}
           value={reason}
           maxLength={max}
@@ -128,32 +131,32 @@ export function ConfirmProductDetail({ base }: { base: string }) {
 
       <div className={local.actions}>
         {status === "active" ? (
-          <button
+          <Button
             type="button"
-            className="btn btn-red btn-lg"
+            variant="red" size="lg"
             disabled={busy}
             onClick={async () => {
               if (await review.deactivate(product.id, reason)) setReason("");
             }}
           >
             NONAKTIFKAN PRODUK
-          </button>
+          </Button>
         ) : (
           <>
-            <button
+            <Button
               type="button"
-              className="btn btn-green btn-lg"
+              variant="green" size="lg"
               disabled={busy}
               onClick={async () => {
                 if (await review.approve(product.id)) router.push(base);
               }}
             >
               TERIMA PRODUK
-            </button>
+            </Button>
             {status !== "rejected" && (
-              <button type="button" className="btn btn-red btn-lg" disabled={busy} onClick={reject}>
+              <Button type="button" variant="red" size="lg" disabled={busy} onClick={reject}>
                 TOLAK PRODUK
-              </button>
+              </Button>
             )}
           </>
         )}

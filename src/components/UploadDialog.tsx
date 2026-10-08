@@ -7,6 +7,8 @@ import { discardUpload, forgetUpload, rememberUpload } from "@/lib/pendingUpload
 import type { ImageFile } from "@/lib/types";
 import { IconCheckCircle, IconWarning } from "./Icons";
 import { useLeaveGuard } from "./LeaveGuard";
+import { Button } from "./shadcn/button";
+import { Dialog, DialogContent, DialogTitle } from "./shadcn/dialog";
 import styles from "./UploadDialog.module.css";
 
 type Phase =
@@ -109,36 +111,39 @@ export function usePendingImage() {
   const uploading = phase?.kind === "upload";
   const close = () => show(null);
 
-  const dialog = phase && (
-    <div className={styles.backdrop} role="presentation">
-      <div className={styles.box} role="dialog" aria-modal="true" aria-live="polite" aria-label="Unggah foto">
-        {phase.kind === "error" ? (
-          <>
+  // shadcn Dialog; it can't be closed while the photo is still uploading
+  const dialog = (
+    <Dialog open={phase !== null} onOpenChange={(open) => !open && !uploading && close()}>
+      <DialogContent showCloseButton={!uploading} aria-describedby={undefined} className="max-w-sm rounded-[20px] p-6 text-center sm:max-w-sm">
+        {phase?.kind === "error" ? (
+          <div className="flex flex-col items-center gap-3">
             <span className={`${styles.badge} ${styles.badgeError}`}>
               <IconWarning />
             </span>
-            <h2>{phase.title}</h2>
+            <DialogTitle className="text-lg font-bold text-brand-navy">{phase.title}</DialogTitle>
             <p className={styles.text}>{phase.message}</p>
-            <button type="button" className="btn btn-navy" onClick={close}>
+            <Button variant="navy" onClick={close}>
               Tutup
-            </button>
-          </>
-        ) : phase.kind === "upload" ? (
-          <>
+            </Button>
+          </div>
+        ) : phase?.kind === "upload" ? (
+          <div className="flex flex-col items-center gap-3">
             <span className={styles.spinner} aria-hidden />
-            <h2>Mengunggah foto...</h2>
+            <DialogTitle className="text-lg font-bold text-brand-navy">Mengunggah foto...</DialogTitle>
             <div className={styles.bar} role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={phase.percent}>
               <span style={{ width: `${phase.percent}%` }} />
             </div>
             <p className={styles.percent}>{phase.percent}%</p>
             <p className={styles.hint}>Mohon tunggu, jangan tutup halaman ini.</p>
-          </>
-        ) : (
-          <>
+          </div>
+        ) : phase ? (
+          <div className="flex flex-col items-center gap-3">
             <span className={`${styles.badge} ${styles.badgeDone}`}>
               <IconCheckCircle />
             </span>
-            <h2>{phase.kind === "saved" ? "Foto telah tersimpan!" : "Foto berhasil diunggah!"}</h2>
+            <DialogTitle className="text-lg font-bold text-brand-navy">
+              {phase.kind === "saved" ? "Foto telah tersimpan!" : "Foto berhasil diunggah!"}
+            </DialogTitle>
             <div className={styles.bar} aria-hidden>
               <span className={styles.barDone} style={{ width: "100%" }} />
             </div>
@@ -152,13 +157,13 @@ export function usePendingImage() {
                 </>
               )}
             </p>
-            <button type="button" className="btn btn-green" onClick={close}>
+            <Button variant="green" onClick={close}>
               Oke
-            </button>
-          </>
-        )}
-      </div>
-    </div>
+            </Button>
+          </div>
+        ) : null}
+      </DialogContent>
+    </Dialog>
   );
 
   return { pick, saved, discard, showError, pending, previewUrl, uploading, dialog };

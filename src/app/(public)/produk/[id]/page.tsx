@@ -1,16 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { IconDocs, IconHeart, IconStore, IconThumb } from "@/components/Icons";
+import { IconDocs, IconFacebook, IconGoogle, IconHeart, IconInstagram, IconMapPin, IconShopee, IconStore, IconThumb, IconWhatsapp } from "@/components/Icons";
 import { ProductReviews } from "@/components/site/ProductReviews";
 import { ProductStrip } from "@/components/site/ProductStrip";
 import { RatingSummary } from "@/components/Stars";
 import { EmptyState, PageHeader, Thumb } from "@/components/ui";
 import { formatDate, formatRupiah, imageSrc, sellerName } from "@/lib/format";
+import type { Product } from "@/lib/types";
 import { getLandingProduct, getLandingProducts } from "@/lib/server-api";
 import styles from "./detail.module.css";
+import { buttonVariants } from "@/components/shadcn/button";
+import { Card, cardClassName } from "@/components/shadcn/card";
+import { cn } from "@/lib/utils";
 
 type Props = { params: Promise<{ id: string }> };
+
+/** Optional links are null or saved as "-" when left empty */
+const isLink = (v?: string | null): v is string => !!v && /^https?:\/\//i.test(v);
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { product } = await getLandingProduct((await params).id);
@@ -48,7 +55,7 @@ export default async function ProductDetailPage({ params }: Props) {
 
         <div className={styles.info}>
           <p className={styles.kicker}>{sellerName(product)}</p>
-          <div className={`card ${styles.main}`}>
+          <Card className={styles.main}>
             <div className={styles.mainLeft}>
               <h1>{product.name}</h1>
               <p className={styles.stock}>{formatRupiah(product.price)}</p>
@@ -73,11 +80,11 @@ export default async function ProductDetailPage({ params }: Props) {
               <h2>Informasi Produk</h2>
               <p>{product.details}</p>
             </div>
-          </div>
+          </Card>
 
           <div className={styles.bottom}>
             {product.tenant?.tenant && (
-              <Link href={`/umkm/${product.tenant.tenant.id}`} className={`card ${styles.seller}`}>
+              <Link href={`/umkm/${product.tenant.tenant.id}`} className={cn(cardClassName, styles.seller)}>
                 <IconStore />
                 <div>
                   <strong>{sellerName(product)}</strong>
@@ -87,6 +94,8 @@ export default async function ProductDetailPage({ params }: Props) {
             )}
             <p className={styles.since}>Tayang sejak {formatDate(product.createdAt)}</p>
           </div>
+
+          <ShopLinks shop={product.tenant?.tenant} />
         </div>
       </div>
 
@@ -99,5 +108,31 @@ export default async function ProductDetailPage({ params }: Props) {
         </section>
       )}
     </div>
+  );
+}
+
+/** The seller's contact / shop buttons; only the links the UMKM filled in are shown. */
+function ShopLinks({ shop }: { shop?: NonNullable<NonNullable<Product["tenant"]>["tenant"]> | null }) {
+  if (!shop) return null;
+  const links = [
+    { href: shop.whatsappLink, label: "WhatsApp", icon: IconWhatsapp, tone: "green" },
+    { href: shop.shopeeLink, label: "Shopee", icon: IconShopee, tone: "orange" },
+    { href: shop.instagramLink, label: "Instagram", icon: IconInstagram, tone: "orange" },
+    { href: shop.googleBusinessLink, label: "Google Bisnis", icon: IconGoogle, tone: "blue" },
+    { href: shop.fbLink, label: "Facebook", icon: IconFacebook, tone: "blue" },
+    { href: shop.gmapsLink, label: "Lokasi", icon: IconMapPin, tone: "navy" },
+  ].filter((l) => isLink(l.href)) as { href: string; label: string; icon: typeof IconWhatsapp; tone: "green" | "orange" | "blue" | "navy" }[];
+  if (!links.length) return null;
+  return (
+    <Card className={styles.links}>
+      <h2>Hubungi &amp; Kunjungi Toko</h2>
+      <div className={styles.linkRow}>
+        {links.map(({ href, label, icon: Icon, tone }) => (
+          <a key={label} href={href!} target="_blank" rel="noreferrer" className={buttonVariants({ variant: tone, size: "sm" })}>
+            <Icon /> {label}
+          </a>
+        ))}
+      </div>
+    </Card>
   );
 }

@@ -171,32 +171,6 @@
   gap: 4px;
 }
 
-.pages button,
-.pages span {
-  display: grid;
-  place-items: center;
-  min-width: 26px;
-  height: 26px;
-  padding: 0 6px;
-  border-radius: 4px;
-  background: var(--gray-300);
-  font-size: 0.85rem;
-}
-
-.pages span {
-  background: var(--gray-300);
-}
-
-.pages button svg {
-  width: 12px;
-  height: 12px;
-}
-
-.pages .current {
-  background: #1aa5d9;
-  color: var(--white);
-}
-
 /* ---------- password ---------- */
 .password {
   position: relative;
