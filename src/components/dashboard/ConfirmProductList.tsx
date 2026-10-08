@@ -29,12 +29,8 @@ export function ConfirmProductList({ base }: { base: string }) {
   const [rejectTarget, setRejectTarget] = useState<Product | null>(null);
 
   const { data, loading, error, reload } = useAsync(async () => {
-    const [products, tenants] = await Promise.all([
-      fetchAll((p) => api.products.list({ page: p, limit: 100, isActive: false })),
-      fetchAll((p) => api.tenants.list({ page: p, limit: 100 })),
-    ]);
-    const categoryByOwner = new Map(tenants.map((t) => [t.userId, t.category?.name ?? "-"]));
-    return { products: products.filter((p) => productStatus(p) === "pending"), categoryByOwner };
+    const products = await fetchAll((p) => api.products.list({ page: p, limit: 100, isActive: false }));
+    return { products: products.filter((p) => productStatus(p) === "pending") };
   }, []);
 
   const review = useProductReview(() => {
@@ -90,7 +86,7 @@ export function ConfirmProductList({ base }: { base: string }) {
                       </TableCell>
                       <TableCell data-label="Nama Produk">{p.name}</TableCell>
                       <TableCell data-label="Nama Penjual">{sellerName(p)}</TableCell>
-                      <TableCell data-label="Kategori">{data?.categoryByOwner.get(p.tenantId) ?? "-"}</TableCell>
+                      <TableCell data-label="Kategori">{p.category?.name ?? "-"}</TableCell>
                       <TableCell data-label="Tanggal Pengajuan">{formatDate(p.updatedAt)}</TableCell>
                       <TableCell data-label="">
                         <span className="actions">

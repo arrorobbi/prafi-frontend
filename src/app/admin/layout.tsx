@@ -8,7 +8,7 @@ const NAV: NavItem[] = [
   { href: "/admin", label: "Dashboard", icon: IconHome, exact: true },
   { href: "/admin/konfirmasi", label: "Konfirmasi Produk", icon: IconCheckCircle },
   { href: "/admin/produk", label: "Manajemen Produk", icon: IconBox },
-  { href: "/admin/kategori", label: "Kategori UMKM", icon: IconTag },
+  { href: "/admin/kategori", label: "Kategori Produk", icon: IconTag },
   { href: "/admin/umkm", label: "Manajemen UMKM", icon: IconStore },
   { href: "/admin/notifikasi", label: "Notifikasi", icon: IconBell, badge: true },
   { href: "/admin/pengaturan", label: "Pengaturan Administrator", icon: IconSettings },

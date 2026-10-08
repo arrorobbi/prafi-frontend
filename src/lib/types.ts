@@ -79,8 +79,11 @@ export interface Product {
   details: string;
   /** Rupiah (IDR) */
   price: number;
-  /** Set by the tenant: shown in the landing page's recommendations */
+  /** Set by the server: true while its reviews average 4.8 stars or more (shown in the landing page's recommendations) */
   isRecommended: boolean;
+  /** Null only for older products created before categories moved to products */
+  categoryId: number | null;
+  category?: Pick<ProductCategory, "id" | "name"> | null;
   /** Average of its reviews (1 decimal), null without reviews */
   ratingAverage: number | null;
   reviewCount: number;
@@ -94,9 +97,14 @@ export interface Product {
   tenant: ProductOwner | null;
 }
 
-export interface TenantCategory {
+/** Managed by admins; the image is a slide of the home page carousel */
+export interface ProductCategory {
   id: number;
   name: string;
+  imageId: number | null;
+  image: ImageFile | null;
+  /** Dashboard: all its products; landing (GET /api/landing/categories): approved products only */
+  productCount: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -116,12 +124,10 @@ export interface TenantProfile {
   googleBusinessLink: string | null;
   shopeeLink: string | null;
   logoId: number;
-  tenantCategoryId: number;
   userId: string;
   createdAt: string;
   updatedAt: string;
   logo: ImageFile | null;
-  category: TenantCategory | null;
   owner?: ProductOwner;
   /** GET /api/tenants/me: whether products can be added yet, and which fields are still empty */
   isComplete?: boolean;
@@ -247,8 +253,12 @@ export interface LogSummary {
 export interface StatsOverview {
   days: number;
   timezone: string;
-  products: { total: number; byStatus: { active: number; pending: number; rejected: number; inactive: number } };
-  tenants: { total: number; byCategory: { name: string; count: number }[]; byArea: { area: string; count: number }[] };
+  products: {
+    total: number;
+    byStatus: { active: number; pending: number; rejected: number; inactive: number };
+    byCategory: { name: string; count: number }[];
+  };
+  tenants: { total: number; byArea: { area: string; count: number }[] };
   users: { roles: Role[]; total: number; byRole: { role: Role; active: number; inactive: number }[] };
   perDay: { date: string; products: number; tenants: number; users: number }[];
 }

@@ -5,7 +5,7 @@ import { ListShell } from "@/components/site/ListShell";
 import { ProductRow } from "@/components/site/ProductRow";
 import { RatingSummary } from "@/components/Stars";
 import { EmptyState, Thumb } from "@/components/ui";
-import { formatRating, imageSrc } from "@/lib/format";
+import { formatRating, imageSrc, tenantWhatsappText, whatsappWithText } from "@/lib/format";
 import { getLandingProducts, getLandingTenant, getLandingTenants } from "@/lib/server-api";
 import styles from "../umkm.module.css";
 import { buttonVariants } from "@/components/shadcn/button";
@@ -44,7 +44,6 @@ export default async function SellerPage({ params }: Props) {
       <section className={styles.profile}>
         <Thumb src={imageSrc(tenant.logo)} alt={`Logo ${tenant.name}`} className={styles.profileLogo} />
         <div className={styles.profileBody}>
-          {tenant.category && <span className={styles.category}>{tenant.category.name}</span>}
           <p className={styles.profileDesc}>{tenant.description}</p>
           <ul className={styles.facts}>
             <li>
@@ -60,7 +59,12 @@ export default async function SellerPage({ params }: Props) {
           </ul>
           <div className={styles.links}>
             {isLink(tenant.whatsappLink) && (
-              <a href={tenant.whatsappLink} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "green", size: "sm" })}>
+              <a
+                href={whatsappWithText(tenant.whatsappLink, tenantWhatsappText(tenant))}
+                target="_blank"
+                rel="noreferrer"
+                className={buttonVariants({ variant: "green", size: "sm" })}
+              >
                 <IconWhatsapp /> WhatsApp
               </a>
             )}

@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { IconDocs, IconHeart, IconMapPin, IconThumb } from "@/components/Icons";
-import { HeroCarousel } from "@/components/site/HeroCarousel";
 import { MapArt } from "@/components/site/MapArt";
-import { ProductCard } from "@/components/site/ProductCard";
+import { HomeHero, type CategorySlide } from "@/components/site/HomeHero";
 import { ProductStrip } from "@/components/site/ProductStrip";
-import { getLandingProducts } from "@/lib/server-api";
+import { imageSrc } from "@/lib/format";
+import { getLandingCategories, getLandingProducts } from "@/lib/server-api";
 import styles from "./home.module.css";
 import { buttonVariants } from "@/components/shadcn/button";
 import { Alert } from "@/components/shadcn/alert";
@@ -33,23 +33,47 @@ const REASONS = [
   },
 ] as const;
 
+/**
+ * The carousel: one slide per category that has approved products, showing the category's image (or, without
+ * one, its best product's photo). Next to it, that category's 3 best rated products.
+ */
+async function categorySlides(): Promise<CategorySlide[]> {
+  const { categories } = await getLandingCategories();
+  const withProducts = categories.filter((c) => c.productCount > 0);
+  const lists = await Promise.all(withProducts.map((c) => getLandingProducts(1, 3, { categoryId: c.id, sort: "rating" })));
+  return withProducts
+    .map((c, i) => ({ category: c, products: lists[i].products }))
+    .filter(({ products }) => products.length > 0)
+    // Categories with their own image first, so the carousel opens on one
+    .sort((a, b) => Number(!!b.category.image) - Number(!!a.category.image))
+    .map(({ category: c, products }) => ({
+      key: c.id,
+      image: c.image ? imageSrc(c.image) : imageSrc(products[0].image),
+      alt: c.image?.altText || c.name,
+      caption: c.name,
+      href: `/produk?kategori=${c.id}`,
+      products,
+    }));
+}
+
 export default async function HomePage() {
-  const [{ products, failed }, recommended] = await Promise.all([
+  const [{ products, failed }, recommended, slides] = await Promise.all([
     getLandingProducts(1, 20),
-    getLandingProducts(1, 3, { recommended: true }),
+    getLandingProducts(1, 12, { recommended: true }),
+    categorySlides(),
   ]);
-  const featured = products.slice(0, 5);
-  // Products their sellers mark as recommended; the newest ones until some are
-  const picks = recommended.products.length ? recommended.products : products.slice(0, 3);
-  const pickIds = new Set(picks.map((p) => p.id));
-  const others = products.filter((p) => !pickIds.has(p.id));
+  // Without category slides, the hero shows recommended products (reviews average 4.8+), or the newest ones
+  const fallback = recommended.products.length ? recommended.products.slice(0, 3) : products.slice(0, 3);
+  // "Produk rekomendasi lainnya": recommended first, then the newest
+  const recIds = new Set(recommended.products.map((p) => p.id));
+  const others = [...recommended.products, ...products.filter((p) => !recIds.has(p.id))];
 
   return (
     <>
-      <section className={styles.hero}>
-        <HeroCarousel products={featured} />
-
-        <div className={styles.heroRight}>
+      <HomeHero
+        slides={slides}
+        fallback={fallback}
+        side={
           <Card className={styles.mapCard}>
             <MapArt className={styles.map} />
             <div className={styles.mapText}>
@@ -59,16 +83,8 @@ export default async function HomePage() {
               </Link>
             </div>
           </Card>
-
-          {picks.length > 0 && (
-            <div className={styles.picks}>
-              {picks.map((p) => (
-                <ProductCard key={p.id} product={p} recommended />
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+        }
+      />
 
       {failed && (
         <div className={styles.container}>
@@ -95,8 +111,8 @@ export default async function HomePage() {
 
       <section className={`${styles.container} ${styles.more}`}>
         <h2>PRODUK REKOMENDASI LAINNYA</h2>
-        {others.length > 0 || products.length > 0 ? (
-          <ProductStrip products={others.length ? others : products} />
+        {others.length > 0 ? (
+          <ProductStrip products={others} />
         ) : (
           <p className={styles.emptyText}>
             Belum ada produk yang tayang. Pelaku UMKM?{" "}

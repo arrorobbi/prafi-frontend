@@ -2,25 +2,43 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { imageSrc } from "@/lib/format";
-import type { Product } from "@/lib/types";
 import { IconChevronLeft, IconChevronRight } from "../Icons";
 import { Thumb } from "../ui";
 import styles from "./HeroCarousel.module.css";
 import { buttonVariants } from "@/components/shadcn/button";
 
-/** Big centre slide with the neighbours peeking on each side, as in the landing design. */
-export function HeroCarousel({ products }: { products: Product[] }) {
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const count = products.length;
+export interface HeroSlide {
+  key: string | number;
+  image: string;
+  alt: string;
+  caption: string;
+  href: string;
+}
 
-  const go = useCallback((delta: number) => setIndex((i) => (i + delta + count) % count), [count]);
+/**
+ * Big centre slide with the neighbours peeking on each side, as in the landing design. Controlled: the parent
+ * keeps `index` (the home page shows the current slide's products next to it).
+ */
+export function HeroCarousel({
+  slides,
+  index,
+  onIndexChange,
+  label = "Kategori produk",
+}: {
+  slides: HeroSlide[];
+  index: number;
+  onIndexChange: (index: number) => void;
+  label?: string;
+}) {
+  const [paused, setPaused] = useState(false);
+  const count = slides.length;
+
+  const go = useCallback((delta: number) => onIndexChange((index + delta + count) % count), [index, count, onIndexChange]);
 
   useEffect(() => {
     if (count < 2 || paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t = setInterval(() => go(1), 5000);
-    return () => clearInterval(t);
+    const t = setTimeout(() => go(1), 6000);
+    return () => clearTimeout(t);
   }, [count, paused, go]);
 
   if (count === 0) {
@@ -35,7 +53,7 @@ export function HeroCarousel({ products }: { products: Product[] }) {
     );
   }
 
-  const at = (offset: number) => products[(index + offset + count) % count];
+  const at = (offset: number) => slides[(index + offset + count) % count];
   const current = at(0);
 
   return (
@@ -43,22 +61,24 @@ export function HeroCarousel({ products }: { products: Product[] }) {
       className={styles.carousel}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
       aria-roledescription="carousel"
-      aria-label="Produk unggulan"
+      aria-label={label}
     >
       <div className={styles.stage}>
         {count > 1 && (
           <div className={`${styles.side} ${styles.left}`} aria-hidden>
-            <Thumb src={imageSrc(at(-1).image)} alt="" />
+            <Thumb src={at(-1).image} alt="" />
           </div>
         )}
-        <Link href={`/produk/${current.id}`} className={styles.main} aria-live="polite">
-          <Thumb src={imageSrc(current.image)} alt={current.image?.altText || current.name} />
-          <span className={styles.caption}>{current.name}</span>
+        <Link href={current.href} className={styles.main} aria-live="polite">
+          <Thumb key={current.key} src={current.image} alt={current.alt} />
+          <span className={styles.caption}>{current.caption}</span>
         </Link>
         {count > 1 && (
           <div className={`${styles.side} ${styles.right}`} aria-hidden>
-            <Thumb src={imageSrc(at(1).image)} alt="" />
+            <Thumb src={at(1).image} alt="" />
           </div>
         )}
         {count > 1 && (
@@ -74,14 +94,14 @@ export function HeroCarousel({ products }: { products: Product[] }) {
       </div>
       {count > 1 && (
         <div className={styles.dots}>
-          {products.map((p, i) => (
+          {slides.map((s, i) => (
             <button
-              key={p.id}
+              key={s.key}
               type="button"
-              aria-label={`Slide ${i + 1}`}
+              aria-label={`${s.caption} (slide ${i + 1})`}
               aria-current={i === index}
               className={i === index ? styles.dotActive : ""}
-              onClick={() => setIndex(i)}
+              onClick={() => onIndexChange(i)}
             />
           ))}
         </div>

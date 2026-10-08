@@ -22,6 +22,7 @@ npm run build && npm start   # production (port 80, see deploy/)
 | variable | purpose |
 | --- | --- |
 | `API_URL` | Backend base URL (default `https://api.transniaga.manokwarikab.go.id`). Read at **build time**. |
+| `SITE_URL` | This site's public address (default `https://transniaga.manokwarikab.go.id`), used for the product link in the WhatsApp message. Read at **build time**. |
 | `NEXT_PUBLIC_ADMIN_WHATSAPP`, `NEXT_PUBLIC_ADMIN_EMAIL` | Contact shown under *Hubungi Administrator* (optional). |
 
 ### How requests reach the backend
@@ -53,9 +54,9 @@ in the **backend** `.env` to this site's URL.
 | `/register/admin` | public | Admin sign-up (needs Disnakertrans activation afterwards) |
 | `/verifikasi?userId=&email=` | public | Email OTP for accounts that tried to log in unverified |
 | `/lupa-password`, `/reset-password` | public | Forgot / reset password |
-| `/admin/*` | admin | Dashboard, Konfirmasi Produk, Manajemen Produk, Kategori UMKM, Manajemen UMKM, Notifikasi, Pengaturan |
+| `/admin/*` | admin | Dashboard, Konfirmasi Produk, Manajemen Produk, Kategori Produk (with carousel image), Manajemen UMKM, Notifikasi, Pengaturan |
 | `/tenant/*` | tenant | Dashboard, Produk Saya, Tambah/Ubah Produk, Produk Ditolak, Profil UMKM, Notifikasi, Bantuan, Pengaturan |
-| `/superadmin/*` | superadmin | Dashboard, Akun Disnakertrans (create + resend activation), Semua Pengguna, Data Produk, Data UMKM, Kategori UMKM (read-only), Log API (signed-in users' create/update/delete requests and every auth action incl. guests' failed logins with the email tried, successful and failed, with result summary), Notifikasi, Pengaturan |
+| `/superadmin/*` | superadmin | Dashboard, Akun Disnakertrans (create + resend activation), Semua Pengguna, Data Produk, Data UMKM, Kategori Produk (read-only), Log API (signed-in users' create/update/delete requests and every auth action incl. guests' failed logins with the email tried, successful and failed, with result summary), Notifikasi, Pengaturan |
 | `/disnakertrans/*` | disnakertrans | Dashboard, Aktivasi Admin (activate/deactivate admins), Konfirmasi Produk (approve/reject/deactivate, like admin), Data Produk, Data UMKM, Notifikasi, Pengaturan |
 
 ## UI components (shadcn/ui + Tailwind)
@@ -108,6 +109,17 @@ dashboards; the superadmin creates disnakertrans accounts, reads everything and 
 activates admins and approves products like admins. Tenants need a complete UMKM profile and an account photo before
 they can add products.
 
+### Categories, recommendations, WhatsApp
+
+- **Product categories** (`/api/product-categories`, admin manages, everyone reads) belong to products (`categoryId`,
+  required in the product form); UMKM profiles no longer have one. Each category may have an image: the home page
+  (`components/site/HomeHero.tsx`) shows one carousel slide per category with approved products (its image, or its
+  best product's photo), and the cards beside it show that category's 3 best rated products.
+- **Recommended** (`isRecommended`) is set by the backend: reviews average 4.8 stars or more. Tenants can't set it.
+- **WhatsApp buttons** open with a prefilled message (`lib/format.ts → whatsappWithText`): on a product page
+  `Halo kak saya ingin menanyakan tentang produk <name> apakah masih ada? <SITE_URL>/produk/<id>`, on a UMKM page
+  `Hi kak, saya mau bertanya tentang produk di toko <name>`.
+
 ### Product status
 
 The API stores only `approval.isActive` and `approval.reason`. The frontend derives four statuses (`lib/format.ts →
@@ -134,8 +146,8 @@ this site's own `/socket.io/` proxy (`next.config.ts`), authenticated with the l
 
 1. **No banner/announcement API** — the design's *Banner & Informasi* admin page is not built.
 2. Registration step *Unggah Foto KTP* is not built: image upload requires login, and there is no KTP field.
-3. The landing "Kategori"/"Wilayah" menus from the design are replaced by *Produk* and *UMKM* (the UMKM directory
-   shows each UMKM's category and area).
+3. The landing "Kategori"/"Wilayah" menus from the design are replaced by *Produk* and *UMKM*. Product categories
+   appear in the home carousel (one slide per category image, its products next to it) and at `/produk?kategori=<id>`.
 
 ## Deploy
 

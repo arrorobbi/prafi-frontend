@@ -1,22 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "@/components/dashboard/dashboard.module.css";
-import { IconWarning } from "@/components/Icons";
 import { useToast } from "@/components/Toast";
 import { ImagePicker } from "@/components/ui";
 import { useLeaveGuard } from "@/components/LeaveGuard";
 import { usePendingImage } from "@/components/UploadDialog";
-import { api, ApiError, errorMessage, fetchAll, type TenantInput } from "@/lib/api";
+import { api, ApiError, errorMessage, type TenantInput } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { imageSrc, whatsappUrl } from "@/lib/format";
-import type { TenantCategory, TenantProfile } from "@/lib/types";
+import type { TenantProfile } from "@/lib/types";
 import local from "./profil.module.css";
 import { Button } from "@/components/shadcn/button";
 import { Input } from "@/components/shadcn/input";
 import { Textarea } from "@/components/shadcn/textarea";
 import { NativeSelect } from "@/components/shadcn/native-select";
-import { Alert } from "@/components/shadcn/alert";
 
 /** Areas of the Prafi transmigration zone (from the design); anything else goes in "Lainnya". */
 const AREAS = ["Wilayah SP 1", "Wilayah SP 2", "Wilayah SP 3", "Wilayah SP 4"];
@@ -55,7 +53,6 @@ export function ProfileForm({
   const knownArea = !profile || AREAS.includes(profile.area);
 
   const [name, setName] = useState(profile?.name ?? user?.tenantName ?? "");
-  const [categoryId, setCategoryId] = useState(profile ? String(profile.tenantCategoryId) : "");
   const [area, setArea] = useState(profile ? (knownArea ? profile.area : OTHER) : "");
   const [otherArea, setOtherArea] = useState(knownArea ? "" : (profile?.area ?? ""));
   const [description, setDescription] = useState(profile?.description ?? "");
@@ -76,23 +73,9 @@ export function ProfileForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
 
-  const [categories, setCategories] = useState<TenantCategory[] | null>(null);
-  const [categoryError, setCategoryError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchAll((p) => api.tenantCategories.list({ page: p, limit: 100 }))
-      .then(setCategories)
-      .catch((err) => {
-        // Kategori Usaha = the Kategori UMKM the admin manages; if they can't load, keep the current one selectable
-        setCategoryError(`Daftar kategori UMKM gagal dimuat: ${errorMessage(err)}`);
-        setCategories(profile?.category ? [profile.category] : []);
-      });
-  }, [profile?.category]);
-
   const validate = () => {
     const e: Record<string, string> = {};
     if (!name.trim()) e.name = "Nama usaha/toko wajib diisi";
-    if (!categoryId) e.tenantCategoryId = "Pilih kategori usaha";
     if (!area || (area === OTHER && !otherArea.trim())) e.area = "Pilih wilayah usaha";
     if (!description.trim()) e.description = "Deskripsi wajib diisi";
     if (!address.trim()) e.address = "Alamat wajib diisi";
@@ -116,7 +99,6 @@ export function ProfileForm({
 
     const body: Omit<TenantInput, "logoId"> = {
       name: name.trim(),
-      tenantCategoryId: Number(categoryId),
       area: area === OTHER ? otherArea.trim() : area,
       description: description.trim(),
       address: address.trim(),
@@ -174,46 +156,24 @@ export function ProfileForm({
           <Input placeholder="Masukan nama usaha/toko" value={name} onChange={(e) => setName(e.target.value)} maxLength={255} />
           {errors.name && <span className="field-error">{errors.name}</span>}
         </label>
-        <div className={styles.formGrid}>
-          <label className="field">
-            <span className="label">Wilayah Usaha/Toko</span>
-            <NativeSelect value={area} onChange={(e) => setArea(e.target.value)}>
-              <option value="" disabled>
-                Pilih wilayah
+        <label className="field">
+          <span className="label">Wilayah Usaha/Toko</span>
+          <NativeSelect value={area} onChange={(e) => setArea(e.target.value)}>
+            <option value="" disabled>
+              Pilih wilayah
+            </option>
+            {AREAS.map((a) => (
+              <option key={a} value={a}>
+                {a}
               </option>
-              {AREAS.map((a) => (
-                <option key={a} value={a}>
-                  {a}
-                </option>
-              ))}
-              <option value={OTHER}>Lainnya</option>
-            </NativeSelect>
-            {area === OTHER && (
-              <Input placeholder="Nama wilayah" value={otherArea} onChange={(e) => setOtherArea(e.target.value)} />
-            )}
-            {errors.area && <span className="field-error">{errors.area}</span>}
-          </label>
-          <label className="field">
-            <span className="label">Kategori Usaha/Toko</span>
-            <NativeSelect value={categoryId} onChange={(e) => setCategoryId(e.target.value)} disabled={!categories}>
-              <option value="" disabled>
-                {categories ? "Pilih kategori" : "Memuat..."}
-              </option>
-              {(categories ?? []).map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </NativeSelect>
-            {errors.tenantCategoryId && <span className="field-error">{errors.tenantCategoryId}</span>}
-          </label>
-        </div>
-        {categoryError && (
-          <Alert variant="warning">
-            <IconWarning />
-            <span>{categoryError}</span>
-          </Alert>
-        )}
+            ))}
+            <option value={OTHER}>Lainnya</option>
+          </NativeSelect>
+          {area === OTHER && (
+            <Input placeholder="Nama wilayah" value={otherArea} onChange={(e) => setOtherArea(e.target.value)} />
+          )}
+          {errors.area && <span className="field-error">{errors.area}</span>}
+        </label>
         <label className="field">
           <span className="label">Deskripsi Usaha/Toko</span>
           <Textarea
@@ -286,7 +246,7 @@ export function ProfileForm({
               Batal
             </Button>
           )}
-          <Button type="submit" variant="navy" size="lg" disabled={busy || (!profile && !!categoryError && !categories?.length)}>
+          <Button type="submit" variant="navy" size="lg" disabled={busy}>
             {busy ? "MENYIMPAN..." : "SIMPAN PROFIL"}
           </Button>
         </div>

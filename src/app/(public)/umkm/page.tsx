@@ -39,7 +39,6 @@ export default async function SellersPage({ searchParams }: { searchParams: Prom
               <Thumb src={imageSrc(t.logo)} alt="" className={styles.logo} />
               <div className={styles.cardBody}>
                 <h3>{t.name}</h3>
-                {t.category && <span className={styles.category}>{t.category.name}</span>}
                 <p className={styles.desc}>{t.description}</p>
                 <p className={styles.meta}>
                   <span>

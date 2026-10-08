@@ -15,7 +15,7 @@ import type {
   StatsOverview,
   Review,
   Role,
-  TenantCategory,
+  ProductCategory,
   TenantProfile,
   User,
   Verification,
@@ -211,7 +211,7 @@ export type ProductInput = {
   details: string;
   /** Rupiah, whole numbers */
   price: number;
-  isRecommended?: boolean;
+  categoryId: number;
   imageId: number;
 };
 
@@ -229,7 +229,12 @@ export type TenantInput = {
   googleBusinessLink?: string | null;
   shopeeLink?: string | null;
   logoId: number;
-  tenantCategoryId: number;
+};
+
+export type CategoryInput = {
+  name: string;
+  /** null removes the image */
+  imageId?: number | null;
 };
 
 /** One function per endpoint in the API docs. */
@@ -276,7 +281,7 @@ export const api = {
   },
 
   products: {
-    list: (q: Paged & { isActive?: boolean } = {}) => get<Product[]>("/products", { page: 1, limit: 20, ...q }),
+    list: (q: Paged & { isActive?: boolean; categoryId?: number } = {}) => get<Product[]>("/products", { page: 1, limit: 20, ...q }),
     get: (id: string) => get<Product>(`/products/${id}`),
     create: (input: ProductInput) => post<Product>("/products", input),
     update: (id: string, changes: Partial<ProductInput>) => patch<Product>(`/products/${id}`, changes),
@@ -284,10 +289,11 @@ export const api = {
   },
 
   landing: {
-    products: (q: Paged & { recommended?: boolean; tenantId?: string } = {}) =>
+    categories: () => get<ProductCategory[]>("/landing/categories", undefined, true),
+    products: (q: Paged & { recommended?: boolean; tenantId?: string; categoryId?: number; sort?: "newest" | "rating" } = {}) =>
       get<Product[]>("/landing/products", { page: 1, limit: 20, ...q }, true),
     product: (id: string) => get<Product>(`/landing/products/${id}`, undefined, true),
-    tenants: (q: Paged & { q?: string; tenantCategoryId?: number } = {}) =>
+    tenants: (q: Paged & { q?: string } = {}) =>
       get<PublicTenant[]>("/landing/tenants", { page: 1, limit: 20, ...q }, true),
     tenant: (id: string) => get<PublicTenant>(`/landing/tenants/${id}`, undefined, true),
     /** Newest first; meta has ratingAverage and reviewCount */
@@ -303,12 +309,12 @@ export const api = {
       }>,
   },
 
-  tenantCategories: {
-    list: (q: Paged = {}) => get<TenantCategory[]>("/tenant-categories", { page: 1, limit: 100, ...q }),
-    get: (id: number) => get<TenantCategory>(`/tenant-categories/${id}`),
-    create: (name: string) => post<TenantCategory>("/tenant-categories", { name }),
-    update: (id: number, name: string) => patch<TenantCategory>(`/tenant-categories/${id}`, { name }),
-    remove: (id: number) => del<null>(`/tenant-categories/${id}`),
+  productCategories: {
+    list: (q: Paged = {}) => get<ProductCategory[]>("/product-categories", { page: 1, limit: 100, ...q }),
+    get: (id: number) => get<ProductCategory>(`/product-categories/${id}`),
+    create: (input: CategoryInput) => post<ProductCategory>("/product-categories", input),
+    update: (id: number, changes: Partial<CategoryInput>) => patch<ProductCategory>(`/product-categories/${id}`, changes),
+    remove: (id: number) => del<null>(`/product-categories/${id}`),
   },
 
   tenants: {
@@ -316,7 +322,7 @@ export const api = {
     createMine: (input: TenantInput) => post<TenantProfile>("/tenants/me", input),
     updateMine: (changes: Partial<TenantInput>) => patch<TenantProfile>("/tenants/me", changes),
     deleteMine: () => del<null>("/tenants/me"),
-    list: (q: Paged & { tenantCategoryId?: number } = {}) => get<TenantProfile[]>("/tenants", { page: 1, limit: 20, ...q }),
+    list: (q: Paged = {}) => get<TenantProfile[]>("/tenants", { page: 1, limit: 20, ...q }),
     get: (id: string) => get<TenantProfile>(`/tenants/${id}`),
   },
 

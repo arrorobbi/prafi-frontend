@@ -203,3 +203,11 @@
   flex-wrap: wrap;
   gap: 8px;
 }
+
+.kicker a {
+  color: var(--navy);
+}
+
+.kicker a:hover {
+  text-decoration: underline;
+}

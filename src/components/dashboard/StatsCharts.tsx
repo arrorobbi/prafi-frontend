@@ -86,7 +86,7 @@ const statusConfig = {
   inactive: { label: "Dinonaktifkan", color: "#9ca3af" },
 } satisfies ChartConfig;
 
-const categoryConfig = { count: { label: "UMKM", color: "var(--chart-1)" } } satisfies ChartConfig;
+const categoryConfig = { count: { label: "Produk", color: "var(--chart-1)" } } satisfies ChartConfig;
 
 const usersConfig = {
   active: { label: "Aktif", color: "var(--chart-3)" },
@@ -95,7 +95,7 @@ const usersConfig = {
 
 /**
  * Charts on the superadmin, disnakertrans and admin dashboards (GET /api/stats/overview): activity per day,
- * product status, UMKM per category, accounts per role (only the roles the user may see).
+ * product status, products per category, accounts per role (only the roles the user may see).
  */
 export function DashboardStats() {
   const [days, setDays] = useState(30);
@@ -175,10 +175,10 @@ export function DashboardStats() {
               )}
             </ChartCard>
 
-            <ChartCard title="UMKM per Kategori" description={`${s.tenants.total} UMKM`}>
-              {s.tenants.byCategory.length ? (
+            <ChartCard title="Produk per Kategori" description={`${s.products.total} produk`}>
+              {s.products.byCategory.length ? (
                 <ChartContainer config={categoryConfig} className="aspect-auto h-[240px] w-full">
-                  <BarChart data={s.tenants.byCategory} layout="vertical" margin={{ left: 8, right: 16 }}>
+                  <BarChart data={s.products.byCategory} layout="vertical" margin={{ left: 8, right: 16 }}>
                     <CartesianGrid horizontal={false} />
                     <XAxis type="number" allowDecimals={false} tickLine={false} axisLine={false} />
                     <YAxis type="category" dataKey="name" tickLine={false} axisLine={false} width={110} tick={{ fontSize: 12 }} />

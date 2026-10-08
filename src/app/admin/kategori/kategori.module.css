@@ -83,3 +83,12 @@
   white-space: normal;
   overflow-wrap: anywhere;
 }
+
+.thumb {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto;
+  border-radius: 8px;
+  object-fit: cover;
+  background: var(--gray-200);
+}

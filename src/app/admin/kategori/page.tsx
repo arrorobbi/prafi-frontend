@@ -4,9 +4,11 @@ import { useState } from "react";
 import { IconPencil, IconPlus, IconTrash } from "@/components/Icons";
 import { ConfirmDialog } from "@/components/Modal";
 import { useToast } from "@/components/Toast";
-import { EmptyState, Loading, PageHeader } from "@/components/ui";
-import { api, ApiError, errorMessage, fetchAll } from "@/lib/api";
-import type { TenantCategory } from "@/lib/types";
+import { EmptyState, ImagePicker, Loading, PageHeader, Thumb } from "@/components/ui";
+import { usePendingImage } from "@/components/UploadDialog";
+import { api, ApiError, errorMessage, fetchAll, type CategoryInput } from "@/lib/api";
+import { imageSrc } from "@/lib/format";
+import type { ProductCategory } from "@/lib/types";
 import { useAsync } from "@/lib/useAsync";
 import styles from "./kategori.module.css";
 import { Button } from "@/components/shadcn/button";
@@ -15,45 +17,59 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Alert } from "@/components/shadcn/alert";
 import { Card } from "@/components/shadcn/card";
 
-/** Tenant (UMKM) categories: GET/POST/PATCH/DELETE /api/tenant-categories. */
+/**
+ * Product categories: GET/POST/PATCH/DELETE /api/product-categories. Each may have an image (uploaded first via
+ * POST /api/images): the home page carousel shows it, with that category's products next to it.
+ */
 export default function CategoriesPage() {
   const toast = useToast();
-  const [editing, setEditing] = useState<TenantCategory | null>(null);
+  const photo = usePendingImage();
+  const [editing, setEditing] = useState<ProductCategory | null>(null);
   const [name, setName] = useState("");
+  /** Editing: the saved image is to be removed on Simpan */
+  const [removeImage, setRemoveImage] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [deleting, setDeleting] = useState<TenantCategory | null>(null);
+  const [deleting, setDeleting] = useState<ProductCategory | null>(null);
   const [deleteBusy, setDeleteBusy] = useState(false);
 
-  const { data, loading, error, reload } = useAsync(async () => {
-    const [categories, tenants] = await Promise.all([
-      fetchAll((p) => api.tenantCategories.list({ page: p, limit: 100 })),
-      fetchAll((p) => api.tenants.list({ page: p, limit: 100 })),
-    ]);
-    const counts = new Map<number, number>();
-    for (const t of tenants) counts.set(t.tenantCategoryId, (counts.get(t.tenantCategoryId) ?? 0) + 1);
-    return { categories, counts };
-  }, []);
+  const { data, loading, error, reload } = useAsync(
+    () => fetchAll((p) => api.productCategories.list({ page: p, limit: 100 })),
+    [],
+  );
 
-  const startEdit = (c: TenantCategory | null) => {
+  const startEdit = (c: ProductCategory | null) => {
+    if (photo.pending) void photo.discard();
     setEditing(c);
     setName(c?.name ?? "");
+    setRemoveImage(false);
     setFormError(null);
   };
+
+  const savedImage = editing && !removeImage ? editing.image : null;
+  const previewUrl = photo.previewUrl ?? (savedImage ? imageSrc(savedImage) : null);
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return setFormError("Nama kategori wajib diisi");
+    const newPhoto = photo.pending;
+    const input: Partial<CategoryInput> = {};
+    if (!editing || name.trim() !== editing.name) input.name = name.trim();
+    if (newPhoto) input.imageId = newPhoto.id;
+    else if (editing && removeImage && editing.imageId) input.imageId = null;
+    if (editing && Object.keys(input).length === 0) {
+      toast.info("Tidak ada perubahan");
+      return;
+    }
+
     setSaving(true);
     setFormError(null);
     try {
-      if (editing) {
-        await api.tenantCategories.update(editing.id, name.trim());
-        toast.success("Kategori diperbarui");
-      } else {
-        await api.tenantCategories.create(name.trim());
-        toast.success("Kategori ditambahkan");
-      }
+      const saved = editing
+        ? (await api.productCategories.update(editing.id, input)).data
+        : (await api.productCategories.create(input as CategoryInput)).data;
+      if (newPhoto) photo.saved(saved.imageId === newPhoto.id);
+      toast.success(editing ? "Kategori diperbarui" : "Kategori ditambahkan");
       startEdit(null);
       reload();
     } catch (err) {
@@ -67,14 +83,16 @@ export default function CategoriesPage() {
     if (!deleting) return;
     setDeleteBusy(true);
     try {
-      await api.tenantCategories.remove(deleting.id);
+      await api.productCategories.remove(deleting.id);
       toast.success("Kategori dihapus");
       if (editing?.id === deleting.id) startEdit(null);
       reload();
     } catch (err) {
       toast.error(
         "Gagal menghapus",
-        err instanceof ApiError && err.code === "STILL_IN_USE" ? "Kategori masih dipakai oleh profil UMKM." : errorMessage(err),
+        err instanceof ApiError && err.code === "STILL_IN_USE"
+          ? "Kategori masih dipakai oleh produk. Minta penjual memindahkan produknya ke kategori lain terlebih dahulu."
+          : errorMessage(err),
       );
     } finally {
       setDeleteBusy(false);
@@ -84,7 +102,8 @@ export default function CategoriesPage() {
 
   return (
     <>
-      <PageHeader title="KATEGORI UMKM" />
+      {photo.dialog}
+      <PageHeader title="KATEGORI PRODUK" />
       <div className={styles.layout}>
         <div>
           <Button type="button" variant="navy" className={styles.add} onClick={() => startEdit(null)}>
@@ -94,9 +113,9 @@ export default function CategoriesPage() {
             <Loading />
           ) : error ? (
             <Alert variant="destructive">{error}</Alert>
-          ) : data!.categories.length === 0 ? (
+          ) : data!.length === 0 ? (
             <Card>
-              <EmptyState title="Belum ada kategori">Tambahkan kategori agar penjual dapat membuat profil toko.</EmptyState>
+              <EmptyState title="Belum ada kategori">Tambahkan kategori agar penjual dapat memilihnya saat menambahkan produk.</EmptyState>
             </Card>
           ) : (
             <div className={styles.tableBox}>
@@ -104,17 +123,25 @@ export default function CategoriesPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>NO</TableHead>
+                    <TableHead>GAMBAR</TableHead>
                     <TableHead>NAMA KATEGORI</TableHead>
-                    <TableHead>JUMLAH UMKM</TableHead>
-                    <TableHead>AKSI</TableHead>
+                    <TableHead>JUMLAH PRODUK</TableHead>
+                    <TableHead className="col-actions">AKSI</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data!.categories.map((c, i) => (
+                  {data!.map((c, i) => (
                     <TableRow key={c.id} className={editing?.id === c.id ? styles.editingRow : ""}>
                       <TableCell>{i + 1}</TableCell>
+                      <TableCell>
+                        {c.image ? (
+                          <Thumb src={imageSrc(c.image)} alt={c.image.altText || c.name} className={styles.thumb} />
+                        ) : (
+                          <span className="muted">Belum ada</span>
+                        )}
+                      </TableCell>
                       <TableCell>{c.name.toUpperCase()}</TableCell>
-                      <TableCell>{data!.counts.get(c.id) ?? 0}</TableCell>
+                      <TableCell>{c.productCount}</TableCell>
                       <TableCell>
                         <span className="actions">
                           <Button type="button" variant="icon" size="icon" aria-label={`Ubah ${c.name}`} onClick={() => startEdit(c)}>
@@ -139,10 +166,37 @@ export default function CategoriesPage() {
             <span className={styles.formLabel}>Nama Kategori</span>
             <Input placeholder="Masukan nama kategori" value={name} onChange={(e) => setName(e.target.value)} />
           </label>
+          <div className="field">
+            <span className={styles.formLabel}>Gambar Carousel Beranda</span>
+            <ImagePicker
+              title="UNGGAH GAMBAR KATEGORI"
+              previewUrl={previewUrl}
+              pending={!!photo.pending}
+              onFile={(f) => {
+                setRemoveImage(false);
+                void photo.pick(f, name.trim() || "Gambar kategori");
+              }}
+            />
+            {previewUrl && (photo.pending || savedImage) && (
+              <Button
+                type="button"
+                variant="white"
+                size="sm"
+                className="self-start"
+                onClick={() => (photo.pending ? void photo.discard() : setRemoveImage(true))}
+              >
+                {photo.pending ? "Batalkan gambar baru" : "Hapus gambar"}
+              </Button>
+            )}
+            {removeImage && <span className={styles.note}>Gambar akan dihapus saat Simpan.</span>}
+          </div>
           {formError && <Alert variant="destructive">{formError}</Alert>}
-          <p className={styles.note}>Kategori dipakai penjual saat membuat profil toko (mis. Makanan Berat, Minuman, Kerajinan Tangan).</p>
+          <p className={styles.note}>
+            Penjual memilih kategori untuk setiap produknya (mis. Makanan Berat, Minuman, Kerajinan Tangan). Gambar kategori tampil di
+            carousel halaman Beranda, bersama produk dari kategori tersebut. Kategori tanpa gambar memakai foto produknya.
+          </p>
           <div className={styles.formButtons}>
-            <Button type="submit" variant="green" disabled={saving}>
+            <Button type="submit" variant="green" disabled={saving || photo.uploading}>
               {saving ? "Menyimpan..." : "Simpan"}
             </Button>
             <Button type="button" variant="red" onClick={() => startEdit(null)} disabled={saving}>
@@ -160,7 +214,7 @@ export default function CategoriesPage() {
         confirmLabel="Hapus"
         message={
           <>
-            Hapus kategori <strong>{deleting?.name}</strong>? Kategori yang masih dipakai oleh profil UMKM tidak dapat dihapus.
+            Hapus kategori <strong>{deleting?.name}</strong>? Kategori yang masih dipakai oleh produk tidak dapat dihapus.
           </>
         }
         onConfirm={remove}

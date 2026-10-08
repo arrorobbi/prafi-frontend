@@ -7,11 +7,15 @@ import type { NextConfig } from "next";
  */
 const API_URL = (process.env.API_URL ?? "https://api.transniaga.manokwarikab.go.id").replace(/\/+$/, "");
 
+/** This site's public address, for links shared outside it (e.g. the product link in a WhatsApp message). */
+const SITE_URL = (process.env.SITE_URL ?? "https://transniaga.manokwarikab.go.id").replace(/\/+$/, "");
+
 const nextConfig: NextConfig = {
   // Socket.IO's endpoint is "/socket.io/" with a trailing slash; don't redirect it away
   skipTrailingSlashRedirect: true,
   env: {
     NEXT_PUBLIC_API_URL: API_URL,
+    NEXT_PUBLIC_SITE_URL: SITE_URL,
   },
   async rewrites() {
     return [

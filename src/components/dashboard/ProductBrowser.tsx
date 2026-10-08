@@ -48,18 +48,14 @@ export function ProductBrowser({ detailHref }: { detailHref?: (p: Product) => st
   const [detail, setDetail] = useState<Product | null>(null);
 
   const { data, loading, error } = useAsync(async () => {
-    const [products, tenants] = await Promise.all([
+    const [products, categories] = await Promise.all([
       fetchAll((p) => api.products.list({ page: p, limit: 100 })),
-      fetchAll((p) => api.tenants.list({ page: p, limit: 100 })),
+      fetchAll((p) => api.productCategories.list({ page: p, limit: 100 })),
     ]);
-    return { products, tenants };
+    return { products, categories };
   }, []);
 
-  const categoryByOwner = useMemo(
-    () => new Map((data?.tenants ?? []).map((t) => [t.userId, t.category?.name ?? ""])),
-    [data],
-  );
-  const categories = useMemo(() => [...new Set([...categoryByOwner.values()].filter(Boolean))].sort(), [categoryByOwner]);
+  const categories = data?.categories ?? [];
   const sellers = useMemo(() => {
     const map = new Map<string, string>();
     for (const p of data?.products ?? []) map.set(p.tenantId, sellerName(p));
@@ -71,7 +67,7 @@ export function ProductBrowser({ detailHref }: { detailHref?: (p: Product) => st
     (p) =>
       (tab === "all" || productStatus(p) === tab) &&
       (!q || p.name.toLowerCase().includes(q) || sellerName(p).toLowerCase().includes(q)) &&
-      (!category || categoryByOwner.get(p.tenantId) === category) &&
+      (!category || String(p.categoryId ?? "") === category) &&
       (!seller || p.tenantId === seller),
   );
   const totalPages = Math.max(1, Math.ceil(list.length / PER_PAGE));
@@ -95,8 +91,8 @@ export function ProductBrowser({ detailHref }: { detailHref?: (p: Product) => st
         <NativeSelect wrapperClassName="w-auto max-sm:w-full" className={"h-[38px] min-w-[200px] rounded-full border-0 bg-brand-orange pr-11 pl-5 text-[0.88rem] font-medium text-white [&>option]:text-foreground"} value={category} onChange={(e) => reset(setCategory)(e.target.value)} aria-label="Kategori">
           <option value="">Semua Kategori</option>
           {categories.map((c) => (
-            <option key={c} value={c}>
-              {c}
+            <option key={c.id} value={c.id}>
+              {c.name}
             </option>
           ))}
         </NativeSelect>
@@ -140,7 +136,7 @@ export function ProductBrowser({ detailHref }: { detailHref?: (p: Product) => st
                       </TableCell>
                       <TableCell data-label="Nama Produk">{p.name}</TableCell>
                       <TableCell data-label="Nama Penjual">{sellerName(p)}</TableCell>
-                      <TableCell data-label="Kategori">{categoryByOwner.get(p.tenantId) || "-"}</TableCell>
+                      <TableCell data-label="Kategori">{p.category?.name ?? "-"}</TableCell>
                       <TableCell data-label="Tanggal">
                         {formatDate(p.createdAt)}
                         <br />
@@ -171,14 +167,14 @@ export function ProductBrowser({ detailHref }: { detailHref?: (p: Product) => st
       </div>
 
       <Modal open={!!detail} title={detail?.name ?? ""} onClose={() => setDetail(null)} wide>
-        {detail && <ProductDetail product={detail} category={categoryByOwner.get(detail.tenantId)} />}
+        {detail && <ProductDetail product={detail} />}
       </Modal>
     </>
   );
 }
 
 /** Read-only product facts (superadmin and disnakertrans cannot approve products). */
-function ProductDetail({ product, category }: { product: Product; category?: string }) {
+function ProductDetail({ product }: { product: Product }) {
   const status = productStatus(product);
   const reason = approvalReason(product);
   return (
@@ -205,8 +201,8 @@ function ProductDetail({ product, category }: { product: Product; category?: str
           <dd>{formatRupiah(product.price)}</dd>
         </div>
         <div>
-          <dt className="label">Rekomendasi Penjual</dt>
-          <dd>{product.isRecommended ? "Ya, tampil di rekomendasi" : "Tidak"}</dd>
+          <dt className="label">Rekomendasi</dt>
+          <dd>{product.isRecommended ? "Ya, rata-rata ulasan 4,8 atau lebih" : "Tidak"}</dd>
         </div>
         <div>
           <dt className="label">Ulasan</dt>
@@ -222,8 +218,8 @@ function ProductDetail({ product, category }: { product: Product; category?: str
           </dd>
         </div>
         <div>
-          <dt className="label">Kategori UMKM</dt>
-          <dd>{category || "-"}</dd>
+          <dt className="label">Kategori Produk</dt>
+          <dd>{product.category?.name ?? "-"}</dd>
         </div>
         <div>
           <dt className="label">Diajukan</dt>

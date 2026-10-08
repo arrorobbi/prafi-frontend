@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { api, ApiError, errorMessage, type ProductInput } from "@/lib/api";
+import { useEffect, useState } from "react";
+import { api, ApiError, errorMessage, fetchAll, type ProductInput } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { formatRupiah, imageSrc, productStatus } from "@/lib/format";
 import { useTenantProfile } from "@/lib/tenantProfile";
-import type { Product } from "@/lib/types";
+import type { Product, ProductCategory } from "@/lib/types";
 import { IconWarning } from "../Icons";
 import { useToast } from "../Toast";
 import { ImagePicker } from "../ui";
@@ -17,7 +17,7 @@ import { Button, buttonVariants } from "@/components/shadcn/button";
 import { Input } from "@/components/shadcn/input";
 import { Textarea } from "@/components/shadcn/textarea";
 import { Alert } from "@/components/shadcn/alert";
-import { Checkbox } from "../shadcn/checkbox";
+import { NativeSelect } from "@/components/shadcn/native-select";
 
 interface Values {
   name: string;
@@ -25,7 +25,8 @@ interface Values {
   price: string;
   description: string;
   details: string;
-  isRecommended: boolean;
+  /** Product category id, "" = not picked yet */
+  categoryId: string;
 }
 
 /** Profile fields the API reports as missing (GET /api/tenants/me → missingFields), as the tenant knows them. */
@@ -39,7 +40,6 @@ const PROFILE_FIELD_LABEL: Record<string, string> = {
   fbLink: "Tautan Facebook",
   gmapsLink: "Tautan Google Maps",
   logoId: "Logo Toko",
-  tenantCategoryId: "Kategori Usaha",
   faceImageId: "Foto Profil Akun",
 };
 
@@ -62,8 +62,20 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
     price: product ? String(product.price) : "",
     description: product?.description ?? "",
     details: product?.details ?? "",
-    isRecommended: product?.isRecommended ?? false,
+    categoryId: product?.categoryId ? String(product.categoryId) : "",
   });
+  const [categories, setCategories] = useState<ProductCategory[] | null>(null);
+  const [categoryError, setCategoryError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchAll((p) => api.productCategories.list({ page: p, limit: 100 }))
+      .then(setCategories)
+      .catch((err) => {
+        // Keep the product's current category selectable when the list can't load
+        setCategoryError(`Daftar kategori produk gagal dimuat: ${errorMessage(err)}`);
+        setCategories(product?.category ? [{ ...product.category, imageId: null, image: null, productCount: 0 }] : []);
+      });
+  }, [product?.category]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const resubmit = !!product && productStatus(product) !== "active";
@@ -83,6 +95,7 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
   const validate = () => {
     const e: Record<string, string> = {};
     if (!values.name.trim()) e.name = "Nama produk wajib diisi";
+    if (!values.categoryId) e.categoryId = "Pilih kategori produk";
     if (!values.price) e.price = "Harga wajib diisi";
     else if (Number(values.price) > MAX_PRICE) e.price = "Harga terlalu besar";
     if (!values.description.trim()) e.description = "Deskripsi produk wajib diisi";
@@ -108,7 +121,7 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
       price: Number(values.price),
       description: values.description.trim(),
       details: values.details.trim(),
-      isRecommended: values.isRecommended,
+      categoryId: Number(values.categoryId),
     };
 
     // Editing: only what changed (a new photo always counts as a change)
@@ -203,17 +216,32 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
           {values.price && !errors.price && <span className="hint">{formatRupiah(Number(values.price))}</span>}
           {errors.price && <span className="field-error">{errors.price}</span>}
         </label>
-        <label className={styles.check}>
-          <Checkbox
-            checked={values.isRecommended}
-            onCheckedChange={(checked) => setValues((v) => ({ ...v, isRecommended: checked === true }))}
-            className="mt-0.5 size-5 border-brand-orange data-[state=checked]:border-brand-orange data-[state=checked]:bg-brand-orange"
-          />
-          <span>
-            <strong>Jadikan produk rekomendasi</strong>
-            <small>Produk rekomendasi ditampilkan di halaman utama setelah disetujui.</small>
-          </span>
+        <label className="field">
+          <span className="label">Kategori Produk</span>
+          <NativeSelect
+            value={values.categoryId}
+            onChange={(e) => setValues((v) => ({ ...v, categoryId: e.target.value }))}
+            disabled={!categories}
+          >
+            <option value="" disabled>
+              {categories ? (categories.length ? "Pilih kategori" : "Belum ada kategori") : "Memuat..."}
+            </option>
+            {(categories ?? []).map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </NativeSelect>
+          {errors.categoryId && <span className="field-error">{errors.categoryId}</span>}
+          {categoryError && <span className="field-error">{categoryError}</span>}
+          {categories && categories.length === 0 && !categoryError && (
+            <span className="hint">Belum ada kategori produk. Hubungi administrator untuk menambahkannya.</span>
+          )}
         </label>
+        <p className="hint">
+          Produk otomatis menjadi <strong>rekomendasi</strong> (tampil di halaman utama) bila rata-rata ulasan pembeli mencapai 4,8
+          bintang atau lebih.
+        </p>
       </div>
       <label className={`field ${styles.full}`}>
         <span className="label">Deskripsi Produk</span>

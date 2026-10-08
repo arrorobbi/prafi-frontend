@@ -37,27 +37,6 @@
   }
 }
 
-.check {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: var(--radius-sm);
-  background: var(--gray-100);
-  cursor: pointer;
-}
-
-.check span {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.check small {
-  color: var(--gray-700);
-  font-size: 0.82rem;
-}
-
 .fixLinks {
   display: flex;
   flex-wrap: wrap;
