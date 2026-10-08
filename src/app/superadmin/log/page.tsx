@@ -95,9 +95,10 @@ export default function LogsPage() {
     <>
       <PageHeader title="LOG API" />
       <p className="muted" style={{ marginBottom: 14 }}>
-        Setiap perubahan data lewat API (tambah, ubah, hapus), baik yang berhasil maupun yang gagal, terbaru di atas. Permintaan
-        baca (GET) tidak dicatat. Yang disimpan hanya nama field yang dikirim dan ringkasan hasil (mis. nama, email,
-        status), tidak pernah isi password atau token.
+        Setiap perubahan data (tambah, ubah, hapus) oleh pengguna yang login, baik yang berhasil maupun yang gagal,
+        terbaru di atas. Permintaan baca (GET) dan permintaan tamu (login, pendaftaran, ulasan, bot) tidak dicatat. Yang
+        disimpan hanya nama field yang dikirim dan ringkasan hasil (mis. nama, email, status), tidak pernah isi password
+        atau token.
       </p>
 
       <form className={s.filters} onSubmit={apply}>
