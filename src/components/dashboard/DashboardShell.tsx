@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { roleHome, useAuth } from "@/lib/auth";
 import { fullName, imageSrc } from "@/lib/format";
 import { NotificationProvider, useNotifications } from "@/lib/notifications";
+import { RealtimeProvider } from "@/lib/realtime";
 import { cleanupStaleUploads, discardOnUnload } from "@/lib/pendingUploads";
 import type { Role } from "@/lib/types";
 import { IconClose, IconLogout, IconMenu, IconUser } from "../Icons";
@@ -115,6 +116,7 @@ export function DashboardShell({
 
   return (
     <LeaveGuardProvider onUnload={discardOnUnload}>
+    <RealtimeProvider>
     <NotificationProvider>
       <div className={styles.shell}>
         <div className={styles.topbar}>
@@ -139,6 +141,7 @@ export function DashboardShell({
         <main className={styles.main}>{children}</main>
       </div>
     </NotificationProvider>
+    </RealtimeProvider>
     </LeaveGuardProvider>
   );
 }

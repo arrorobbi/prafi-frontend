@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "@/components/dashboard/dashboard.module.css";
 import { ROLE_LABEL } from "@/components/dashboard/UserAccounts";
 import { Modal } from "@/components/Modal";
@@ -8,6 +8,7 @@ import { EmptyState, Loading, PageHeader, Pagination } from "@/components/ui";
 import { api } from "@/lib/api";
 import { formatDate, formatRupiah, formatTime } from "@/lib/format";
 import type { ApiLog, LogLevel, LogSummary } from "@/lib/types";
+import { useRealtime, useRealtimeStatus } from "@/lib/realtime";
 import { useAsync } from "@/lib/useAsync";
 import s from "./log.module.css";
 
@@ -32,6 +33,26 @@ function statusBadge(code: number) {
   if (code >= 400) return "badge badge-pending";
   if (code >= 300) return "badge badge-inactive";
   return "badge badge-active";
+}
+
+/** Whether a pushed row belongs in the list with these filters (same rules as GET /api/logs). */
+function matches(log: ApiLog, f: Filters) {
+  const status = log.statusCode;
+  if (f.result === "success" && status >= 400) return false;
+  if (f.result === "failed" && status < 400) return false;
+  if (f.result === "client" && log.level !== "warn") return false;
+  if (f.result === "server" && log.level !== "error") return false;
+  if (f.method && log.method !== f.method) return false;
+  const st = f.status.trim().toLowerCase();
+  if (/^[1-5]xx$/.test(st) && Math.floor(status / 100) !== Number(st[0])) return false;
+  if (/^[1-5]\d\d$/.test(st) && status !== Number(st)) return false;
+  const path = f.path.trim().toLowerCase();
+  if (path && !log.path.toLowerCase().includes(path)) return false;
+  const email = f.email.trim().toLowerCase();
+  if (email && !`${log.userEmail ?? ""} ${log.authEmail ?? ""}`.toLowerCase().includes(email)) return false;
+  if (f.from && new Date(log.createdAt) < new Date(`${f.from}T00:00:00`)) return false;
+  if (f.to && new Date(log.createdAt) > new Date(`${f.to}T23:59:59.999`)) return false;
+  return true;
 }
 
 /** One line for the table: what was created/changed (name, email, price, status), or how many rows a list had */
@@ -66,7 +87,7 @@ export default function LogsPage() {
   const [page, setPage] = useState(1);
   const [openId, setOpenId] = useState<number | null>(null);
 
-  const { data, loading, error, reload } = useAsync(
+  const { data, loading, error, reload, setData } = useAsync(
     () =>
       api.logs.list({
         page,
@@ -81,6 +102,39 @@ export default function LogsPage() {
       }),
     [page, filters],
   );
+
+  // Live: rows saved while this page is open (log:new over Socket.IO)
+  const live = useRealtimeStatus();
+  const [waiting, setWaiting] = useState(0);
+  const [fresh, setFresh] = useState<Set<number>>(new Set());
+  useEffect(() => setWaiting(0), [page, filters]);
+
+  useRealtime<{ log?: ApiLog }>("log:new", ({ log } = {}) => {
+    if (!log || !matches(log, filters)) return;
+    // On page 1 the row goes straight to the top; elsewhere it would shift the list, so just count it
+    if (page !== 1 || !data) return setWaiting((n) => n + 1);
+    setData((d) => {
+      if (!d || d.data.some((x) => x.id === log.id)) return d;
+      const total = (d.meta?.total ?? d.data.length) + 1;
+      return {
+        ...d,
+        data: [log, ...d.data].slice(0, LIMIT),
+        meta: { ...(d.meta ?? { page: 1, limit: LIMIT, total: 0, totalPages: 1 }), total, totalPages: Math.ceil(total / LIMIT) },
+      };
+    });
+    setFresh((prev) => new Set(prev).add(log.id));
+    setTimeout(() => setFresh((prev) => {
+      const next = new Set(prev);
+      next.delete(log.id);
+      return next;
+    }), 4000);
+  });
+
+  const showWaiting = () => {
+    setWaiting(0);
+    if (page === 1) reload();
+    else setPage(1);
+  };
 
   const set = (key: keyof Filters) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setDraft((f) => ({ ...f, [key]: e.target.value }));
@@ -160,6 +214,14 @@ export default function LogsPage() {
       <div className={styles.panel}>
         <div className={`${styles.toolbar}`}>
           <span className="muted">{data?.meta ? `${data.meta.total} log` : ""}</span>
+          <span className={live ? s.live : s.offline} title={live ? "Log baru muncul otomatis" : "Tidak terhubung: gunakan Muat Ulang"}>
+            {live ? "● Live" : "○ Offline"}
+          </span>
+          {waiting > 0 && (
+            <button type="button" className="btn btn-orange btn-sm" onClick={showWaiting}>
+              {waiting} log baru · Tampilkan
+            </button>
+          )}
           <span className={styles.toolbarSpacer} />
           <button type="button" className="btn btn-light btn-sm" onClick={reload} disabled={loading}>
             {loading ? "Memuat..." : "Muat Ulang"}
@@ -188,7 +250,10 @@ export default function LogsPage() {
                 </thead>
                 <tbody>
                   {data!.data.map((log) => (
-                    <tr key={log.id} className={log.statusCode >= 400 ? s.failedRow : undefined}>
+                    <tr
+                      key={log.id}
+                      className={[log.statusCode >= 400 ? s.failedRow : "", fresh.has(log.id) ? s.freshRow : ""].join(" ").trim() || undefined}
+                    >
                       <td data-label="Waktu">{when(log.createdAt)}</td>
                       <td data-label="Permintaan" className={s.mono}>
                         <span className={s.method}>{log.method}</span> {log.path}

@@ -106,23 +106,20 @@ productStatus`):
 
 ### Realtime
 
-The unread badge polls `GET /api/notifications/unread-count` every 30 s and on tab focus. The backend also pushes
-`notification:new` / `session:ended` over Socket.IO (already proxied at `/socket.io/`); switching to it needs the
-`socket.io-client` package, which is not installed yet.
+The dashboards keep one Socket.IO connection per signed-in tab (`src/lib/realtime.tsx`, `socket.io-client`), through
+this site's own `/socket.io/` proxy (`next.config.ts`), authenticated with the login token:
+
+- `notification:new` / `notification:unread-count` update the bell badge and open notification lists right away
+  (`GET /api/notifications/unread-count` is still polled every 60 s and on tab focus as a fallback)
+- `log:new` adds new rows to the superadmin's *Log API* page live (a "● Live" badge shows the connection)
+- `session:ended` logs the tab out (expired, logged out elsewhere, deactivated, password reset)
 
 ## Known API gaps (frontend works around them)
 
-1. **No price field** on products — cards show stock (`qty`) instead; sellers can write the price in *Informasi Produk*.
-2. **Tenant categories are readable only by superadmin/admin** — sellers get 403 when creating their shop profile, so
-   they cannot pick a category. Fix in the backend: add `ROLES.TENANT` to `TENANT_CATEGORY_READER_ROLES`
-   (`src/constants/roles.ts`). The profile form shows a warning until then.
-3. **Public endpoints only list approved products** — no public product detail, category, seller profile, WhatsApp
-   or area data. Landing "Kategori"/"Wilayah" menus from the design are therefore replaced by *Produk* and *UMKM*, and
-   detail/seller pages filter the public list.
-4. **No rejection notification** for the seller (`PRODUCT_DEACTIVATED` goes to superadmins only); sellers see the
-   status and reason under *Produk Ditolak*.
-5. **No banner/announcement API** — the design's *Banner & Informasi* admin page is not built.
-6. Registration step *Unggah Foto KTP* is not built: image upload requires login, and there is no KTP field.
+1. **No banner/announcement API** — the design's *Banner & Informasi* admin page is not built.
+2. Registration step *Unggah Foto KTP* is not built: image upload requires login, and there is no KTP field.
+3. The landing "Kategori"/"Wilayah" menus from the design are replaced by *Produk* and *UMKM* (the UMKM directory
+   shows each UMKM's category and area).
 
 ## Deploy
 

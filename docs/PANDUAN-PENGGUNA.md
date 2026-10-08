@@ -126,7 +126,7 @@ halaman `/panduan`.
 
 ### 2.6 Notifikasi
 
-Menu **Notifikasi** (dengan angka belum dibaca) memiliki tab *Semua*, *Belum Dibaca*, dan *Dibaca*. Klik notifikasi
+Notifikasi baru langsung muncul tanpa memuat ulang halaman. Menu **Notifikasi** (dengan angka belum dibaca) memiliki tab *Semua*, *Belum Dibaca*, dan *Dibaca*. Klik notifikasi
 untuk membuka halaman terkait; klik **Tandai semua sebagai sudah dibaca** untuk membersihkan badge.
 
 Penjual menerima notifikasi untuk setiap perubahan pada produknya:
@@ -233,7 +233,7 @@ Akun superadmin dibuat oleh pengelola server. Superadmin **hanya membaca** data,
 | Akun Disnakertrans | **TAMBAH AKUN**: isi nama, telepon, email, dan password. Sistem mengirim tautan aktivasi ke email; berikan password secara langsung. Bila tautan kedaluwarsa, klik **Kirim Ulang Verifikasi** |
 | Semua Pengguna | Semua akun, disaring per role |
 | Data Produk / Data UMKM / Kategori UMKM | Melihat data (hanya baca) |
-| Log API | Catatan setiap penambahan, perubahan, dan penghapusan data **oleh pengguna yang login**, serta **semua aktivitas akun** (login, password/email salah, daftar, OTP, lupa/reset password, logout) termasuk dari tamu beserta **email yang dicoba**, baik yang berhasil maupun yang gagal. Permintaan baca dan permintaan tamu lainnya (ulasan, bot) tidak dicatat. Isi: siapa, kapan, field yang dikirim, dan ringkasan hasil atau error-nya. Filter **Hasil** (Berhasil / Gagal), method, status, path, email (pengguna atau email yang dicoba), dan tanggal |
+| Log API | Catatan setiap penambahan, perubahan, dan penghapusan data **oleh pengguna yang login**, serta **semua aktivitas akun** (login, password/email salah, daftar, OTP, lupa/reset password, logout) termasuk dari tamu beserta **email yang dicoba**, baik yang berhasil maupun yang gagal. Permintaan baca dan permintaan tamu lainnya (ulasan, bot) tidak dicatat. Isi: siapa, kapan, field yang dikirim, dan ringkasan hasil atau error-nya. Filter **Hasil** (Berhasil / Gagal), method, status, path, email (pengguna atau email yang dicoba), dan tanggal. Log baru muncul otomatis (tanda **● Live**) |
 | Notifikasi | Akun baru, produk baru, serta akun yang dinonaktifkan dan produk tayang yang diturunkan |
 
 ![Tambah akun Disnakertrans](../public/panduan/superadmin-1-tambah.jpg)

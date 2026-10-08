@@ -222,7 +222,8 @@ export const GUIDES: Guide[] = [
     body: (
       <Steps>
         <Step image="notifikasi-1" alt="Halaman notifikasi">
-          Menu <b>Notifikasi</b> (dengan angka belum dibaca) memiliki tab <b>Semua</b>, <b>Belum Dibaca</b>, dan{" "}
+          Notifikasi baru langsung muncul (angka di menu <b>Notifikasi</b> bertambah seketika, tanpa memuat ulang
+          halaman). Menu <b>Notifikasi</b> memiliki tab <b>Semua</b>, <b>Belum Dibaca</b>, dan{" "}
           <b>Dibaca</b>. Klik notifikasi untuk membuka halaman terkait, atau klik{" "}
           <b>Tandai semua sebagai sudah dibaca</b>.
         </Step>
@@ -345,7 +346,8 @@ export const GUIDES: Guide[] = [
           penambahan, perubahan, dan penghapusan data oleh pengguna yang login, serta semua aktivitas akun (login,
           password salah, daftar, OTP, lupa/reset password) termasuk dari tamu beserta email yang dicoba, baik yang
           berhasil maupun yang gagal. Permintaan baca dan permintaan tamu lainnya tidak dicatat. Gunakan filter{" "}
-          <b>Hasil</b> untuk melihat yang gagal dan filter <b>Email</b> untuk mencari satu akun.
+          <b>Hasil</b> untuk melihat yang gagal dan filter <b>Email</b> untuk mencari satu akun. Log baru muncul otomatis
+          di halaman ini (tanda <b>● Live</b>) tanpa perlu memuat ulang.
         </p>
       </>
     ),
