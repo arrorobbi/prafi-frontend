@@ -16,13 +16,24 @@ export function Stars({ value, size = "md" }: { value: number; size?: "sm" | "md
 }
 
 /** "★ 4,5 (12 ulasan)", or "Belum ada ulasan". */
-export function RatingSummary({ average, count, size = "sm" }: { average: number | null; count: number; size?: "sm" | "md" | "lg" }) {
+export function RatingSummary({
+  average,
+  count,
+  size = "sm",
+  compact,
+}: {
+  average: number | null;
+  count: number;
+  size?: "sm" | "md" | "lg";
+  /** Narrow cards: "(2)" instead of "(2 ulasan)", so it fits on one line */
+  compact?: boolean;
+}) {
   if (!count || average == null) return <span className={styles.none}>Belum ada ulasan</span>;
   return (
-    <span className={styles.summary}>
+    <span className={styles.summary} title={compact ? `${formatRating(average)} dari ${count} ulasan` : undefined}>
       <Stars value={average} size={size} />
       <strong>{formatRating(average)}</strong>
-      <span className={styles.count}>({count} ulasan)</span>
+      <span className={styles.count}>({compact ? count : `${count} ulasan`})</span>
     </span>
   );
 }

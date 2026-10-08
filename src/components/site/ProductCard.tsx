@@ -21,7 +21,10 @@ export function ProductCard({ product, small, recommended }: { product: Product;
         <h3 className={styles.name}>{product.name}</h3>
         <p className={styles.seller}>{sellerName(product)}</p>
         <p className={styles.stock}>{formatRupiah(product.price)}</p>
-        <RatingSummary average={product.ratingAverage} count={product.reviewCount} />
+        {/* Fixed one-line row: cards with and without reviews are the same height */}
+        <div className={styles.rating}>
+          <RatingSummary average={product.ratingAverage} count={product.reviewCount} compact />
+        </div>
       </div>
     </Link>
   );

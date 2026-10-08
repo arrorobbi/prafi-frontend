@@ -1,6 +1,7 @@
 .card {
   display: flex;
   flex-direction: column;
+  height: 100%;
   gap: 8px;
   padding: 8px 8px 14px;
   border-radius: 16px;
@@ -76,6 +77,19 @@
   color: var(--navy);
   font-size: 1.05rem;
   font-weight: 700;
+}
+
+/* Always one line of the same height, with or without reviews */
+.rating {
+  display: flex;
+  align-items: center;
+  height: 1.5rem;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.rating > span {
+  flex-wrap: nowrap;
 }
 
 .small .name {
