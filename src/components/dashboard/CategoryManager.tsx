@@ -18,7 +18,7 @@ import { Alert } from "@/components/shadcn/alert";
 import { Card } from "@/components/shadcn/card";
 
 /**
- * Product categories: GET/POST/PATCH/DELETE /api/product-categories. Each may have an image (uploaded first via
+ * Product categories: GET/POST/PATCH/DELETE /api/product-categories. Each must have an image (uploaded first via
  * POST /api/images): the home page carousel shows it, with that category's products next to it. Used by the admin
  * and disnakertrans dashboards (both manage categories).
  */
@@ -27,8 +27,6 @@ export function CategoryManager() {
   const photo = usePendingImage();
   const [editing, setEditing] = useState<ProductCategory | null>(null);
   const [name, setName] = useState("");
-  /** Editing: the saved image is to be removed on Simpan */
-  const [removeImage, setRemoveImage] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<ProductCategory | null>(null);
@@ -43,21 +41,22 @@ export function CategoryManager() {
     if (photo.pending) void photo.discard();
     setEditing(c);
     setName(c?.name ?? "");
-    setRemoveImage(false);
     setFormError(null);
   };
 
-  const savedImage = editing && !removeImage ? editing.image : null;
+  const savedImage = editing?.image ?? null;
   const previewUrl = photo.previewUrl ?? (savedImage ? imageSrc(savedImage) : null);
+  const missing = (data ?? []).filter((c) => !c.image);
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return setFormError("Nama kategori wajib diisi");
     const newPhoto = photo.pending;
+    // Every category needs its carousel image (older ones without one get it on their next save)
+    if (!newPhoto && !savedImage) return setFormError("Gambar kategori wajib diunggah");
     const input: Partial<CategoryInput> = {};
     if (!editing || name.trim() !== editing.name) input.name = name.trim();
     if (newPhoto) input.imageId = newPhoto.id;
-    else if (editing && removeImage && editing.imageId) input.imageId = null;
     if (editing && Object.keys(input).length === 0) {
       toast.info("Tidak ada perubahan");
       return;
@@ -110,6 +109,12 @@ export function CategoryManager() {
           <Button type="button" variant="navy" className={styles.add} onClick={() => startEdit(null)}>
             <IconPlus /> TAMBAH KATEGORI
           </Button>
+          {missing.length > 0 && (
+            <Alert variant="warning" className="mb-3.5">
+              {missing.length} kategori belum memiliki gambar ({missing.map((c) => c.name).join(", ")}). Gambar wajib: klik ikon
+              pensil lalu unggah gambarnya.
+            </Alert>
+          )}
           {loading && !data ? (
             <Loading />
           ) : error ? (
@@ -138,7 +143,7 @@ export function CategoryManager() {
                         {c.image ? (
                           <Thumb src={imageSrc(c.image)} alt={c.image.altText || c.name} className={styles.thumb} />
                         ) : (
-                          <span className="muted">Belum ada</span>
+                          <span className={styles.missing}>Belum ada (wajib)</span>
                         )}
                       </TableCell>
                       <TableCell>{c.name.toUpperCase()}</TableCell>
@@ -173,28 +178,19 @@ export function CategoryManager() {
               title="UNGGAH GAMBAR KATEGORI"
               previewUrl={previewUrl}
               pending={!!photo.pending}
-              onFile={(f) => {
-                setRemoveImage(false);
-                void photo.pick(f, name.trim() || "Gambar kategori");
-              }}
+              onFile={(f) => void photo.pick(f, name.trim() || "Gambar kategori")}
             />
-            {previewUrl && (photo.pending || savedImage) && (
-              <Button
-                type="button"
-                variant="white"
-                size="sm"
-                className="self-start"
-                onClick={() => (photo.pending ? void photo.discard() : setRemoveImage(true))}
-              >
-                {photo.pending ? "Batalkan gambar baru" : "Hapus gambar"}
+            {photo.pending && (
+              <Button type="button" variant="white" size="sm" className="self-start" onClick={() => void photo.discard()}>
+                Batalkan gambar baru
               </Button>
             )}
-            {removeImage && <span className={styles.note}>Gambar akan dihapus saat Simpan.</span>}
           </div>
           {formError && <Alert variant="destructive">{formError}</Alert>}
           <p className={styles.note}>
-            Penjual memilih kategori untuk setiap produknya (mis. Makanan Berat, Minuman, Kerajinan Tangan). Gambar kategori tampil di
-            carousel halaman Beranda, bersama produk dari kategori tersebut. Kategori tanpa gambar memakai foto produknya.
+            Penjual memilih kategori untuk setiap produknya (mis. Makanan Berat, Minuman, Kerajinan Tangan). Gambar kategori{" "}
+            <strong>wajib</strong> dan tampil di carousel halaman Beranda, bersama produk dari kategori tersebut. Gambar dapat diganti,
+            tetapi tidak dapat dihapus.
           </p>
           <div className={styles.formButtons}>
             <Button type="submit" variant="green" disabled={saving || photo.uploading}>

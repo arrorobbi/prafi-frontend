@@ -92,3 +92,9 @@
   object-fit: cover;
   background: var(--gray-200);
 }
+
+.missing {
+  color: #d31919;
+  font-size: 0.8rem;
+  font-weight: 600;
+}

@@ -180,7 +180,7 @@ Penjual menerima notifikasi untuk setiap perubahan pada produknya:
 | Dashboard | Ringkasan: total UMKM, total produk, menunggu verifikasi, aktif, ditolak, dinonaktifkan (dapat disaring per rentang waktu), dan grafik **Statistik**: aktivitas per hari, status produk, produk per kategori, akun penjual (7 / 30 / 90 hari) |
 | Konfirmasi Produk | Daftar produk yang menunggu keputusan. ✔ untuk menerima, ✖ untuk menolak dengan alasan, atau **Lihat Detail** |
 | Manajemen Produk | Semua produk dengan tab status, pencarian, filter kategori, dan filter penjual |
-| Kategori Produk | Tambah, ubah, dan hapus kategori produk beserta **gambarnya** (gambar tampil di carousel Beranda). Kategori yang masih dipakai produk tidak bisa dihapus |
+| Kategori Produk | Tambah, ubah, dan hapus kategori produk beserta **gambarnya** (wajib; tampil di carousel Beranda, dapat diganti tetapi tidak dihapus). Kategori yang masih dipakai produk tidak bisa dihapus |
 | Manajemen UMKM | *Akun Penjual*: aktifkan/nonaktifkan akun. *Profil Toko*: detail toko, WhatsApp, lokasi |
 | Notifikasi | Produk baru diajukan, produk diperbarui, penjual baru, profil toko diperbarui |
 | Pengaturan Administrator | Data akun, foto, dan password |
@@ -218,7 +218,7 @@ yang diberikan superadmin.
 | Aktivasi Admin | Aktifkan atau nonaktifkan akun admin (alasan opsional). Admin baru hanya bisa login setelah diaktifkan |
 | Konfirmasi Produk | Menyetujui, menolak (dengan alasan), atau menonaktifkan produk — sama seperti admin |
 | Data Produk / Data UMKM | Melihat semua produk dan profil toko; produk dibuka ke halaman konfirmasinya |
-| Kategori Produk | Tambah, ubah, dan hapus kategori produk beserta gambarnya (carousel Beranda) — sama seperti admin |
+| Kategori Produk | Tambah, ubah, dan hapus kategori produk beserta gambarnya (wajib; carousel Beranda) — sama seperti admin |
 | Notifikasi | *Admin Baru Menunggu Aktivasi*, serta notifikasi produk yang sama dengan admin (produk baru, diperbarui, ditayangkan) |
 
 ![Aktivasi admin](../public/panduan/disnakertrans-1-aktivasi.jpg)

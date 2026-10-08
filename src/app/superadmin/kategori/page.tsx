@@ -42,7 +42,7 @@ export default function CategoriesPage() {
                   <TableRow key={c.id}>
                     <TableCell data-label="No">{i + 1}</TableCell>
                     <TableCell data-label="Gambar">
-                      {c.image ? <Thumb src={imageSrc(c.image)} alt={c.image.altText || c.name} className="thumb" /> : <span className="muted">Belum ada</span>}
+                      {c.image ? <Thumb src={imageSrc(c.image)} alt={c.image.altText || c.name} className="thumb" /> : <span className="muted">Belum ada (wajib)</span>}
                     </TableCell>
                     <TableCell data-label="Kategori">{c.name}</TableCell>
                     <TableCell data-label="Jumlah Produk">{c.productCount}</TableCell>
