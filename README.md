@@ -57,7 +57,7 @@ in the **backend** `.env` to this site's URL.
 | `/lupa-password`, `/reset-password` | public | Forgot / reset password |
 | `/admin/*` | admin | Dashboard, Konfirmasi Produk, Manajemen Produk, Kategori Produk (with carousel image), Manajemen UMKM, Notifikasi, Pengaturan |
 | `/tenant/*` | tenant | Dashboard, Produk Saya, Tambah/Ubah Produk, Produk Ditolak, Profil UMKM, Notifikasi, Bantuan, Pengaturan |
-| `/superadmin/*` | superadmin | Dashboard, Akun Disnakertrans (create + resend activation), Semua Pengguna, Data Produk, Data UMKM, Kategori Produk (read-only), Log API (signed-in users' create/update/delete requests and every auth action incl. guests' failed logins with the email tried, successful and failed, with result summary), Notifikasi, Pengaturan |
+| `/superadmin/*` | superadmin | Dashboard, Akun Disnakertrans (create + resend activation), Semua Pengguna, Data Produk, Data UMKM, Kategori Produk (read-only), Panduan Server (sidebar link to the backend's `/api/docs/server`, opens in a new tab with the same login), Log API (signed-in users' create/update/delete requests and every auth action incl. guests' failed logins with the email tried, successful and failed, with result summary), Notifikasi, Pengaturan |
 | `/disnakertrans/*` | disnakertrans | Dashboard, Aktivasi Admin (activate/deactivate admins), Konfirmasi Produk (approve/reject/deactivate, like admin), Data Produk, Kategori Produk (manage, like admin), Data UMKM, Notifikasi, Pengaturan |
 
 ## UI components (shadcn/ui + Tailwind)

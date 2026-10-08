@@ -195,6 +195,14 @@ export const IconThumb = (p: P) => (
     <path d="M2 10h4v11H2zM8 21h9.3a2 2 0 002-1.6l1.6-7.5A2 2 0 0019 9.5h-5.2l.8-3.8a1.8 1.8 0 00-3.2-1.5L8 9z" />
   </svg>
 );
+export const IconServer = (p: P) => (
+  <svg {...base(p)}>
+    <rect x="3" y="4" width="18" height="7" rx="2" />
+    <rect x="3" y="13" width="18" height="7" rx="2" />
+    <path d="M7 7.5h.01M7 16.5h.01" />
+  </svg>
+);
+
 export const IconDocs = (p: P) => (
   <svg {...base(p)}>
     <path d="M8 3h9l3 3v13H8z" />

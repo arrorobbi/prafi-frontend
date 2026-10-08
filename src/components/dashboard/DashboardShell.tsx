@@ -22,6 +22,8 @@ export interface NavItem {
   badge?: boolean;
   /** Match only this exact path (for the dashboard home). */
   exact?: boolean;
+  /** Not a dashboard page (e.g. the backend's server guide): a plain link that opens in a new tab. */
+  external?: boolean;
 }
 
 function Nav({ items, onNavigate }: { items: NavItem[]; onNavigate: () => void }) {
@@ -29,7 +31,16 @@ function Nav({ items, onNavigate }: { items: NavItem[]; onNavigate: () => void }
   const { unread } = useNotifications();
   return (
     <nav className={styles.nav} aria-label="Menu dashboard">
-      {items.map(({ href, label, icon: Icon, badge, exact }) => {
+      {items.map(({ href, label, icon: Icon, badge, exact, external }) => {
+        if (external) {
+          return (
+            <a key={href} href={href} target="_blank" rel="noopener" onClick={onNavigate}>
+              <Icon />
+              <span>{label}</span>
+              <span className="sr-only"> (tab baru)</span>
+            </a>
+          );
+        }
         const active = exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
         return (
           <Link key={href} href={href} className={active ? styles.active : ""} aria-current={active ? "page" : undefined} onClick={onNavigate}>
