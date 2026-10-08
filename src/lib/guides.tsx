@@ -301,7 +301,7 @@ export const GUIDES: Guide[] = [
           tunggu akun diaktifkan oleh Disnakertrans.
         </Step>
         <Step image="admin-1-kategori" alt="Halaman Kategori Produk">
-          <b>Kategori Produk</b>: isi nama kategori di panel oranye, unggah <b>gambarnya</b> (tampil di carousel Beranda),
+          <b>Kategori Produk</b>: isi nama kategori di panel oranye, unggah <b>gambarnya</b> (wajib; tampil di carousel Beranda, dapat diganti tetapi tidak dihapus),
           lalu klik <b>Simpan</b> (mis. Makanan Berat, Minuman). Penjual memilih kategori ini untuk setiap produk. Kategori
           yang masih dipakai produk tidak dapat dihapus.
         </Step>

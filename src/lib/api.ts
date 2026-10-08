@@ -233,8 +233,8 @@ export type TenantInput = {
 
 export type CategoryInput = {
   name: string;
-  /** null removes the image */
-  imageId?: number | null;
+  /** Required on create (upload it first); an update can replace it but not remove it */
+  imageId: number;
 };
 
 /** One function per endpoint in the API docs. */

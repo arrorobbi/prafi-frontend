@@ -113,9 +113,9 @@ they can add products.
 
 - **Product categories** (`/api/product-categories`, admin and disnakertrans manage, everyone reads; shared page
   `components/dashboard/CategoryManager.tsx`) belong to products (`categoryId`,
-  required in the product form); UMKM profiles no longer have one. Each category may have an image: the home page
-  (`components/site/HomeHero.tsx`) shows one carousel slide per category with approved products (its image, or its
-  best product's photo), and the cards beside it show that category's 3 best rated products.
+  required in the product form); UMKM profiles no longer have one. Each category must have an image (required on create, can be replaced but not removed): the home page
+  (`components/site/HomeHero.tsx`) shows one carousel slide per category with approved products (its image; older categories without one use
+  their best product's photo until an image is added), and the cards beside it show that category's 3 best rated products.
 - **Recommended** (`isRecommended`) is set by the backend: reviews average 4.8 stars or more. Tenants can't set it.
 - **WhatsApp buttons** open with a prefilled message (`lib/format.ts → whatsappWithText`): on a product page
   `Halo kak saya ingin menanyakan tentang produk <name> apakah masih ada? <SITE_URL>/produk/<id>`, on a UMKM page
