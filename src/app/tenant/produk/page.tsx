@@ -111,6 +111,7 @@ export default function MyProductsPage() {
                   <TableRow>
                     <TableHead>Foto</TableHead>
                     <TableHead>Nama Produk</TableHead>
+                    <TableHead>Kategori</TableHead>
                     <TableHead>Harga</TableHead>
                     <TableHead>Ulasan</TableHead>
                     <TableHead>Diajukan</TableHead>
@@ -133,6 +134,7 @@ export default function MyProductsPage() {
                           </>
                         )}
                       </TableCell>
+                      <TableCell data-label="Kategori">{p.category?.name ?? "-"}</TableCell>
                       <TableCell data-label="Harga">{formatRupiah(p.price)}</TableCell>
                       <TableCell data-label="Ulasan">
                         <RatingSummary average={p.ratingAverage} count={p.reviewCount} />

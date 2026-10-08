@@ -7,7 +7,7 @@ import { ConfirmDialog } from "@/components/Modal";
 import { useToast } from "@/components/Toast";
 import { Loading, PageHeader, Thumb } from "@/components/ui";
 import { api, errorMessage } from "@/lib/api";
-import { imageSrc } from "@/lib/format";
+import { imageSrc, tenantWhatsappText, whatsappWithText } from "@/lib/format";
 import { useTenantProfile } from "@/lib/tenantProfile";
 import { ProfileForm } from "./ProfileForm";
 import local from "./profil.module.css";
@@ -89,15 +89,9 @@ export default function ShopProfilePage() {
             <span className="label">Deskripsi Usaha/Toko</span>
             <div className={styles.readonlyBox}>{profile.description}</div>
           </div>
-          <div className={styles.formGrid}>
-            <div className="field">
-              <span className="label">Kategori</span>
-              <div className={styles.readonlyBox}>{profile.category?.name ?? "-"}</div>
-            </div>
-            <div className="field">
-              <span className="label">Wilayah</span>
-              <div className={styles.readonlyBox}>{profile.area}</div>
-            </div>
+          <div className="field">
+            <span className="label">Wilayah</span>
+            <div className={styles.readonlyBox}>{profile.area}</div>
           </div>
           <div className="field">
             <span className="label">Jam Operasional</span>
@@ -113,7 +107,12 @@ export default function ShopProfilePage() {
 
       <div className={`${styles.linkRow} mt`}>
         {isLink(profile.whatsappLink) && (
-          <a href={profile.whatsappLink} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "green", size: "lg" })}>
+          <a
+            href={whatsappWithText(profile.whatsappLink, tenantWhatsappText(profile))}
+            target="_blank"
+            rel="noreferrer"
+            className={buttonVariants({ variant: "green", size: "lg" })}
+          >
             <IconWhatsapp /> HUBUNGI PENJUAL
           </a>
         )}

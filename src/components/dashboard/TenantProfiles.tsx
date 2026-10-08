@@ -39,7 +39,6 @@ export function TenantProfiles() {
                 <TableRow>
                   <TableHead>Logo</TableHead>
                   <TableHead>Nama Toko</TableHead>
-                  <TableHead>Kategori</TableHead>
                   <TableHead>Wilayah</TableHead>
                   <TableHead>Pemilik</TableHead>
                   <TableHead className="col-actions">Aksi</TableHead>
@@ -52,7 +51,6 @@ export function TenantProfiles() {
                       <Thumb src={imageSrc(t.logo)} alt={t.name} className="thumb" />
                     </TableCell>
                     <TableCell data-label="Nama Toko">{t.name}</TableCell>
-                    <TableCell data-label="Kategori">{t.category?.name ?? "-"}</TableCell>
                     <TableCell data-label="Wilayah">{t.area}</TableCell>
                     <TableCell data-label="Pemilik">{fullName(t.owner)}</TableCell>
                     <TableCell data-label="">
@@ -81,8 +79,6 @@ export function TenantProfiles() {
           <div className={local.detail}>
             <Thumb src={imageSrc(detail.logo)} alt={detail.name} className={local.logo} />
             <dl>
-              <dt>Kategori</dt>
-              <dd>{detail.category?.name ?? "-"}</dd>
               <dt>Wilayah</dt>
               <dd>{detail.area}</dd>
               <dt>Alamat</dt>

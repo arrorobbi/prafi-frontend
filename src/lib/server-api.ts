@@ -1,4 +1,4 @@
-import type { PageMeta, Product, PublicTenant } from "./types";
+import type { PageMeta, Product, ProductCategory, PublicTenant } from "./types";
 
 /** Server components call the backend directly (no proxy, no CORS). */
 const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "https://api.transniaga.manokwarikab.go.id").replace(/\/+$/, "");
@@ -26,13 +26,14 @@ async function getPublic<T>(path: string, query: Query = {}): Promise<{ data: T;
 const isNotFound = (err: unknown) => (err as { status?: number })?.status === 404;
 
 /**
- * Public landing products (approved only). recommended: only the ones their tenant recommends;
- * tenantId: one owner's products. Never throws: pages still render if the API is down.
+ * Public landing products (approved only). recommended: only the recommended ones (reviews average 4.8+);
+ * tenantId: one owner's products; categoryId: one category; sort: newest (default) or rating.
+ * Never throws: pages still render if the API is down.
  */
 export async function getLandingProducts(
   page = 1,
   limit = 20,
-  filters: { recommended?: boolean; tenantId?: string } = {},
+  filters: { recommended?: boolean; tenantId?: string; categoryId?: number; sort?: "newest" | "rating" } = {},
 ): Promise<{ products: Product[]; meta: PageMeta; failed: boolean }> {
   try {
     const { data, meta } = await getPublic<Product[]>("/landing/products", { page, limit, ...filters });
@@ -61,9 +62,18 @@ export async function getLandingProduct(id: string): Promise<{ product: Product 
   }
 }
 
+/** Every product category with its image and number of approved products, A→Z. Never throws. */
+export async function getLandingCategories(): Promise<{ categories: ProductCategory[]; failed: boolean }> {
+  try {
+    return { categories: (await getPublic<ProductCategory[]>("/landing/categories")).data, failed: false };
+  } catch {
+    return { categories: [], failed: true };
+  }
+}
+
 /** Public UMKM (active owners), A→Z, with productCount and rating. Never throws. */
 export async function getLandingTenants(
-  filters: { q?: string; tenantCategoryId?: number; page?: number; limit?: number } = {},
+  filters: { q?: string; page?: number; limit?: number } = {},
 ): Promise<{ tenants: PublicTenant[]; meta: PageMeta; failed: boolean }> {
   try {
     const { data, meta } = await getPublic<PublicTenant[]>("/landing/tenants", { page: 1, limit: 100, ...filters });

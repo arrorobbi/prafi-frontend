@@ -10,7 +10,7 @@ const NAV: NavItem[] = [
   { href: "/superadmin/pengguna", label: "Semua Pengguna", icon: IconUsers },
   { href: "/superadmin/produk", label: "Data Produk", icon: IconBox },
   { href: "/superadmin/umkm", label: "Data UMKM", icon: IconStore },
-  { href: "/superadmin/kategori", label: "Kategori UMKM", icon: IconTag },
+  { href: "/superadmin/kategori", label: "Kategori Produk", icon: IconTag },
   { href: "/superadmin/log", label: "Log API", icon: IconDocs },
   { href: "/superadmin/notifikasi", label: "Notifikasi", icon: IconBell, badge: true },
   { href: "/superadmin/pengaturan", label: "Pengaturan Akun", icon: IconSettings },

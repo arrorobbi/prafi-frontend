@@ -6,7 +6,7 @@ import { useProductReview } from "./ProductReview";
 import styles from "./dashboard.module.css";
 import { IconWarning } from "@/components/Icons";
 import { Loading, PageHeader, StatusBadge, Thumb } from "@/components/ui";
-import { api, fetchAll } from "@/lib/api";
+import { api } from "@/lib/api";
 import { approvalReason, DEACTIVATE_PREFIX, formatDate, formatRupiah, imageSrc, productStatus, REJECT_PREFIX, sellerName } from "@/lib/format";
 import { useAsync } from "@/lib/useAsync";
 import local from "./ConfirmProductDetail.module.css";
@@ -26,8 +26,7 @@ export function ConfirmProductDetail({ base }: { base: string }) {
 
   const { data, loading, error, reload } = useAsync(async () => {
     const { data: product } = await api.products.get(id);
-    const tenants = await fetchAll((p) => api.tenants.list({ page: p, limit: 100 })).catch(() => []);
-    return { product, tenant: tenants.find((t) => t.userId === product.tenantId) ?? null };
+    return { product };
   }, [id]);
 
   const review = useProductReview(() => reload());
@@ -41,7 +40,7 @@ export function ConfirmProductDetail({ base }: { base: string }) {
       </>
     );
 
-  const { product, tenant } = data;
+  const { product } = data;
   const status = productStatus(product);
   const lastReason = approvalReason(product);
   const busy = review.busyId === product.id;
@@ -85,8 +84,8 @@ export function ConfirmProductDetail({ base }: { base: string }) {
               <div className={styles.readonlyBox}>{formatRupiah(product.price)}</div>
             </div>
             <div className="field">
-              <span className="label">Rekomendasi Penjual</span>
-              <div className={styles.readonlyBox}>{product.isRecommended ? "Ya" : "Tidak"}</div>
+              <span className="label">Kategori Produk</span>
+              <div className={styles.readonlyBox}>{product.category?.name ?? "-"}</div>
             </div>
             <div className="field">
               <span className="label">Tanggal Pengajuan</span>
@@ -98,10 +97,6 @@ export function ConfirmProductDetail({ base }: { base: string }) {
                 {sellerName(product)}
                 {product.tenant?.email ? ` · ${product.tenant.email}` : ""}
               </div>
-            </div>
-            <div className="field">
-              <span className="label">Kategori UMKM</span>
-              <div className={styles.readonlyBox}>{tenant?.category?.name ?? "Profil toko belum dibuat"}</div>
             </div>
           </div>
         </div>

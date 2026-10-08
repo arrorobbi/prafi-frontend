@@ -51,6 +51,34 @@ export function whatsappUrl(value: string) {
   return `https://wa.me/${digits}`;
 }
 
+/** This site's public address (SITE_URL at build time), for links shared outside it */
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://transniaga.manokwarikab.go.id").replace(/\/+$/, "");
+
+/**
+ * A WhatsApp link (wa.me/… or api.whatsapp.com/send?phone=…) with a prefilled message. Other links (not WhatsApp,
+ * or not a valid URL) are returned unchanged.
+ */
+export function whatsappWithText(link: string, text: string) {
+  let url: URL;
+  try {
+    url = new URL(link);
+  } catch {
+    return link;
+  }
+  if (!/(^|\.)(wa\.me|whatsapp\.com)$/i.test(url.hostname)) return link;
+  url.searchParams.delete("text");
+  const rest = url.searchParams.toString();
+  // encodeURIComponent: spaces as %20 (WhatsApp shows a "+" from URLSearchParams literally in some apps)
+  return `${url.origin}${url.pathname}?${rest ? `${rest}&` : ""}text=${encodeURIComponent(text)}`;
+}
+
+/** The message a visitor sends from a product page: the product's name and its link. */
+export const productWhatsappText = (product: { id: string; name: string }) =>
+  `Halo kak saya ingin menanyakan tentang produk ${product.name} apakah masih ada? ${SITE_URL}/produk/${product.id}`;
+
+/** The message a visitor sends from a UMKM (shop) page. */
+export const tenantWhatsappText = (tenant: { name: string }) => `Hi kak, saya mau bertanya tentang produk di toko ${tenant.name}`;
+
 // ---------- product status ----------
 // The API only stores approval.isActive + reason. The frontend writes these reason prefixes when an admin
 // rejects or deactivates a product, so "rejected" and "deactivated" can be told apart later.

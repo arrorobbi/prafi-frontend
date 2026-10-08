@@ -6,7 +6,7 @@ import { ProductReviews } from "@/components/site/ProductReviews";
 import { ProductStrip } from "@/components/site/ProductStrip";
 import { RatingSummary } from "@/components/Stars";
 import { EmptyState, PageHeader, Thumb } from "@/components/ui";
-import { formatDate, formatRupiah, imageSrc, sellerName } from "@/lib/format";
+import { formatDate, formatRupiah, imageSrc, productWhatsappText, sellerName, whatsappWithText } from "@/lib/format";
 import type { Product } from "@/lib/types";
 import { getLandingProduct, getLandingProducts } from "@/lib/server-api";
 import styles from "./detail.module.css";
@@ -54,7 +54,15 @@ export default async function ProductDetailPage({ params }: Props) {
         </div>
 
         <div className={styles.info}>
-          <p className={styles.kicker}>{sellerName(product)}</p>
+          <p className={styles.kicker}>
+            {sellerName(product)}
+            {product.category && (
+              <>
+                {" · "}
+                <Link href={`/produk?kategori=${product.category.id}`}>{product.category.name}</Link>
+              </>
+            )}
+          </p>
           <Card className={styles.main}>
             <div className={styles.mainLeft}>
               <h1>{product.name}</h1>
@@ -95,7 +103,7 @@ export default async function ProductDetailPage({ params }: Props) {
             <p className={styles.since}>Tayang sejak {formatDate(product.createdAt)}</p>
           </div>
 
-          <ShopLinks shop={product.tenant?.tenant} />
+          <ShopLinks shop={product.tenant?.tenant} product={product} />
         </div>
       </div>
 
@@ -111,11 +119,19 @@ export default async function ProductDetailPage({ params }: Props) {
   );
 }
 
-/** The seller's contact / shop buttons; only the links the UMKM filled in are shown. */
-function ShopLinks({ shop }: { shop?: NonNullable<NonNullable<Product["tenant"]>["tenant"]> | null }) {
+/**
+ * The seller's contact / shop buttons; only the links the UMKM filled in are shown. WhatsApp opens with a message
+ * about this product (its name and link) already typed.
+ */
+function ShopLinks({ shop, product }: { shop?: NonNullable<NonNullable<Product["tenant"]>["tenant"]> | null; product: Product }) {
   if (!shop) return null;
   const links = [
-    { href: shop.whatsappLink, label: "WhatsApp", icon: IconWhatsapp, tone: "green" },
+    {
+      href: isLink(shop.whatsappLink) ? whatsappWithText(shop.whatsappLink, productWhatsappText(product)) : null,
+      label: "WhatsApp",
+      icon: IconWhatsapp,
+      tone: "green",
+    },
     { href: shop.shopeeLink, label: "Shopee", icon: IconShopee, tone: "orange" },
     { href: shop.instagramLink, label: "Instagram", icon: IconInstagram, tone: "orange" },
     { href: shop.googleBusinessLink, label: "Google Bisnis", icon: IconGoogle, tone: "blue" },

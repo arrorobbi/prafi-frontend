@@ -8,15 +8,16 @@ halaman `/panduan`.
 
 ## 1. Pengunjung
 
-- **Beranda** menampilkan produk unggulan dan produk rekomendasi yang sudah disetujui administrator.
+- **Beranda**: carousel menampilkan gambar setiap **kategori produk**; di sebelahnya tampil produk dari kategori yang sedang tampil (berganti mengikuti carousel, rating tertinggi lebih dulu). Klik gambar atau **Lihat semua** untuk membuka semua produk kategori itu. Di bawahnya ada produk rekomendasi lainnya.
+- Produk berlabel **rekomendasi** (ikon jempol) adalah produk dengan rata-rata ulasan **4,8 bintang atau lebih**.
 - Klik ikon **kaca pembesar** di kanan atas untuk mencari produk atau toko. Tekan *Enter* untuk melihat semua hasil.
 
   ![Mencari produk](../public/panduan/pengunjung-2-cari.jpg)
 
 - Menu **Produk** menampilkan semua produk; menu **UMKM** menampilkan daftar toko beserta produknya.
 - Klik produk untuk melihat detail: harga, deskripsi, informasi produk, ulasan pembeli, dan toko penjualnya. Siapa pun dapat memberi bintang dan ulasan tanpa login.
-- Di halaman produk, tombol **Hubungi & Kunjungi Toko** (WhatsApp, Shopee, Instagram, Google Bisnis, Facebook, Lokasi) hanya muncul untuk tautan yang diisi penjual.
-- Klik nama toko atau **Lihat UMKM** untuk membuka halaman UMKM: profil, alamat, jam buka, tombol WhatsApp/Instagram/Shopee/Google Bisnis, jumlah produk, rata-rata bintang, dan semua produknya.
+- Di halaman produk, tombol **Hubungi & Kunjungi Toko** (WhatsApp, Shopee, Instagram, Google Bisnis, Facebook, Lokasi) hanya muncul untuk tautan yang diisi penjual. Tombol **WhatsApp** membuka chat dengan pesan siap kirim: *"Halo kak saya ingin menanyakan tentang produk <nama produk> apakah masih ada? <tautan produk>"*.
+- Klik nama toko atau **Lihat UMKM** untuk membuka halaman UMKM: profil, alamat, jam buka, tombol WhatsApp/Instagram/Shopee/Google Bisnis, jumlah produk, rata-rata bintang, dan semua produknya. Tombol WhatsApp di sini membuka chat dengan pesan *"Hi kak, saya mau bertanya tentang produk di toko <nama toko>"*.
 
   ![Detail produk](../public/panduan/pengunjung-3-detail.jpg)
 
@@ -59,7 +60,7 @@ halaman `/panduan`.
    ![Profil UMKM](../public/panduan/profil-1-lihat.jpg)
 
 2. Pilih logo/foto toko (JPG, PNG, WEBP, atau GIF, maks. 5 MB). Foto langsung terunggah, tetapi baru tersimpan setelah Anda klik **SIMPAN PROFIL**.
-3. Isi nama toko, **wilayah** (SP 1 – SP 4 atau *Lainnya*), **kategori usaha**, deskripsi, dan alamat.
+3. Isi nama toko, **wilayah** (SP 1 – SP 4 atau *Lainnya*), deskripsi, dan alamat. (Kategori kini dipilih per produk, bukan di profil toko.)
 4. Isi jam operasional (hari, jam buka, jam tutup) dan nomor WhatsApp.
 5. Tautan Google Maps, Facebook, Instagram, Google Bisnis, dan Shopee boleh dikosongkan.
 
@@ -82,7 +83,7 @@ halaman `/panduan`.
 
    ![Unggah foto produk](../public/panduan/produk-2-foto.jpg)
 
-3. Isi **Nama Produk** dan **Harga** (Rupiah). Centang **Jadikan produk rekomendasi** bila ingin tampil di rekomendasi halaman utama.
+3. Isi **Nama Produk**, **Harga** (Rupiah), dan pilih **Kategori Produk** (dibuat oleh administrator). Label **rekomendasi** diberikan otomatis bila rata-rata ulasan pembeli mencapai **4,8 bintang atau lebih**; penjual tidak lagi mencentangnya sendiri.
 4. Isi **Deskripsi Produk** (singkat) dan **Informasi Produk** (bahan, ukuran, harga, cara pakai, keunggulan) —
    masing-masing maksimal 255 karakter.
 
@@ -176,15 +177,15 @@ Penjual menerima notifikasi untuk setiap perubahan pada produknya:
 
 | Menu | Fungsi |
 | --- | --- |
-| Dashboard | Ringkasan: total UMKM, total produk, menunggu verifikasi, aktif, ditolak, dinonaktifkan (dapat disaring per rentang waktu), dan grafik **Statistik**: aktivitas per hari, status produk, UMKM per kategori, akun penjual (7 / 30 / 90 hari) |
+| Dashboard | Ringkasan: total UMKM, total produk, menunggu verifikasi, aktif, ditolak, dinonaktifkan (dapat disaring per rentang waktu), dan grafik **Statistik**: aktivitas per hari, status produk, produk per kategori, akun penjual (7 / 30 / 90 hari) |
 | Konfirmasi Produk | Daftar produk yang menunggu keputusan. ✔ untuk menerima, ✖ untuk menolak dengan alasan, atau **Lihat Detail** |
 | Manajemen Produk | Semua produk dengan tab status, pencarian, filter kategori, dan filter penjual |
-| Kategori UMKM | Tambah, ubah, dan hapus kategori toko. Kategori yang masih dipakai tidak bisa dihapus |
+| Kategori Produk | Tambah, ubah, dan hapus kategori produk beserta **gambarnya** (gambar tampil di carousel Beranda). Kategori yang masih dipakai produk tidak bisa dihapus |
 | Manajemen UMKM | *Akun Penjual*: aktifkan/nonaktifkan akun. *Profil Toko*: detail toko, WhatsApp, lokasi |
 | Notifikasi | Produk baru diajukan, produk diperbarui, penjual baru, profil toko diperbarui |
 | Pengaturan Administrator | Data akun, foto, dan password |
 
-![Kategori UMKM](../public/panduan/admin-1-kategori.jpg)
+![Kategori Produk](../public/panduan/admin-1-kategori.jpg)
 
 ![Manajemen UMKM](../public/panduan/admin-4-umkm.jpg)
 
@@ -195,7 +196,7 @@ Penjual menerima notifikasi untuk setiap perubahan pada produknya:
 
    ![Konfirmasi produk](../public/panduan/admin-2-konfirmasi.jpg)
 
-2. Periksa foto, nama, deskripsi, informasi produk, penjual, dan kategori toko.
+2. Periksa foto, nama, deskripsi, informasi produk, kategori produk, dan penjual.
 3. Klik **TERIMA PRODUK** untuk menayangkan, atau isi **Alasan Penolakan** dan klik **TOLAK PRODUK**.
 
    ![Detail produk](../public/panduan/admin-3-detail.jpg)
@@ -213,10 +214,11 @@ yang diberikan superadmin.
 
 | Menu | Fungsi |
 | --- | --- |
-| Dashboard | Jumlah admin, admin belum aktif, UMKM, dan produk, serta grafik **Statistik** (aktivitas, status produk, UMKM per kategori, akun admin) |
+| Dashboard | Jumlah admin, admin belum aktif, UMKM, dan produk, serta grafik **Statistik** (aktivitas, status produk, produk per kategori, akun admin) |
 | Aktivasi Admin | Aktifkan atau nonaktifkan akun admin (alasan opsional). Admin baru hanya bisa login setelah diaktifkan |
 | Konfirmasi Produk | Menyetujui, menolak (dengan alasan), atau menonaktifkan produk — sama seperti admin |
 | Data Produk / Data UMKM | Melihat semua produk dan profil toko; produk dibuka ke halaman konfirmasinya |
+| Kategori Produk | Tambah, ubah, dan hapus kategori produk beserta gambarnya (carousel Beranda) — sama seperti admin |
 | Notifikasi | *Admin Baru Menunggu Aktivasi*, serta notifikasi produk yang sama dengan admin (produk baru, diperbarui, ditayangkan) |
 
 ![Aktivasi admin](../public/panduan/disnakertrans-1-aktivasi.jpg)
@@ -230,10 +232,10 @@ Akun superadmin dibuat oleh pengelola server. Superadmin **hanya membaca** data,
 
 | Menu | Fungsi |
 | --- | --- |
-| Dashboard | Ringkasan akun per role, produk, dan akun terbaru, serta grafik **Statistik** (aktivitas, status produk, UMKM per kategori, akun per role) |
+| Dashboard | Ringkasan akun per role, produk, dan akun terbaru, serta grafik **Statistik** (aktivitas, status produk, produk per kategori, akun per role) |
 | Akun Disnakertrans | **TAMBAH AKUN**: isi nama, telepon, email, dan password. Sistem mengirim tautan aktivasi ke email; berikan password secara langsung. Bila tautan kedaluwarsa, klik **Kirim Ulang Verifikasi** |
 | Semua Pengguna | Semua akun, disaring per role |
-| Data Produk / Data UMKM / Kategori UMKM | Melihat data (hanya baca) |
+| Data Produk / Data UMKM / Kategori Produk | Melihat data (hanya baca) |
 | Log API | Catatan setiap penambahan, perubahan, dan penghapusan data **oleh pengguna yang login**, serta **semua aktivitas akun** (login, password/email salah, daftar, OTP, lupa/reset password, logout) termasuk dari tamu beserta **email yang dicoba**, baik yang berhasil maupun yang gagal. Permintaan baca dan permintaan tamu lainnya (ulasan, bot) tidak dicatat. Isi: siapa, kapan, field yang dikirim, dan ringkasan hasil atau error-nya. Filter **Hasil** (Berhasil / Gagal), method, status, path, email (pengguna atau email yang dicoba), dan tanggal. Log baru muncul otomatis (tanda **● Live**). **Grafik Log**: permintaan per hari (berhasil / gagal), per method, endpoint terbanyak, error terbanyak |
 | Notifikasi | Akun baru, produk baru, serta akun yang dinonaktifkan dan produk tayang yang diturunkan |
 

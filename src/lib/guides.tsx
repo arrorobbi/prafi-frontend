@@ -71,7 +71,9 @@ export const GUIDES: Guide[] = [
     body: (
       <Steps>
         <Step image="pengunjung-1-beranda" alt="Menu utama di beranda">
-          Gunakan menu <b>Beranda</b>, <b>Produk</b>, dan <b>UMKM</b> di bagian atas untuk menjelajah produk dan toko.
+          Gunakan menu <b>Beranda</b>, <b>Produk</b>, dan <b>UMKM</b> di bagian atas untuk menjelajah produk dan toko. Di
+          Beranda, carousel menampilkan gambar setiap <b>kategori produk</b>, dan di sebelahnya produk dari kategori yang sedang
+          tampil. Produk berikon jempol adalah <b>rekomendasi</b>: rata-rata ulasannya 4,8 bintang atau lebih.
         </Step>
         <Step image="pengunjung-2-cari" alt="Kotak pencarian">
           Klik ikon <b>kaca pembesar</b>, ketik nama produk atau toko. Pilih salah satu saran, atau tekan <b>Enter</b>{" "}
@@ -80,7 +82,8 @@ export const GUIDES: Guide[] = [
         <Step image="pengunjung-3-detail" alt="Halaman detail produk">
           Halaman detail menampilkan harga, deskripsi, informasi produk, dan ulasan pembeli. Anda dapat memberi
           bintang dan ulasan tanpa login. Tombol <b>Hubungi &amp; Kunjungi Toko</b> (WhatsApp, Shopee, Instagram, Google Bisnis, Facebook,
-          Lokasi) hanya muncul untuk tautan yang diisi penjual. Klik nama toko untuk membuka halaman UMKM: profil, alamat, jam buka,
+          Lokasi) hanya muncul untuk tautan yang diisi penjual; tombol <b>WhatsApp</b> membuka chat dengan pesan tentang produk itu
+          (nama dan tautannya) yang siap dikirim. Klik nama toko untuk membuka halaman UMKM: profil, alamat, jam buka,
           tombol WhatsApp/Instagram/Shopee/Google Bisnis, jumlah produk, rata-rata bintang, dan semua produknya.
         </Step>
       </Steps>
@@ -119,7 +122,7 @@ export const GUIDES: Guide[] = [
   {
     id: "profil-toko",
     title: "Membuat Profil Toko (Profil UMKM)",
-    summary: "Logo, kategori, wilayah, alamat, jam operasional, dan kontak",
+    summary: "Logo, wilayah, alamat, jam operasional, dan kontak",
     icon: IconStore,
     color: "#0e3c69",
     audience: ["public", "tenant"],
@@ -131,7 +134,7 @@ export const GUIDES: Guide[] = [
         </Step>
         <Step image="profil-2-form" alt="Formulir profil toko">
           Pilih logo atau foto toko (JPG/PNG/WEBP, maksimal 5 MB): foto langsung terunggah, tetapi baru tersimpan
-          setelah Anda klik <b>SIMPAN PROFIL</b>. Isi nama toko, wilayah (SP 1 – SP 4 atau lainnya), kategori usaha,
+          setelah Anda klik <b>SIMPAN PROFIL</b>. Isi nama toko, wilayah (SP 1 – SP 4 atau lainnya),
           deskripsi, alamat lengkap, jam operasional (hari, jam buka, jam tutup), dan nomor WhatsApp. Tautan Google
           Maps, Facebook, Instagram, Google Bisnis, dan Shopee boleh dikosongkan.
         </Step>
@@ -162,9 +165,9 @@ export const GUIDES: Guide[] = [
           (ada tanda persen), tetapi baru tersimpan setelah Anda klik <b>Ajukan Produk</b>.
         </Step>
         <Step image="produk-3-isi-data" alt="Isian data produk">
-          Isi <b>Nama Produk</b> dan <b>Harga</b> (dalam Rupiah), lalu <b>Deskripsi Produk</b> (penjelasan singkat) dan
-          <b>Informasi Produk</b> (bahan, ukuran, cara penggunaan, keunggulan). Masing-masing maksimal 255 karakter.
-          Centang <b>Jadikan produk rekomendasi</b> agar produk tampil di rekomendasi halaman utama setelah disetujui.
+          Isi <b>Nama Produk</b>, <b>Harga</b> (dalam Rupiah), dan pilih <b>Kategori Produk</b>, lalu <b>Deskripsi Produk</b>{" "}
+          (penjelasan singkat) dan <b>Informasi Produk</b> (bahan, ukuran, cara penggunaan, keunggulan). Masing-masing maksimal
+          255 karakter. Produk otomatis menjadi <b>rekomendasi</b> bila rata-rata ulasan pembeli 4,8 bintang atau lebih.
         </Step>
         <Step image="produk-4-ajukan" alt="Tombol Ajukan Produk">
           Klik <b>Ajukan Produk</b>. Status produk menjadi <b>Menunggu Konfirmasi</b> dan Anda menerima notifikasi.
@@ -297,9 +300,10 @@ export const GUIDES: Guide[] = [
           Daftar di <Link href="/register/admin">halaman pendaftaran admin</Link>, verifikasi email dengan OTP, lalu
           tunggu akun diaktifkan oleh Disnakertrans.
         </Step>
-        <Step image="admin-1-kategori" alt="Halaman Kategori UMKM">
-          <b>Kategori UMKM</b>: isi nama kategori di panel oranye lalu klik <b>Simpan</b> (mis. Makanan Berat,
-          Minuman) sebelum penjual membuat profil toko. Kategori yang masih dipakai tidak dapat dihapus.
+        <Step image="admin-1-kategori" alt="Halaman Kategori Produk">
+          <b>Kategori Produk</b>: isi nama kategori di panel oranye, unggah <b>gambarnya</b> (tampil di carousel Beranda),
+          lalu klik <b>Simpan</b> (mis. Makanan Berat, Minuman). Penjual memilih kategori ini untuk setiap produk. Kategori
+          yang masih dipakai produk tidak dapat dihapus.
         </Step>
         <Step image="admin-2-konfirmasi" alt="Daftar konfirmasi produk">
           <b>Konfirmasi Produk</b>: produk baru tampil di sini. Klik <b>Lihat Detail</b>, atau langsung ✔ untuk
@@ -311,7 +315,7 @@ export const GUIDES: Guide[] = [
         </Step>
         <Step image="admin-4-umkm" alt="Manajemen UMKM">
           <b>Dashboard</b> menampilkan grafik <b>Statistik</b>: aktivitas produk, UMKM, dan akun baru per hari, status
-          produk, UMKM per kategori, dan akun per role (pilih 7, 30, atau 90 hari terakhir).{" "}
+          produk, produk per kategori, dan akun per role (pilih 7, 30, atau 90 hari terakhir).{" "}
           <b>Manajemen UMKM</b>: aktifkan/nonaktifkan akun penjual (tab <b>Akun Penjual</b>) dan lihat detail toko
           (tab <b>Profil Toko</b>). <b>Manajemen Produk</b> menampilkan semua produk per status, kategori, dan
           penjual; <b>Notifikasi</b> berisi pengajuan produk baru dan pendaftaran penjual.
@@ -322,7 +326,7 @@ export const GUIDES: Guide[] = [
   {
     id: "panduan-disnakertrans",
     title: "Panduan Disnakertrans & Superadmin",
-    summary: "Aktivasi akun admin dan pembuatan akun Disnakertrans",
+    summary: "Aktivasi akun admin, kategori produk, dan pembuatan akun Disnakertrans",
     icon: IconUser,
     color: "#0e3c69",
     audience: ["public"],
@@ -342,7 +346,8 @@ export const GUIDES: Guide[] = [
         </Steps>
         <p>
           <b>Disnakertrans</b> juga dapat menyetujui, menolak, dan menonaktifkan produk di menu{" "}
-          <b>Konfirmasi Produk</b>, sama seperti admin, dan menerima notifikasi produk yang sama.
+          <b>Konfirmasi Produk</b>, sama seperti admin, dan menerima notifikasi produk yang sama. Disnakertrans juga
+          mengelola <b>Kategori Produk</b> (tambah, ubah, hapus, dan gambar carousel Beranda) seperti admin.
         </p>
         <p>
           <b>Superadmin</b> dapat melihat semua data (hanya baca) dan membuka menu <b>Log API</b>: catatan setiap

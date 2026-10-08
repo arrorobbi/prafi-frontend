@@ -56,6 +56,38 @@
   gap: 16px;
 }
 
+/* The current carousel category, above its products */
+.picksHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: -14px;
+}
+
+.picksHead h2 {
+  color: var(--navy);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.picksHead h2 span {
+  color: var(--orange);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.picksHead a {
+  flex: none;
+  color: var(--orange);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.picksHead a:hover {
+  text-decoration: underline;
+}
+
 /* ---------- reasons ---------- */
 .reasons {
   display: grid;
