@@ -164,5 +164,13 @@ this site's own `/socket.io/` proxy (`next.config.ts`), authenticated with the l
 
 ## Deploy
 
-See `deploy/` (systemd unit runs `npm start` on port 80; nginx terminates TLS). After pulling: `npm ci && npm run
-build && sudo systemctl restart prafi-frontend`.
+See `deploy/` (the systemd unit runs `next start` on port 80 directly, with a 10 s stop timeout; nginx terminates
+TLS). The build rewrites `.next` in place, so stop the site while building:
+
+```bash
+git pull && npm ci
+sudo systemctl stop prafi-frontend && npm run build && sudo systemctl start prafi-frontend
+```
+
+After changing `deploy/prafi-frontend.service`: `sudo cp deploy/prafi-frontend.service /etc/systemd/system/ && sudo
+systemctl daemon-reload`.

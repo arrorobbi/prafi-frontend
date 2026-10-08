@@ -7,11 +7,15 @@ Type=simple
 User=prafi
 WorkingDirectory=/home/prafi/project/prafi-frontend
 Environment=NODE_ENV=production
-ExecStart=/usr/bin/npm start
+# Next.js directly (not through `npm start`): the stop signal reaches the server itself
+ExecStart=/usr/bin/node node_modules/next/dist/bin/next start -p 80
 # allow binding to port 80 without running as root
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 Restart=always
 RestartSec=5
+# Next.js waits for open connections (e.g. live Socket.IO tabs) before exiting; don't wait more than 10 s
+TimeoutStopSec=10
+KillMode=mixed
 
 [Install]
 WantedBy=multi-user.target
