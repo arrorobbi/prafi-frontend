@@ -203,6 +203,8 @@ export interface ApiLog {
   userId: string | null;
   userEmail: string | null;
   userRole: Role | null;
+  /** Auth actions (login, sign-up, forgot password…): the email that was given, also for guests and failed attempts */
+  authEmail: string | null;
   ip: string | null;
   userAgent: string | null;
   errorCode: string | null;

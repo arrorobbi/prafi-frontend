@@ -342,8 +342,10 @@ export const GUIDES: Guide[] = [
         </p>
         <p>
           <b>Superadmin</b> dapat melihat semua data (hanya baca) dan membuka menu <b>Log API</b>: catatan setiap
-          penambahan, perubahan, dan penghapusan data oleh pengguna yang login, baik yang berhasil maupun yang gagal
-          (permintaan tamu dan permintaan baca tidak dicatat). Gunakan filter <b>Hasil</b> untuk melihat yang gagal.
+          penambahan, perubahan, dan penghapusan data oleh pengguna yang login, serta semua aktivitas akun (login,
+          password salah, daftar, OTP, lupa/reset password) termasuk dari tamu beserta email yang dicoba, baik yang
+          berhasil maupun yang gagal. Permintaan baca dan permintaan tamu lainnya tidak dicatat. Gunakan filter{" "}
+          <b>Hasil</b> untuk melihat yang gagal dan filter <b>Email</b> untuk mencari satu akun.
         </p>
       </>
     ),

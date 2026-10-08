@@ -51,7 +51,13 @@ function summaryLine(s: LogSummary | null) {
 }
 
 const when = (iso: string) => `${formatDate(iso)} ${formatTime(iso)}`;
-const who = (log: ApiLog) => (log.userEmail ? `${log.userEmail}${log.userRole ? ` (${ROLE_LABEL[log.userRole]})` : ""}` : "Tamu");
+/** The signed-in user; for a guest's auth action (e.g. a failed login) the email they typed */
+const who = (log: ApiLog) =>
+  log.userEmail
+    ? `${log.userEmail}${log.userRole ? ` (${ROLE_LABEL[log.userRole]})` : ""}`
+    : log.authEmail
+      ? `Tamu · ${log.authEmail}`
+      : "Tamu";
 
 /** Request and error logs of the API (GET /api/logs): superadmin only. */
 export default function LogsPage() {
@@ -95,10 +101,10 @@ export default function LogsPage() {
     <>
       <PageHeader title="LOG API" />
       <p className="muted" style={{ marginBottom: 14 }}>
-        Setiap perubahan data (tambah, ubah, hapus) oleh pengguna yang login, baik yang berhasil maupun yang gagal,
-        terbaru di atas. Permintaan baca (GET) dan permintaan tamu (login, pendaftaran, ulasan, bot) tidak dicatat. Yang
-        disimpan hanya nama field yang dikirim dan ringkasan hasil (mis. nama, email, status), tidak pernah isi password
-        atau token.
+        Setiap perubahan data (tambah, ubah, hapus) oleh pengguna yang login, ditambah semua aktivitas akun (login,
+        password salah, daftar, OTP, lupa/reset password) termasuk dari tamu, baik yang berhasil maupun yang gagal,
+        terbaru di atas. Permintaan baca (GET) dan permintaan tamu lainnya (ulasan, bot) tidak dicatat. Yang disimpan
+        hanya nama field yang dikirim, email yang dicoba, dan ringkasan hasil, tidak pernah isi password atau token.
       </p>
 
       <form className={s.filters} onSubmit={apply}>
@@ -130,8 +136,8 @@ export default function LogsPage() {
           <input className="input" value={draft.path} onChange={set("path")} placeholder="mis. /api/tenants" />
         </label>
         <label className="field">
-          <span className={s.filterLabel}>Email Pengguna</span>
-          <input className="input" value={draft.email} onChange={set("email")} placeholder="Cari email" />
+          <span className={s.filterLabel}>Email</span>
+          <input className="input" value={draft.email} onChange={set("email")} placeholder="Pengguna / email yang dicoba" />
         </label>
         <label className="field">
           <span className={s.filterLabel}>Dari Tanggal</span>
@@ -263,6 +269,12 @@ function LogDetail({ id, onClose }: { id: number | null; onClose: () => void }) 
               <dd>{log.durationMs} ms</dd>
               <dt>Pengguna</dt>
               <dd>{who(log)}</dd>
+              {log.authEmail && log.authEmail !== log.userEmail && (
+                <>
+                  <dt>Email yang dicoba</dt>
+                  <dd className={s.mono}>{log.authEmail}</dd>
+                </>
+              )}
               <dt>IP</dt>
               <dd className={s.mono}>{log.ip ?? "-"}</dd>
               <dt>User Agent</dt>
