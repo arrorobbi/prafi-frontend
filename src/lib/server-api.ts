@@ -7,13 +7,19 @@ const EMPTY_META: PageMeta = { page: 1, limit: 0, total: 0, totalPages: 0 };
 
 type Query = Record<string, string | number | boolean | undefined>;
 
+/**
+ * Cache tag of every public answer below. The backend clears it right after a change visitors can see
+ * (POST /internal/revalidate), so the 60 s cache is only a fallback.
+ */
+export const LANDING_TAG = "landing";
+
 /** GET a public endpoint, cached for a minute. Throws on failure; `status` is set for HTTP errors (e.g. 404). */
 async function getPublic<T>(path: string, query: Query = {}): Promise<{ data: T; meta?: PageMeta }> {
   const params = new URLSearchParams();
   for (const [k, v] of Object.entries(query)) if (v !== undefined && v !== "") params.set(k, String(v));
   const qs = params.toString();
   const res = await fetch(`${API_URL}/api${path}${qs ? `?${qs}` : ""}`, {
-    next: { revalidate: 60 },
+    next: { revalidate: 60, tags: [LANDING_TAG] },
     headers: { Accept: "application/json" },
   });
   const json = await res.json().catch(() => ({}));

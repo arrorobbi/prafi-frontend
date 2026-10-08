@@ -24,6 +24,7 @@ npm run build && npm start   # production (port 80, see deploy/)
 | `API_URL` | Backend base URL (default `https://api.transniaga.manokwarikab.go.id`). Read at **build time**. |
 | `SITE_URL` | This site's public address (default `https://transniaga.manokwarikab.go.id`), used for the product link in the WhatsApp message. Read at **build time**. |
 | `NEXT_PUBLIC_ADMIN_WHATSAPP`, `NEXT_PUBLIC_ADMIN_EMAIL` | Contact shown under *Hubungi Administrator* (optional). |
+| `REVALIDATE_SECRET` | Shared with the backend `.env`: lets it refresh the cached landing pages right after a change (see *Landing page cache*). Read at runtime. |
 
 ### How requests reach the backend
 
@@ -112,6 +113,13 @@ Every endpoint in the API docs is wired in `src/lib/api.ts`. Admin-only/tenant-o
 dashboards; the superadmin creates disnakertrans accounts, reads everything and views the API log; disnakertrans
 activates admins and approves products like admins. Tenants need a complete UMKM profile and an account photo before
 they can add products.
+
+### Landing page cache
+
+Public data (`lib/server-api.ts`) is cached for 60 s with the tag `landing`. After every change visitors can see
+(product, review, category, UMKM profile, approval, a tenant's account), the backend calls
+`POST /internal/revalidate` (header `x-revalidate-secret: <REVALIDATE_SECRET>`), which clears that tag and Beranda, so
+the change shows at once. Without the secret (or if the call fails) the pages still refresh within 60 s.
 
 ### Categories, recommendations, WhatsApp
 
