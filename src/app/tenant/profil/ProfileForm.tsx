@@ -5,7 +5,8 @@ import styles from "@/components/dashboard/dashboard.module.css";
 import { IconWarning } from "@/components/Icons";
 import { useToast } from "@/components/Toast";
 import { ImagePicker } from "@/components/ui";
-import { useImageUpload } from "@/components/UploadDialog";
+import { useLeaveGuard } from "@/components/LeaveGuard";
+import { usePendingImage } from "@/components/UploadDialog";
 import { api, ApiError, errorMessage, fetchAll, type TenantInput } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { imageSrc, whatsappUrl } from "@/lib/format";
@@ -60,10 +61,13 @@ export function ProfileForm({
   const [whatsapp, setWhatsapp] = useState(phoneFromWhatsapp(profile?.whatsappLink) || user?.phoneNumber || "");
   const [fbLink, setFbLink] = useState(profile?.fbLink && profile.fbLink !== EMPTY_LINK ? profile.fbLink : "");
   const [gmapsLink, setGmapsLink] = useState(profile?.gmapsLink && profile.gmapsLink !== EMPTY_LINK ? profile.gmapsLink : "");
+  // Optional links: left empty = no link (null)
   const [instagramLink, setInstagramLink] = useState(profile?.instagramLink ?? "");
-  const uploader = useImageUpload();
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(profile?.logo ? imageSrc(profile.logo) : null);
+  const [googleBusinessLink, setGoogleBusinessLink] = useState(profile?.googleBusinessLink ?? "");
+  const [shopeeLink, setShopeeLink] = useState(profile?.shopeeLink ?? "");
+  // The logo uploads when picked; it's only attached to the profile with Simpan
+  const logo = usePendingImage();
+  const { confirmLeave } = useLeaveGuard();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
 
@@ -91,9 +95,11 @@ export function ProfileForm({
     if (whatsapp.replace(/\D/g, "").length < 9) e.whatsappLink = "Nomor WhatsApp tidak valid";
     if (fbLink && !/^https?:\/\//i.test(fbLink)) e.fbLink = "Tautan harus diawali https://";
     if (gmapsLink && !/^https?:\/\//i.test(gmapsLink)) e.gmapsLink = "Tautan harus diawali https://";
-    if (!instagramLink.trim()) e.instagramLink = "Tautan Instagram wajib diisi";
-    else if (!/^https?:\/\//i.test(instagramLink.trim())) e.instagramLink = "Tautan harus diawali https:// (mis. https://instagram.com/namatoko)";
-    if (!profile && !file) e.logoId = "Logo/foto toko wajib diunggah";
+    const optionalLinks = { instagramLink, googleBusinessLink, shopeeLink };
+    for (const [key, value] of Object.entries(optionalLinks)) {
+      if (value.trim() && !/^https?:\/\/\S+$/i.test(value.trim())) e[key] = "Tautan harus diawali https:// (atau kosongkan)";
+    }
+    if (!profile && !logo.pending) e.logoId = "Logo/foto toko wajib diunggah";
     return e;
   };
 
@@ -113,7 +119,9 @@ export function ProfileForm({
       whatsappLink: whatsappUrl(whatsapp),
       fbLink: fbLink.trim() || EMPTY_LINK,
       gmapsLink: gmapsLink.trim() || EMPTY_LINK,
-      instagramLink: instagramLink.trim(),
+      instagramLink: instagramLink.trim() || null,
+      googleBusinessLink: googleBusinessLink.trim() || null,
+      shopeeLink: shopeeLink.trim() || null,
     };
 
     // Editing: only what changed (a new logo always counts as a change)
@@ -123,32 +131,24 @@ export function ProfileForm({
       (Object.keys(body) as (keyof typeof body)[]).forEach((k) => {
         if (body[k] !== (profile as unknown as Record<string, unknown>)[k]) (changes as Record<string, unknown>)[k] = body[k];
       });
-      if (Object.keys(changes).length === 0 && !file) {
+      if (Object.keys(changes).length === 0 && !logo.pending) {
         toast.info("Tidak ada perubahan");
         onSaved(profile);
         return;
       }
     }
 
-    const saveWith = async (logoId?: number) => {
-      const withLogo = logoId !== undefined ? { ...changes, logoId } : changes;
-      return profile ? (await api.tenants.updateMine(withLogo)).data : (await api.tenants.createMine(withLogo as TenantInput)).data;
-    };
+    const newLogo = logo.pending;
+    const withLogo = newLogo ? { ...changes, logoId: newLogo.id } : changes;
 
     setBusy(true);
     try {
-      let saved: TenantProfile | null;
-      if (file) {
-        // Upload popup: progress → saved, or the real error; the profile must point at the new logo
-        saved = await uploader.run({
-          file,
-          altText: `Logo ${name.trim()}`,
-          save: saveWith,
-          isSaved: (t, logoId) => t.logoId === logoId && !!t.logo,
-        });
-        if (!saved) return;
-      } else {
-        saved = await saveWith();
+      const saved = profile ? (await api.tenants.updateMine(withLogo)).data : (await api.tenants.createMine(withLogo as TenantInput)).data;
+      if (newLogo) {
+        // Saved only when the profile really points at the new logo
+        const ok = saved.logoId === newLogo.id && !!saved.logo;
+        logo.saved(ok);
+        if (!ok) return;
       }
       toast.success(profile ? "Profil toko diperbarui" : "Profil toko dibuat");
       onSaved(saved);
@@ -162,7 +162,7 @@ export function ProfileForm({
 
   return (
     <form className={local.form} onSubmit={submit} noValidate>
-      {uploader.dialog}
+      {logo.dialog}
       <div className={local.left}>
         <label className="field">
           <span className="label">Nama Usaha/Toko</span>
@@ -239,13 +239,11 @@ export function ProfileForm({
       <div className={local.right}>
         <ImagePicker
           title="UNGGAH FOTO ATAU LOGO"
-          previewUrl={preview}
+          previewUrl={logo.previewUrl ?? (profile?.logo ? imageSrc(profile.logo) : null)}
           round
           error={errors.logoId}
-          onFile={(f, url) => {
-            setFile(f);
-            setPreview(url);
-          }}
+          pending={!!logo.pending}
+          onFile={(f) => void logo.pick(f, `Logo ${name.trim() || "toko"}`)}
         />
         <label className="field">
           <span className="label">Nomor WhatsApp</span>
@@ -258,9 +256,19 @@ export function ProfileForm({
           {errors.gmapsLink && <span className="field-error">{errors.gmapsLink}</span>}
         </label>
         <label className="field">
-          <span className="label">Tautan Instagram</span>
+          <span className="label">Tautan Instagram (opsional)</span>
           <input className="input" placeholder="https://instagram.com/namatoko" value={instagramLink} onChange={(e) => setInstagramLink(e.target.value)} />
           {errors.instagramLink && <span className="field-error">{errors.instagramLink}</span>}
+        </label>
+        <label className="field">
+          <span className="label">Tautan Google Bisnis (opsional)</span>
+          <input className="input" placeholder="https://g.page/namatoko" value={googleBusinessLink} onChange={(e) => setGoogleBusinessLink(e.target.value)} />
+          {errors.googleBusinessLink && <span className="field-error">{errors.googleBusinessLink}</span>}
+        </label>
+        <label className="field">
+          <span className="label">Tautan Toko Shopee (opsional)</span>
+          <input className="input" placeholder="https://shopee.co.id/namatoko" value={shopeeLink} onChange={(e) => setShopeeLink(e.target.value)} />
+          {errors.shopeeLink && <span className="field-error">{errors.shopeeLink}</span>}
         </label>
         <label className="field">
           <span className="label">Tautan Facebook / Toko Online (opsional)</span>
@@ -269,7 +277,7 @@ export function ProfileForm({
         </label>
         <div className={styles.formActions}>
           {onCancel && (
-            <button type="button" className="btn btn-light" onClick={onCancel} disabled={busy}>
+            <button type="button" className="btn btn-light" onClick={() => confirmLeave(onCancel, "Batalkan perubahan?")} disabled={busy}>
               Batal
             </button>
           )}

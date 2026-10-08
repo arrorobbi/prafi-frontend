@@ -219,6 +219,19 @@ export const IconInstagram = (p: P) => (
     <path d="M17.5 6.5h.01" />
   </svg>
 );
+export const IconGoogle = (p: P) => (
+  <svg {...base(p)}>
+    <path d="M20.5 12.2c0-.6-.1-1.2-.2-1.7H12v3.3h4.8a4.5 4.5 0 01-1.9 2.8" />
+    <path d="M14.9 16.6A8.5 8.5 0 1117.8 6" />
+  </svg>
+);
+export const IconShopee = (p: P) => (
+  <svg {...base(p)}>
+    <path d="M5 8h14l-1 12H6z" />
+    <path d="M9 8a3 3 0 016 0" />
+    <path d="M14 12.5c-.6-.5-1.3-.7-2-.6-1 .1-1.6.7-1.4 1.4.3 1.2 3.6.9 3.5 2.5-.1.8-.9 1.3-1.9 1.3-.8 0-1.5-.3-2-.8" />
+  </svg>
+);
 export const IconCalendar = (p: P) => (
   <svg {...base(p)}>
     <rect x="3" y="5" width="18" height="16" rx="2" />

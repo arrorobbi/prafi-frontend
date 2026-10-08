@@ -4,9 +4,12 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { roleHome, useAuth } from "@/lib/auth";
+import { fullName, imageSrc } from "@/lib/format";
 import { NotificationProvider, useNotifications } from "@/lib/notifications";
+import { cleanupStaleUploads, discardOnUnload } from "@/lib/pendingUploads";
 import type { Role } from "@/lib/types";
-import { IconClose, IconLogout, IconMenu } from "../Icons";
+import { IconClose, IconLogout, IconMenu, IconUser } from "../Icons";
+import { LeaveGuardProvider, useLeaveGuard } from "../LeaveGuard";
 import { Brand, Loading } from "../ui";
 import styles from "./DashboardShell.module.css";
 
@@ -39,6 +42,32 @@ function Nav({ items, onNavigate }: { items: NavItem[]; onNavigate: () => void }
   );
 }
 
+/** Logout asks first while a photo is uploaded but not saved (it's deleted on "Setuju"). */
+function LogoutButton() {
+  const { logout } = useAuth();
+  const { confirmLeave } = useLeaveGuard();
+  return (
+    <button type="button" className={styles.logout} onClick={() => confirmLeave(() => logout("Anda telah logout"))}>
+      <IconLogout />
+      <span>Logout</span>
+    </button>
+  );
+}
+
+/** Phones: the sidebar (with the profile) is hidden behind the menu, so the top bar shows who's logged in. */
+function TopbarUser({ role }: { role: Role }) {
+  const { user } = useAuth();
+  if (!user) return null;
+  return (
+    <Link href={`/${role}/pengaturan`} className={styles.topUser} aria-label="Pengaturan akun">
+      <span className={styles.topName}>{user.firstName}</span>
+      <span className={styles.topAvatar}>
+        {user.faceImage ? <img src={imageSrc(user.faceImage)} alt={`Foto ${fullName(user)}`} /> : <IconUser />}
+      </span>
+    </Link>
+  );
+}
+
 /**
  * Sidebar layout for the admin and tenant dashboards. Also guards the route:
  * guests go to /login, other roles go to their own dashboard.
@@ -54,7 +83,7 @@ export function DashboardShell({
   profile: React.ReactNode;
   children: React.ReactNode;
 }) {
-  const { status, user, logout } = useAuth();
+  const { status, user } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -63,6 +92,11 @@ export function DashboardShell({
     if (status === "guest") router.replace(`/login?next=${encodeURIComponent(pathname)}`);
     else if (status === "authenticated" && user && user.role !== role) router.replace(roleHome(user.role));
   }, [status, user, role, router, pathname]);
+
+  // Photos uploaded in an earlier visit but never saved (tab closed, crash): delete them
+  useEffect(() => {
+    if (status === "authenticated" && user) void cleanupStaleUploads(user.id);
+  }, [status, user]);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -80,6 +114,7 @@ export function DashboardShell({
   }
 
   return (
+    <LeaveGuardProvider onUnload={discardOnUnload}>
     <NotificationProvider>
       <div className={styles.shell}>
         <div className={styles.topbar}>
@@ -87,6 +122,7 @@ export function DashboardShell({
             <IconMenu />
           </button>
           <Brand compact href={roleHome(role)} />
+          <TopbarUser role={role} />
         </div>
 
         {open && <div className={styles.scrim} onClick={() => setOpen(false)} aria-hidden />}
@@ -97,14 +133,12 @@ export function DashboardShell({
           </button>
           <div className={styles.profile}>{profile}</div>
           <Nav items={items} onNavigate={() => setOpen(false)} />
-          <button type="button" className={styles.logout} onClick={() => logout("Anda telah logout")}>
-            <IconLogout />
-            <span>Logout</span>
-          </button>
+          <LogoutButton />
         </aside>
 
         <main className={styles.main}>{children}</main>
       </div>
     </NotificationProvider>
+    </LeaveGuardProvider>
   );
 }

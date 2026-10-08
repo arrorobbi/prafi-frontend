@@ -222,7 +222,10 @@ export type TenantInput = {
   fbLink: string;
   whatsappLink: string;
   gmapsLink: string;
-  instagramLink: string;
+  /** Optional: null (or empty) = no link */
+  instagramLink?: string | null;
+  googleBusinessLink?: string | null;
+  shopeeLink?: string | null;
   logoId: number;
   tenantCategoryId: number;
 };

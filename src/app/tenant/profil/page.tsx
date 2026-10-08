@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import styles from "@/components/dashboard/dashboard.module.css";
-import { IconFacebook, IconInstagram, IconMapPin, IconPencil, IconWarning, IconWhatsapp } from "@/components/Icons";
+import { IconFacebook, IconGoogle, IconInstagram, IconMapPin, IconPencil, IconShopee, IconWarning, IconWhatsapp } from "@/components/Icons";
 import { ConfirmDialog } from "@/components/Modal";
 import { useToast } from "@/components/Toast";
 import { Loading, PageHeader, Thumb } from "@/components/ui";
@@ -12,7 +12,7 @@ import { useTenantProfile } from "@/lib/tenantProfile";
 import { ProfileForm } from "./ProfileForm";
 import local from "./profil.module.css";
 
-const isLink = (v?: string) => !!v && v !== "-";
+const isLink = (v?: string | null) => !!v && v !== "-";
 
 export default function ShopProfilePage() {
   const toast = useToast();
@@ -66,7 +66,7 @@ export default function ShopProfilePage() {
         <div className="alert alert-warning mt">
           <IconWarning />
           <span>
-            Profil belum lengkap{profile.missingFields?.includes("instagramLink") ? ": tautan Instagram belum diisi" : ""}. Lengkapi melalui{" "}
+            Profil belum lengkap. Lengkapi melalui{" "}
             <strong>Ubah Profil</strong> agar dapat menambahkan produk baru.
           </span>
         </div>
@@ -126,8 +126,18 @@ export default function ShopProfilePage() {
           </a>
         )}
         {isLink(profile.instagramLink) && (
-          <a href={profile.instagramLink} target="_blank" rel="noreferrer" className="btn btn-navy btn-lg">
+          <a href={profile.instagramLink!} target="_blank" rel="noreferrer" className="btn btn-navy btn-lg">
             <IconInstagram /> INSTAGRAM
+          </a>
+        )}
+        {isLink(profile.googleBusinessLink) && (
+          <a href={profile.googleBusinessLink!} target="_blank" rel="noreferrer" className="btn btn-blue btn-lg">
+            <IconGoogle /> GOOGLE BISNIS
+          </a>
+        )}
+        {isLink(profile.shopeeLink) && (
+          <a href={profile.shopeeLink!} target="_blank" rel="noreferrer" className="btn btn-orange btn-lg">
+            <IconShopee /> SHOPEE
           </a>
         )}
       </div>

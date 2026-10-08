@@ -4,13 +4,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api, ApiError, errorMessage, type ProductInput } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
 import { formatRupiah, imageSrc, productStatus } from "@/lib/format";
 import { useTenantProfile } from "@/lib/tenantProfile";
 import type { Product } from "@/lib/types";
 import { IconWarning } from "../Icons";
 import { useToast } from "../Toast";
 import { ImagePicker } from "../ui";
-import { useImageUpload } from "../UploadDialog";
+import { usePendingImage } from "../UploadDialog";
 import styles from "./ProductForm.module.css";
 
 interface Values {
@@ -32,9 +33,9 @@ const PROFILE_FIELD_LABEL: Record<string, string> = {
   whatsappLink: "Nomor WhatsApp",
   fbLink: "Tautan Facebook",
   gmapsLink: "Tautan Google Maps",
-  instagramLink: "Tautan Instagram",
   logoId: "Logo Toko",
   tenantCategoryId: "Kategori Usaha",
+  faceImageId: "Foto Profil Akun",
 };
 
 const MAX_PRICE = 2_000_000_000;
@@ -47,8 +48,10 @@ const MAX_PRICE = 2_000_000_000;
 export function ProductForm({ product, onSaved }: { product?: Product; onSaved?: (p: Product) => void }) {
   const router = useRouter();
   const toast = useToast();
-  const uploader = useImageUpload();
+  // The photo uploads when picked; it's only attached to the product with Simpan / Ajukan
+  const photo = usePendingImage();
   const { profile, loading: profileLoading } = useTenantProfile();
+  const { user } = useAuth();
   const [values, setValues] = useState<Values>({
     name: product?.name ?? "",
     price: product ? String(product.price) : "",
@@ -56,15 +59,18 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
     details: product?.details ?? "",
     isRecommended: product?.isRecommended ?? false,
   });
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(product ? imageSrc(product.image) : null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
   const resubmit = !!product && productStatus(product) !== "active";
 
-  // Only creating needs the complete profile; existing products stay editable
-  const missing = profile ? (profile.missingFields ?? []) : ["profile"];
-  const blocked = !product && !profileLoading && (!profile || profile.isComplete === false);
+  // Only creating needs a complete profile + an account photo; existing products stay editable.
+  // The photo is checked on the live account, so the notice goes away as soon as a photo is saved.
+  const missing = [
+    ...(profile ? (profile.missingFields ?? []).filter((f) => f !== "faceImageId") : ["profile"]),
+    ...(user && !user.faceImageId ? ["faceImageId"] : []),
+  ];
+  const profileMissing = missing.filter((f) => f !== "faceImageId");
+  const blocked = !product && !profileLoading && missing.length > 0;
 
   const set = (key: "name" | "description" | "details") => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setValues((v) => ({ ...v, [key]: e.target.value }));
@@ -76,7 +82,7 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
     else if (Number(values.price) > MAX_PRICE) e.price = "Harga terlalu besar";
     if (!values.description.trim()) e.description = "Deskripsi produk wajib diisi";
     if (!values.details.trim()) e.details = "Informasi produk wajib diisi";
-    if (!product && !file) e.imageId = "Foto produk wajib diunggah";
+    if (!product && !photo.pending) e.imageId = "Foto produk wajib diunggah";
     return e;
   };
 
@@ -107,33 +113,25 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
       (Object.keys(body) as (keyof typeof body)[]).forEach((k) => {
         if (body[k] !== product[k]) (changes as Record<string, unknown>)[k] = body[k];
       });
-      if (Object.keys(changes).length === 0 && !file) {
+      if (Object.keys(changes).length === 0 && !photo.pending) {
         toast.info("Tidak ada perubahan");
         return;
       }
     }
 
-    const saveWith = async (imageId?: number) => {
-      const withImage = imageId !== undefined ? { ...changes, imageId } : changes;
-      return product
-        ? (await api.products.update(product.id, withImage)).data
-        : (await api.products.create(withImage as ProductInput)).data;
-    };
+    const newPhoto = photo.pending;
+    const withPhoto = newPhoto ? { ...changes, imageId: newPhoto.id } : changes;
 
     setBusy(true);
     try {
-      let saved: Product | null;
-      if (file) {
-        // Upload popup: progress → saved, or the real error; the product must point at the new image
-        saved = await uploader.run({
-          file,
-          altText: body.name,
-          save: saveWith,
-          isSaved: (p, imageId) => p.imageId === imageId && !!p.image,
-        });
-        if (!saved) return;
-      } else {
-        saved = await saveWith();
+      const saved = product
+        ? (await api.products.update(product.id, withPhoto)).data
+        : (await api.products.create(withPhoto as ProductInput)).data;
+      if (newPhoto) {
+        // Saved only when the product really points at the new photo
+        const ok = saved.imageId === newPhoto.id && !!saved.image;
+        photo.saved(ok);
+        if (!ok) return;
       }
       if (product) toast.success("Produk diperbarui", resubmit ? "Produk diajukan ulang dan menunggu konfirmasi administrator." : undefined);
       else toast.success("Produk berhasil diajukan", "Produk menunggu konfirmasi administrator.");
@@ -148,31 +146,38 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
 
   return (
     <form className={styles.form} onSubmit={submit} noValidate>
-      {uploader.dialog}
+      {photo.dialog}
       {blocked && (
         <div className={`alert alert-warning ${styles.full}`}>
           <IconWarning />
           <span>
+            <strong>Lengkapi data Anda dulu sebelum menambahkan produk.</strong>{" "}
             {missing.includes("profile")
-              ? "Buat profil UMKM terlebih dahulu sebelum menambahkan produk."
-              : `Lengkapi profil UMKM terlebih dahulu sebelum menambahkan produk. Belum diisi: ${missing
-                  .map((f) => PROFILE_FIELD_LABEL[f] ?? f)
-                  .join(", ")}.`}{" "}
-            <Link href="/tenant/profil">
-              <strong>Buka Profil UMKM</strong>
-            </Link>
+              ? "Profil UMKM belum dibuat."
+              : profileMissing.length > 0 && `Profil UMKM belum lengkap: ${profileMissing.map((f) => PROFILE_FIELD_LABEL[f] ?? f).join(", ")}.`}{" "}
+            {missing.includes("faceImageId") && "Foto profil akun belum diunggah."}
+            <span className={styles.fixLinks}>
+              {profileMissing.length > 0 && (
+                <Link href="/tenant/profil" className="btn btn-navy btn-sm">
+                  Buka Profil UMKM
+                </Link>
+              )}
+              {missing.includes("faceImageId") && (
+                <Link href="/tenant/pengaturan" className="btn btn-orange btn-sm">
+                  Unggah Foto Profil
+                </Link>
+              )}
+            </span>
           </span>
         </div>
       )}
       <div className={styles.picker}>
         <ImagePicker
           title="UNGGAH FOTO PRODUK"
-          previewUrl={preview}
+          previewUrl={photo.previewUrl ?? (product ? imageSrc(product.image) : null)}
           error={errors.imageId}
-          onFile={(f, url) => {
-            setFile(f);
-            setPreview(url);
-          }}
+          pending={!!photo.pending}
+          onFile={(f) => void photo.pick(f, values.name.trim() || "Foto produk")}
         />
       </div>
       <div className={styles.side}>
@@ -224,7 +229,7 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
         <span className="hint">{values.details.length}/255 karakter</span>
       </label>
       <div className={styles.actions}>
-        <button type="submit" className="btn btn-orange btn-lg" disabled={busy || blocked}>
+        <button type="submit" className="btn btn-orange btn-lg" disabled={busy || blocked || photo.uploading}>
           {busy ? "Menyimpan..." : !product ? "Ajukan Produk" : resubmit ? "Simpan & Ajukan Ulang" : "Simpan Perubahan"}
         </button>
       </div>

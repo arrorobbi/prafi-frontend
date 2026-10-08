@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { STATUS_BADGE, STATUS_LABEL, type ProductStatus } from "@/lib/format";
 import { IconBack, IconChevronLeft, IconChevronRight, IconEye, IconEyeOff, IconImagePlus } from "./Icons";
+import { useLeaveGuard } from "./LeaveGuard";
 import styles from "./ui.module.css";
 
 /** Logo + "TRANSNIAGA / Produk Pilihan Ada Disini", as in the designs. */
@@ -33,6 +34,8 @@ export function PageHeader({
   hideBrand?: boolean;
 }) {
   const router = useRouter();
+  // Asks first when the page has an unsaved photo (LeaveGuard); goes straight back otherwise
+  const { confirmLeave } = useLeaveGuard();
   return (
     <header className={styles.pageHeader}>
       <div className={styles.pageHeaderLeft}>
@@ -40,7 +43,7 @@ export function PageHeader({
           type="button"
           className={styles.back}
           aria-label="Kembali"
-          onClick={() => (backHref ? router.push(backHref) : router.back())}
+          onClick={() => confirmLeave(() => (backHref ? router.push(backHref) : router.back()))}
         >
           <IconBack />
         </button>
@@ -169,12 +172,15 @@ export function ImagePicker({
   onFile,
   error,
   round,
+  pending,
 }: {
   title: string;
   previewUrl?: string | null;
   onFile: (file: File, previewUrl: string) => void;
   error?: string;
   round?: boolean;
+  /** The shown photo is uploaded but not saved yet */
+  pending?: boolean;
 }) {
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -217,6 +223,7 @@ export function ImagePicker({
           onFile(file, objectUrl.current);
         }}
       />
+      {pending && <span className={styles.pickerPending}>Foto baru belum disimpan. Klik Simpan untuk menyimpannya.</span>}
       {(localError || error) && <span className="field-error">{localError || error}</span>}
     </div>
   );

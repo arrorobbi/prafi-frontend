@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { IconBox, IconClock, IconFacebook, IconInstagram, IconMapPin, IconStore, IconWhatsapp } from "@/components/Icons";
+import { IconBox, IconClock, IconFacebook, IconGoogle, IconInstagram, IconMapPin, IconShopee, IconStore, IconWhatsapp } from "@/components/Icons";
 import { ListShell } from "@/components/site/ListShell";
 import { ProductRow } from "@/components/site/ProductRow";
 import { RatingSummary } from "@/components/Stars";
@@ -69,8 +69,18 @@ export default async function SellerPage({ params }: Props) {
               </a>
             )}
             {isLink(tenant.instagramLink) && (
-              <a href={tenant.instagramLink} target="_blank" rel="noreferrer" className="btn btn-orange btn-sm">
+              <a href={tenant.instagramLink!} target="_blank" rel="noreferrer" className="btn btn-orange btn-sm">
                 <IconInstagram /> Instagram
+              </a>
+            )}
+            {isLink(tenant.shopeeLink) && (
+              <a href={tenant.shopeeLink!} target="_blank" rel="noreferrer" className="btn btn-orange btn-sm">
+                <IconShopee /> Shopee
+              </a>
+            )}
+            {isLink(tenant.googleBusinessLink) && (
+              <a href={tenant.googleBusinessLink!} target="_blank" rel="noreferrer" className="btn btn-blue btn-sm">
+                <IconGoogle /> Google Bisnis
               </a>
             )}
             {isLink(tenant.fbLink) && (

@@ -8,7 +8,8 @@ import { IconLock, IconUser } from "../Icons";
 import { Modal } from "../Modal";
 import { useToast } from "../Toast";
 import { PageHeader, PasswordInput, validateImage } from "../ui";
-import { useImageUpload } from "../UploadDialog";
+import { useLeaveGuard } from "../LeaveGuard";
+import { usePendingImage } from "../UploadDialog";
 import styles from "./dashboard.module.css";
 import local from "./AccountSettings.module.css";
 
@@ -22,9 +23,9 @@ export function AccountSettings({ title }: { title: string }) {
   const [tenantName, setTenantName] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [pwOpen, setPwOpen] = useState(false);
-  const uploader = useImageUpload();
+  const photo = usePendingImage();
+  const { confirmLeave } = useLeaveGuard();
 
   const reset = () => {
     if (!user) return;
@@ -50,6 +51,9 @@ export function AccountSettings({ title }: { title: string }) {
     if (email.trim() !== user.email) changes.email = email.trim();
     if (phone.trim() !== user.phoneNumber) changes.phoneNumber = phone.trim();
     if (isTenant && tenantName.trim() !== (user.tenantName ?? "")) changes.tenantName = tenantName.trim();
+    // The new photo is only attached now, with Simpan
+    const newPhoto = photo.pending;
+    if (newPhoto) changes.faceImageId = newPhoto.id;
     if (Object.keys(changes).length === 0) {
       toast.info("Tidak ada perubahan");
       return;
@@ -59,7 +63,8 @@ export function AccountSettings({ title }: { title: string }) {
     try {
       const { data } = await api.auth.updateMe(changes);
       setUser(data);
-      toast.success("Perubahan disimpan");
+      if (newPhoto) photo.saved(data.faceImageId === newPhoto.id && !!data.faceImage);
+      else toast.success("Perubahan disimpan");
     } catch (err) {
       if (err instanceof ApiError) setErrors(err.fieldErrors);
       toast.error("Gagal menyimpan", errorMessage(err));
@@ -68,41 +73,42 @@ export function AccountSettings({ title }: { title: string }) {
     }
   };
 
-  const changePhoto = async (file: File) => {
+  const changePhoto = (file: File) => {
     const problem = validateImage(file);
-    if (problem) return toast.error(problem);
-    setUploading(true);
-    // Saved only when the account really points at the new photo (user.faceImageId) and the photo exists
-    const saved = await uploader.run({
-      file,
-      altText: `Foto ${fullName(user)}`,
-      save: async (imageId) => (await api.auth.updateMe({ faceImageId: imageId })).data,
-      isSaved: (u, imageId) => u.faceImageId === imageId && !!u.faceImage,
-    });
-    if (saved) setUser(saved);
-    setUploading(false);
+    if (problem) return photo.showError("Foto tidak dapat dipakai", problem);
+    void photo.pick(file, `Foto ${fullName(user)}`);
   };
+
+  /** Batalkan Perubahan: an unsaved photo is deleted, so ask first */
+  const cancel = () =>
+    confirmLeave(() => {
+      reset();
+    }, "Batalkan perubahan?");
 
   return (
     <>
       <PageHeader title={title} />
-      {uploader.dialog}
+      {photo.dialog}
       <div className={styles.splitCard}>
         <div className={styles.logoCard}>
-          {user.faceImage ? (
-            <img src={imageSrc(user.faceImage)} alt="Foto profil" />
+          {photo.previewUrl || user.faceImage ? (
+            <img src={photo.previewUrl ?? imageSrc(user.faceImage)} alt="Foto profil" />
           ) : (
             <span className={local.placeholder}>
               <IconUser />
             </span>
           )}
-          <label className={`btn btn-navy btn-lg ${uploading ? local.disabled : ""}`}>
-            {uploading ? "Mengunggah..." : "Ubah Foto"}
+          {photo.pending && <span className={local.pendingNote}>Foto baru belum disimpan. Klik Simpan Perubahan.</span>}
+          {isTenant && !user.faceImageId && !photo.pending && (
+            <span className={local.pendingNote}>Unggah foto profil agar Anda dapat menambahkan produk.</span>
+          )}
+          <label className={`btn btn-navy btn-lg ${photo.uploading ? local.disabled : ""}`}>
+            {photo.uploading ? "Mengunggah..." : "Ubah Foto"}
             <input
               type="file"
               accept="image/jpeg,image/png,image/webp,image/gif"
               className="sr-only"
-              disabled={uploading}
+              disabled={photo.uploading}
               onChange={(e) => {
                 const f = e.target.files?.[0];
                 e.target.value = "";
@@ -150,7 +156,7 @@ export function AccountSettings({ title }: { title: string }) {
             <button type="submit" className="btn btn-green btn-lg" disabled={saving}>
               {saving ? "MENYIMPAN..." : "SIMPAN PERUBAHAN"}
             </button>
-            <button type="button" className="btn btn-red btn-lg" onClick={reset} disabled={saving}>
+            <button type="button" className="btn btn-red btn-lg" onClick={cancel} disabled={saving}>
               BATALKAN PERUBAHAN
             </button>
           </div>

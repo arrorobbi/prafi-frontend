@@ -102,7 +102,10 @@ export interface TenantProfile {
   fbLink: string;
   whatsappLink: string;
   gmapsLink: string;
-  instagramLink: string;
+  /** Optional links: null when the tenant didn't add one */
+  instagramLink: string | null;
+  googleBusinessLink: string | null;
+  shopeeLink: string | null;
   logoId: number;
   tenantCategoryId: number;
   userId: string;

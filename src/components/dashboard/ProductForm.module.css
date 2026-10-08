@@ -65,3 +65,10 @@
   color: var(--gray-700);
   font-size: 0.82rem;
 }
+
+.fixLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}

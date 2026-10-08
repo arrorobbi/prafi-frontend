@@ -129,8 +129,8 @@ export const GUIDES: Guide[] = [
         </Step>
         <Step image="profil-2-form" alt="Formulir profil toko">
           Unggah logo atau foto toko (JPG/PNG/WEBP, maksimal 5 MB). Isi nama toko, wilayah (SP 1 – SP 4 atau lainnya),
-          kategori usaha, deskripsi, alamat lengkap, jam operasional (hari, jam buka, jam tutup), nomor WhatsApp, dan
-          tautan Instagram. Tautan Google Maps dan Facebook/toko online boleh dikosongkan. Profil harus lengkap
+          kategori usaha, deskripsi, alamat lengkap, jam operasional (hari, jam buka, jam tutup), dan nomor WhatsApp.
+          Tautan Google Maps, Facebook, Instagram, Google Bisnis, dan Shopee boleh dikosongkan. Profil harus lengkap
           sebelum Anda dapat menambahkan produk.
         </Step>
         <Step image="profil-3-simpan" alt="Tombol simpan profil">

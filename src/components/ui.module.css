@@ -292,3 +292,14 @@
     font-size: 0.62rem;
   }
 }
+
+.pickerPending {
+  align-self: center;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: #fff4e8;
+  color: var(--orange-dark);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-align: center;
+}
