@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { IconPencil, IconPlus, IconTrash } from "@/components/Icons";
-import { ConfirmDialog } from "@/components/Modal";
+import { ConfirmDialog, useConfirm } from "@/components/Modal";
 import { useToast } from "@/components/Toast";
 import { EmptyState, ImagePicker, Loading, PageHeader, Thumb } from "@/components/ui";
 import { usePendingImage } from "@/components/UploadDialog";
@@ -24,6 +24,7 @@ import { Card } from "@/components/shadcn/card";
  */
 export function CategoryManager() {
   const toast = useToast();
+  const { confirm: ask, dialog: confirmDialog } = useConfirm();
   const photo = usePendingImage();
   const [editing, setEditing] = useState<ProductCategory | null>(null);
   const [name, setName] = useState("");
@@ -61,6 +62,19 @@ export function CategoryManager() {
       toast.info("Tidak ada perubahan");
       return;
     }
+    if (
+      editing &&
+      !(await ask({
+        title: "Simpan Perubahan Kategori",
+        message: (
+          <>
+            Simpan perubahan kategori <strong>{editing.name}</strong>?{newPhoto && " Gambar lama akan diganti dengan gambar baru."}
+          </>
+        ),
+        confirmLabel: "Ya, simpan",
+      }))
+    )
+      return;
 
     setSaving(true);
     setFormError(null);
@@ -103,6 +117,7 @@ export function CategoryManager() {
   return (
     <>
       {photo.dialog}
+      {confirmDialog}
       <PageHeader title="KATEGORI PRODUK" />
       <div className={styles.layout}>
         <div>

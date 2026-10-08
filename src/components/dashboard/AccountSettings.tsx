@@ -5,7 +5,7 @@ import { api, ApiError, errorMessage } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { fullName, imageSrc, splitName } from "@/lib/format";
 import { IconLock, IconUser } from "../Icons";
-import { Modal } from "../Modal";
+import { Modal, useConfirm } from "../Modal";
 import { useToast } from "../Toast";
 import { PageHeader, PasswordInput, validateImage } from "../ui";
 import { useLeaveGuard } from "../LeaveGuard";
@@ -21,6 +21,7 @@ import { Alert } from "@/components/shadcn/alert";
 export function AccountSettings({ title }: { title: string }) {
   const { user, setUser } = useAuth();
   const toast = useToast();
+  const { confirm: ask, dialog: confirmDialog } = useConfirm();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -62,6 +63,7 @@ export function AccountSettings({ title }: { title: string }) {
       toast.info("Tidak ada perubahan");
       return;
     }
+    if (!(await ask({ title: "Simpan Perubahan Akun", message: "Simpan perubahan data akun Anda?", confirmLabel: "Ya, simpan" }))) return;
     setSaving(true);
     setErrors({});
     try {
@@ -93,6 +95,7 @@ export function AccountSettings({ title }: { title: string }) {
     <>
       <PageHeader title={title} />
       {photo.dialog}
+      {confirmDialog}
       <div className={styles.splitCard}>
         <div className={styles.logoCard}>
           {photo.previewUrl || user.faceImage ? (
@@ -174,6 +177,7 @@ export function AccountSettings({ title }: { title: string }) {
 
 function ChangePassword({ open, onClose }: { open: boolean; onClose: () => void }) {
   const toast = useToast();
+  const { confirm: ask, dialog: confirmDialog } = useConfirm();
   const { setUser } = useAuth();
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
@@ -193,6 +197,14 @@ function ChangePassword({ open, onClose }: { open: boolean; onClose: () => void 
     e.preventDefault();
     if (next.length < 8) return setError("Password baru minimal 8 karakter");
     if (next !== confirm) return setError("Konfirmasi password tidak sama");
+    if (
+      !(await ask({
+        title: "Ubah Password",
+        message: "Ubah password akun Anda? Anda tetap masuk di perangkat ini; gunakan password baru saat login berikutnya.",
+        confirmLabel: "Ya, ubah",
+      }))
+    )
+      return;
     setBusy(true);
     setError(null);
     try {
@@ -209,6 +221,7 @@ function ChangePassword({ open, onClose }: { open: boolean; onClose: () => void 
 
   return (
     <Modal open={open} title="Ubah Password" onClose={close}>
+      {confirmDialog}
       <form className="stack" onSubmit={submit}>
         <label className="field">
           <span className="label">Password Saat Ini</span>

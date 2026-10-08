@@ -3,6 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useProductReview } from "./ProductReview";
+import { useConfirm } from "../Modal";
 import styles from "./dashboard.module.css";
 import { IconWarning } from "@/components/Icons";
 import { Loading, PageHeader, StatusBadge, Thumb } from "@/components/ui";
@@ -30,6 +31,7 @@ export function ConfirmProductDetail({ base }: { base: string }) {
   }, [id]);
 
   const review = useProductReview(() => reload());
+  const { confirm, dialog } = useConfirm();
 
   if (loading && !data) return <Loading />;
   if (error || !data)
@@ -52,11 +54,50 @@ export function ConfirmProductDetail({ base }: { base: string }) {
       return;
     }
     setReasonError(null);
-    if (await review.reject(product.id, reason)) router.push(base);
+    const ok = await confirm({
+      title: "Tolak Produk",
+      message: (
+        <>
+          Tolak produk <strong>{product.name}</strong>? Penjual akan menerima notifikasi beserta alasan penolakannya.
+        </>
+      ),
+      confirmLabel: "Ya, tolak",
+      danger: true,
+    });
+    if (ok && (await review.reject(product.id, reason))) router.push(base);
+  };
+
+  const deactivate = async () => {
+    const ok = await confirm({
+      title: "Nonaktifkan Produk",
+      message: (
+        <>
+          Nonaktifkan produk <strong>{product.name}</strong>? Produk tidak akan tampil lagi di halaman utama dan penjual menerima
+          notifikasi.
+        </>
+      ),
+      confirmLabel: "Ya, nonaktifkan",
+      danger: true,
+    });
+    if (ok && (await review.deactivate(product.id, reason))) setReason("");
+  };
+
+  const approve = async () => {
+    const ok = await confirm({
+      title: "Terima Produk",
+      message: (
+        <>
+          Terima produk <strong>{product.name}</strong>? Produk akan langsung tampil di halaman utama.
+        </>
+      ),
+      confirmLabel: "Ya, terima",
+    });
+    if (ok && (await review.approve(product.id))) router.push(base);
   };
 
   return (
     <>
+      {dialog}
       <PageHeader title="KONFIRMASI PRODUK" backHref={base} />
 
       <div className={local.layout}>
@@ -130,9 +171,7 @@ export function ConfirmProductDetail({ base }: { base: string }) {
             type="button"
             variant="red" size="lg"
             disabled={busy}
-            onClick={async () => {
-              if (await review.deactivate(product.id, reason)) setReason("");
-            }}
+            onClick={deactivate}
           >
             NONAKTIFKAN PRODUK
           </Button>
@@ -142,9 +181,7 @@ export function ConfirmProductDetail({ base }: { base: string }) {
               type="button"
               variant="green" size="lg"
               disabled={busy}
-              onClick={async () => {
-                if (await review.approve(product.id)) router.push(base);
-              }}
+              onClick={approve}
             >
               TERIMA PRODUK
             </Button>

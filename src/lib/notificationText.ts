@@ -13,6 +13,7 @@ const TITLES: Record<NotificationType, string> = {
   PRODUCT_DEACTIVATED: "Produk Dinonaktifkan",
   PRODUCT_PUBLISHED: "Produk Ditayangkan",
   PRODUCT_UPDATED: "Produk Diperbarui",
+  PRODUCT_DELETED: "Produk Dihapus Penjual",
   TENANT_PROFILE_UPDATED: "Profil Toko Diperbarui",
   TENANT_REGISTERED: "Penjual Baru Mendaftar",
   PRODUCT_UNDER_REVIEW: "Produk Berhasil Diajukan",
@@ -77,6 +78,10 @@ export function notificationMessage(n: AppNotification) {
       const by = before(d, " updated");
       return product ? `${by ?? "Penjual"} memperbarui produk "${product}".` : d;
     }
+    case "PRODUCT_DELETED": {
+      const by = before(d, " deleted");
+      return product ? `${by ?? "Penjual"} menghapus produk "${product}".` : d;
+    }
     case "TENANT_PROFILE_UPDATED": {
       const by = before(d, " updated");
       return by ? `${by} memperbarui profil tokonya.` : d;
@@ -131,7 +136,7 @@ export type NotificationTone = "pending" | "success" | "danger" | "info";
 
 export function notificationTone(type: NotificationType): NotificationTone {
   if (type === "PRODUCT_APPROVED" || type === "PRODUCT_PUBLISHED") return "success";
-  if (type === "USER_DEACTIVATED" || type === "PRODUCT_DEACTIVATED" || type === "PRODUCT_TAKEN_DOWN") return "danger";
+  if (type === "USER_DEACTIVATED" || type === "PRODUCT_DEACTIVATED" || type === "PRODUCT_TAKEN_DOWN" || type === "PRODUCT_DELETED") return "danger";
   if (type === "PRODUCT_REVIEWED" || type === "PRODUCT_CHANGES_SAVED") return "success";
   if (type === "PRODUCT_UNDER_REVIEW" || type === "PRODUCT_SUBMITTED" || type === "ADMIN_PENDING_ACTIVATION") return "pending";
   return "info";

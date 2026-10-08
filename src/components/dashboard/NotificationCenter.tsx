@@ -10,6 +10,7 @@ import { useNotifications } from "@/lib/notifications";
 import type { AppNotification } from "@/lib/types";
 import { useAsync } from "@/lib/useAsync";
 import { IconBell, IconCheck, IconClock, IconClose, IconTrash } from "../Icons";
+import { useConfirm } from "../Modal";
 import { useToast } from "../Toast";
 import { EmptyState, Loading, PageHeader, Pagination } from "../ui";
 import styles from "./NotificationCenter.module.css";
@@ -31,6 +32,7 @@ const TONE_ICON = {
 export function NotificationCenter() {
   const router = useRouter();
   const toast = useToast();
+  const { confirm: ask, dialog: confirmDialog } = useConfirm();
   const { user } = useAuth();
   const { unread, refresh, version } = useNotifications();
   const [tab, setTab] = useState<Tab>("all");
@@ -57,6 +59,8 @@ export function NotificationCenter() {
   };
 
   const markAll = async () => {
+    if (!(await ask({ title: "Tandai Semua Dibaca", message: "Tandai semua notifikasi sebagai sudah dibaca?", confirmLabel: "Ya, tandai" })))
+      return;
     try {
       const { data: r } = await api.notifications.markAllRead();
       toast.success("Notifikasi ditandai sudah dibaca", `${r.updated} notifikasi diperbarui`);
@@ -68,6 +72,17 @@ export function NotificationCenter() {
   };
 
   const remove = async (n: AppNotification) => {
+    const ok = await ask({
+      title: "Hapus Notifikasi",
+      message: (
+        <>
+          Hapus notifikasi <strong>{notificationTitle(n)}</strong>? Notifikasi yang dihapus tidak dapat dikembalikan.
+        </>
+      ),
+      confirmLabel: "Hapus",
+      danger: true,
+    });
+    if (!ok) return;
     try {
       await api.notifications.remove(n.id);
       refresh();
@@ -79,6 +94,7 @@ export function NotificationCenter() {
 
   return (
     <>
+      {confirmDialog}
       <PageHeader title="NOTIFIKASI" />
       <div className={styles.bar}>
         <PillTabs<Tab>

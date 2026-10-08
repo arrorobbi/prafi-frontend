@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import {
   AlertDialog,
@@ -75,4 +76,45 @@ export function ConfirmDialog({ open, title, message, confirmLabel = "Ya, lanjut
       </AlertDialogContent>
     </AlertDialog>
   );
+}
+
+export type ConfirmOptions = Pick<ConfirmProps, "title" | "message" | "confirmLabel" | "danger">;
+
+/**
+ * Asks "are you sure?" before an update or delete: `if (!(await confirm({ title, message }))) return;`.
+ * Render `dialog` once in the component.
+ */
+export function useConfirm() {
+  const [options, setOptions] = useState<ConfirmOptions | null>(null);
+  const resolver = useRef<((ok: boolean) => void) | null>(null);
+
+  const confirm = useCallback(
+    (next: ConfirmOptions) =>
+      new Promise<boolean>((resolve) => {
+        resolver.current?.(false);
+        resolver.current = resolve;
+        setOptions(next);
+      }),
+    [],
+  );
+
+  const finish = (ok: boolean) => {
+    resolver.current?.(ok);
+    resolver.current = null;
+    setOptions(null);
+  };
+
+  const dialog = (
+    <ConfirmDialog
+      open={!!options}
+      title={options?.title ?? ""}
+      message={options?.message}
+      confirmLabel={options?.confirmLabel}
+      danger={options?.danger}
+      onConfirm={() => finish(true)}
+      onClose={() => finish(false)}
+    />
+  );
+
+  return { confirm, dialog };
 }

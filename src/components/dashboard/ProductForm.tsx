@@ -9,6 +9,7 @@ import { formatRupiah, imageSrc, productStatus } from "@/lib/format";
 import { useTenantProfile } from "@/lib/tenantProfile";
 import type { Product, ProductCategory } from "@/lib/types";
 import { IconWarning } from "../Icons";
+import { useConfirm } from "../Modal";
 import { useToast } from "../Toast";
 import { ImagePicker } from "../ui";
 import { usePendingImage } from "../UploadDialog";
@@ -53,6 +54,7 @@ const MAX_PRICE = 2_000_000_000;
 export function ProductForm({ product, onSaved }: { product?: Product; onSaved?: (p: Product) => void }) {
   const router = useRouter();
   const toast = useToast();
+  const { confirm: ask, dialog: confirmDialog } = useConfirm();
   // The photo uploads when picked; it's only attached to the product with Simpan / Ajukan
   const photo = usePendingImage();
   const { profile, loading: profileLoading } = useTenantProfile();
@@ -140,6 +142,21 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
     const newPhoto = photo.pending;
     const withPhoto = newPhoto ? { ...changes, imageId: newPhoto.id } : changes;
 
+    if (
+      product &&
+      !(await ask({
+        title: "Simpan Perubahan Produk",
+        message: (
+          <>
+            Simpan perubahan produk <strong>{product.name}</strong>?
+            {resubmit && " Produk akan diajukan ulang dan menunggu konfirmasi administrator."}
+          </>
+        ),
+        confirmLabel: "Ya, simpan",
+      }))
+    )
+      return;
+
     setBusy(true);
     try {
       const saved = product
@@ -165,6 +182,7 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
   return (
     <form className={styles.form} onSubmit={submit} noValidate>
       {photo.dialog}
+      {confirmDialog}
       {blocked && (
         <Alert variant="warning" className={styles.full}>
           <IconWarning />

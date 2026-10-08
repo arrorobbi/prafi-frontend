@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import styles from "@/components/dashboard/dashboard.module.css";
+import { useConfirm } from "@/components/Modal";
 import { useToast } from "@/components/Toast";
 import { ImagePicker } from "@/components/ui";
 import { useLeaveGuard } from "@/components/LeaveGuard";
@@ -48,6 +49,7 @@ export function ProfileForm({
   onCancel?: () => void;
 }) {
   const toast = useToast();
+  const { confirm: ask, dialog: confirmDialog } = useConfirm();
   const { user } = useAuth();
   const hours = parseHours(profile?.operationalHours);
   const knownArea = !profile || AREAS.includes(profile.area);
@@ -129,6 +131,9 @@ export function ProfileForm({
     const newLogo = logo.pending;
     const withLogo = newLogo ? { ...changes, logoId: newLogo.id } : changes;
 
+    if (profile && !(await ask({ title: "Simpan Profil UMKM", message: "Simpan perubahan profil UMKM Anda?", confirmLabel: "Ya, simpan" })))
+      return;
+
     setBusy(true);
     try {
       const saved = profile ? (await api.tenants.updateMine(withLogo)).data : (await api.tenants.createMine(withLogo as TenantInput)).data;
@@ -151,6 +156,7 @@ export function ProfileForm({
   return (
     <form className={local.form} onSubmit={submit} noValidate>
       {logo.dialog}
+      {confirmDialog}
       <div className={local.left}>
         <label className="field">
           <span className="label">Nama Usaha/Toko (wajib diisi)</span>

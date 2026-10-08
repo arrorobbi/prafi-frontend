@@ -71,6 +71,10 @@ The shared building blocks are [shadcn/ui](https://ui.shadcn.com) components in 
   **Tabs** (`components/dashboard/PillTabs.tsx`), **Dialog / AlertDialog** (behind `Modal` / `ConfirmDialog`),
   **Sonner** (behind `useToast`), **Chart** (Recharts; `components/dashboard/StatsCharts.tsx`).
 
+**Every update and delete asks first.** Use `useConfirm()` from `components/Modal.tsx`
+(`if (!(await confirm({ title, message }))) return;`, render its `dialog`), or `ConfirmDialog` directly. Creating
+something new needs no confirmation.
+
 Tailwind CSS v4 is loaded in `src/app/shadcn.css` (before `globals.css`) **without its global reset**, so the
 existing page styles (CSS modules) keep working; theme tokens map shadcn's colours to the brand. Page layout rules can
 target any button through the `btn-ui` class.
