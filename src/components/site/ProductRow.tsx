@@ -5,6 +5,7 @@ import { IconBox, IconStore } from "../Icons";
 import { RatingSummary } from "../Stars";
 import { Thumb } from "../ui";
 import styles from "./ProductRow.module.css";
+import { buttonVariants } from "@/components/shadcn/button";
 
 /** One white row in the product lists: photo, name, seller, price, rating and actions. */
 export function ProductRow({ product }: { product: Product }) {
@@ -22,11 +23,11 @@ export function ProductRow({ product }: { product: Product }) {
         <RatingSummary average={product.ratingAverage} count={product.reviewCount} />
       </div>
       <div className={styles.actions}>
-        <Link href={`/produk/${product.id}`} className="btn btn-green btn-square btn-sm">
+        <Link href={`/produk/${product.id}`} className={buttonVariants({ variant: "green", shape: "square", size: "sm" })}>
           <IconBox /> Lihat Produk
         </Link>
         {product.tenant?.tenant && (
-          <Link href={`/umkm/${product.tenant.tenant.id}`} className="btn btn-navy btn-square btn-sm">
+          <Link href={`/umkm/${product.tenant.tenant.id}`} className={buttonVariants({ variant: "navy", shape: "square", size: "sm" })}>
             <IconStore /> Lihat UMKM
           </Link>
         )}

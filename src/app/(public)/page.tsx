@@ -6,6 +6,9 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { ProductStrip } from "@/components/site/ProductStrip";
 import { getLandingProducts } from "@/lib/server-api";
 import styles from "./home.module.css";
+import { buttonVariants } from "@/components/shadcn/button";
+import { Alert } from "@/components/shadcn/alert";
+import { Card } from "@/components/shadcn/card";
 
 export const revalidate = 60;
 
@@ -47,15 +50,15 @@ export default async function HomePage() {
         <HeroCarousel products={featured} />
 
         <div className={styles.heroRight}>
-          <div className={`card ${styles.mapCard}`}>
+          <Card className={styles.mapCard}>
             <MapArt className={styles.map} />
             <div className={styles.mapText}>
               <h1>CARI PRODUK REKOMENDASI DAN PILIHAN ANDA DISINI</h1>
-              <Link href="/umkm" className="btn btn-navy btn-sm">
+              <Link href="/umkm" className={buttonVariants({ variant: "navy", size: "sm" })}>
                 <IconMapPin /> Cek UMKM Disini!
               </Link>
             </div>
-          </div>
+          </Card>
 
           {picks.length > 0 && (
             <div className={styles.picks}>
@@ -69,7 +72,7 @@ export default async function HomePage() {
 
       {failed && (
         <div className={styles.container}>
-          <div className="alert alert-warning">Produk belum dapat dimuat saat ini. Silakan muat ulang halaman beberapa saat lagi.</div>
+          <Alert variant="warning">Produk belum dapat dimuat saat ini. Silakan muat ulang halaman beberapa saat lagi.</Alert>
         </div>
       )}
 
@@ -101,7 +104,7 @@ export default async function HomePage() {
           </p>
         )}
         <div className={styles.moreLink}>
-          <Link href="/produk" className="btn btn-orange">
+          <Link href="/produk" className={buttonVariants({ variant: "orange" })}>
             Lihat Semua Produk
           </Link>
         </div>

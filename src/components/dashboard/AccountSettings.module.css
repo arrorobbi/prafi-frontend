@@ -46,7 +46,7 @@
   gap: 16px;
 }
 
-.buttons :global(.btn) {
+.buttons :global(.btn-ui) {
   border-radius: 2px;
   white-space: normal;
 }

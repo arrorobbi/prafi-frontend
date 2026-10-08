@@ -33,7 +33,7 @@
   margin-top: 24px;
 }
 
-.actions :global(.btn) {
+.actions :global(.btn-ui) {
   min-width: 240px;
   border-radius: 2px;
 }
@@ -48,7 +48,7 @@
     margin: 0 auto;
   }
 
-  .actions :global(.btn) {
+  .actions :global(.btn-ui) {
     flex: 1 1 100%;
     min-width: 0;
   }

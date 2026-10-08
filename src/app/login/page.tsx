@@ -9,6 +9,8 @@ import { IconEye, IconEyeOff } from "@/components/Icons";
 import { Loading } from "@/components/ui";
 import { api, ApiError, errorMessage } from "@/lib/api";
 import { roleHome, SESSION_MESSAGE_KEY, useAuth } from "@/lib/auth";
+import { Button } from "@/components/shadcn/button";
+import { Alert } from "@/components/shadcn/alert";
 
 function LoginForm() {
   const router = useRouter();
@@ -88,15 +90,15 @@ function LoginForm() {
   return (
     <div className={styles.orangeCard}>
       <h2>MASUK AKUN</h2>
-      {notice && <div className={`alert alert-info ${styles.cardAlert}`}>{notice}</div>}
+      {notice && <Alert variant="info" className={styles.cardAlert}>{notice}</Alert>}
       {error && (
-        <div className={`alert alert-error ${styles.cardAlert}`}>
+        <Alert variant="destructive" className={styles.cardAlert}>
           <div>
             {error}
             {resendUserId && (
-              <button
+              <Button
                 type="button"
-                className="btn btn-navy btn-sm"
+                variant="navy" size="sm"
                 style={{ marginTop: 8 }}
                 onClick={() =>
                   api.auth
@@ -106,10 +108,10 @@ function LoginForm() {
                 }
               >
                 Kirim ulang tautan aktivasi
-              </button>
+              </Button>
             )}
           </div>
-        </div>
+        </Alert>
       )}
       <form onSubmit={submit}>
         <label className={styles.pillInput}>
@@ -150,9 +152,9 @@ function LoginForm() {
             Lupa Password
           </Link>
         </label>
-        <button type="submit" className={`btn btn-navy btn-lg ${styles.loginBtn}`} disabled={busy}>
+        <Button type="submit" variant="navy" size="lg" className={styles.loginBtn} disabled={busy}>
           {busy ? "Memproses..." : "Login"}
-        </button>
+        </Button>
       </form>
       <div className={styles.divider}>ATAU</div>
       <p className={styles.signup}>

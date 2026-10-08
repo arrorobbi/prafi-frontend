@@ -11,6 +11,9 @@ import { PasswordInput } from "../ui";
 import { AuthFrame, HelpBox } from "./AuthFrame";
 import { OtpForm } from "./OtpForm";
 import styles from "./auth.module.css";
+import { Button, buttonVariants } from "@/components/shadcn/button";
+import { Input } from "@/components/shadcn/input";
+import { Alert } from "@/components/shadcn/alert";
 
 type Kind = "tenant" | "admin";
 
@@ -130,20 +133,20 @@ export function RegisterWizard({ kind }: { kind: Kind }) {
           <div className={styles.col}>
             <label className="field">
               <span className="label">Nama Lengkap</span>
-              <input className="input" placeholder="Masukan nama lengkap" value={form.fullName} onChange={set("fullName")} autoComplete="name" />
+              <Input placeholder="Masukan nama lengkap" value={form.fullName} onChange={set("fullName")} autoComplete="name" />
               {errors.fullName && <span className="field-error">{errors.fullName}</span>}
             </label>
             <label className="field">
               <span className="label">Nomor Telfon/Whatsapp</span>
               <div className={styles.phone}>
                 <span>+62</span>
-                <input className="input" placeholder="812-8899-0067" inputMode="tel" value={form.phone} onChange={set("phone")} autoComplete="tel-national" />
+                <Input placeholder="812-8899-0067" inputMode="tel" value={form.phone} onChange={set("phone")} autoComplete="tel-national" />
               </div>
               {errors.phone && <span className="field-error">{errors.phone}</span>}
             </label>
             <label className="field">
               <span className="label">Email</span>
-              <input className="input" type="email" placeholder="Masukan email aktif" value={form.email} onChange={set("email")} autoComplete="email" />
+              <Input type="email" placeholder="Masukan email aktif" value={form.email} onChange={set("email")} autoComplete="email" />
               {errors.email && <span className="field-error">{errors.email}</span>}
             </label>
             <div className={styles.row2}>
@@ -163,17 +166,17 @@ export function RegisterWizard({ kind }: { kind: Kind }) {
             {kind === "tenant" ? (
               <label className="field">
                 <span className="label">Nama Usaha/Toko</span>
-                <input className="input" placeholder="Masukan nama usaha/toko" value={form.tenantName} onChange={set("tenantName")} />
+                <Input placeholder="Masukan nama usaha/toko" value={form.tenantName} onChange={set("tenantName")} />
                 {errors.tenantName && <span className="field-error">{errors.tenantName}</span>}
                 <span className="hint">Profil toko lengkap (logo, alamat, kategori) diisi setelah akun terverifikasi.</span>
               </label>
             ) : (
-              <div className="alert alert-info">
+              <Alert variant="info">
                 Akun admin perlu diaktifkan oleh Disnakertrans setelah email diverifikasi. Anda akan bisa login setelah
                 akun diaktifkan.
-              </div>
+              </Alert>
             )}
-            {error && <div className="alert alert-error">{error}</div>}
+            {error && <Alert variant="destructive">{error}</Alert>}
             <HelpBox />
             <p className="hint">
               {kind === "tenant" ? (
@@ -184,9 +187,9 @@ export function RegisterWizard({ kind }: { kind: Kind }) {
               {" · "}Sudah punya akun? <Link href="/login">Login</Link>
             </p>
             <div className={styles.actionsRight}>
-              <button type="submit" className="btn btn-orange">
+              <Button type="submit" variant="orange">
                 SELANJUTNYA
-              </button>
+              </Button>
             </div>
           </div>
         </form>
@@ -222,24 +225,24 @@ export function RegisterWizard({ kind }: { kind: Kind }) {
                 </div>
               </>
             )}
-            <button type="button" className={`btn btn-light ${styles.editBtn}`} onClick={() => setStep(0)}>
+            <Button type="button" variant="light" className={styles.editBtn} onClick={() => setStep(0)}>
               EDIT DATA
-            </button>
-            <div className="alert alert-warning">
+            </Button>
+            <Alert variant="warning">
               <IconWarning />
               <span>
                 Pastikan semua data telah benar dan sesuai. Kode verifikasi akan dikirim ke email Anda
                 {kind === "tenant" ? ", dan produk yang Anda ajukan akan diverifikasi oleh tim administrator." : "."}
               </span>
-            </div>
+            </Alert>
           </div>
           <div className={styles.side}>
             <HelpBox />
-            {error && <div className="alert alert-error">{error}</div>}
+            {error && <Alert variant="destructive">{error}</Alert>}
             <div className={styles.actionsRight}>
-              <button type="button" className="btn btn-navy" onClick={submit} disabled={busy}>
+              <Button type="button" variant="navy" onClick={submit} disabled={busy}>
                 {busy ? "MENGIRIM..." : "KIRIM PENDAFTARAN"}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -259,15 +262,15 @@ export function RegisterWizard({ kind }: { kind: Kind }) {
           <div className={styles.buttons}>
             {kind === "tenant" && loggedIn ? (
               <>
-                <button type="button" className="btn btn-orange btn-lg" onClick={() => router.push("/tenant/profil")}>
+                <Button type="button" variant="orange" size="lg" onClick={() => router.push("/tenant/profil")}>
                   LENGKAPI PROFIL TOKO
-                </button>
-                <button type="button" className="btn btn-navy btn-lg" onClick={() => router.push(roleHome("tenant"))}>
+                </Button>
+                <Button type="button" variant="navy" size="lg" onClick={() => router.push(roleHome("tenant"))}>
                   KE DASHBOARD
-                </button>
+                </Button>
               </>
             ) : (
-              <Link href={`/login?verified=1&email=${encodeURIComponent(form.email)}`} className="btn btn-orange btn-lg">
+              <Link href={`/login?verified=1&email=${encodeURIComponent(form.email)}`} className={buttonVariants({ variant: "orange", size: "lg" })}>
                 KE HALAMAN LOGIN
               </Link>
             )}

@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import styles from "@/components/dashboard/dashboard.module.css";
 import { StatCard } from "@/components/dashboard/StatCard";
@@ -9,6 +10,16 @@ import { api, fetchAll } from "@/lib/api";
 import { formatDate, formatNumber, fullName } from "@/lib/format";
 import { productAndShopStats } from "@/lib/staffStats";
 import { useAsync } from "@/lib/useAsync";
+import { buttonVariants } from "@/components/shadcn/button";
+import { Badge } from "@/components/shadcn/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table";
+import { Alert } from "@/components/shadcn/alert";
+
+/** The charts (Recharts) load separately, so the page shows right away */
+const DashboardStats = dynamic(() => import("@/components/dashboard/StatsCharts").then((m) => m.DashboardStats), {
+  ssr: false,
+  loading: () => <Loading label="Memuat grafik..." />,
+});
 
 export default function DisnakertransDashboardPage() {
   const { data, loading, error } = useAsync(async () => {
@@ -26,7 +37,7 @@ export default function DisnakertransDashboardPage() {
       {loading ? (
         <Loading />
       ) : error ? (
-        <div className="alert alert-error">{error}</div>
+        <Alert variant="destructive">{error}</Alert>
       ) : (
         <>
           <div className={styles.stats}>
@@ -44,44 +55,46 @@ export default function DisnakertransDashboardPage() {
               <EmptyState title="Tidak ada admin yang menunggu aktivasi" />
             ) : (
               <div className="table-wrap">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Nama</th>
-                      <th>Email</th>
-                      <th>Telepon</th>
-                      <th>Terdaftar</th>
-                      <th>Verifikasi</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                <Table className="table">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nama</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Telepon</TableHead>
+                      <TableHead>Terdaftar</TableHead>
+                      <TableHead>Verifikasi</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {data!.waiting.slice(0, 5).map((u) => (
-                      <tr key={u.id}>
-                        <td data-label="Nama">{fullName(u)}</td>
-                        <td data-label="Email" className={styles.wrap}>
+                      <TableRow key={u.id}>
+                        <TableCell data-label="Nama">{fullName(u)}</TableCell>
+                        <TableCell data-label="Email" className={styles.wrap}>
                           {u.email}
-                        </td>
-                        <td data-label="Telepon">{u.phoneNumber}</td>
-                        <td data-label="Terdaftar">{formatDate(u.createdAt)}</td>
-                        <td data-label="Verifikasi">
-                          <span className={`badge ${u.mailActive ? "badge-active" : "badge-pending"}`}>
+                        </TableCell>
+                        <TableCell data-label="Telepon">{u.phoneNumber}</TableCell>
+                        <TableCell data-label="Terdaftar">{formatDate(u.createdAt)}</TableCell>
+                        <TableCell data-label="Verifikasi">
+                          <Badge variant={u.mailActive ? "active" : "pending"}>
                             {u.mailActive ? "Terverifikasi" : "Belum verifikasi"}
-                          </span>
-                        </td>
-                      </tr>
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
             )}
             <div className={`${styles.formActions} mt`}>
-              <Link href="/disnakertrans/admin" className="btn btn-orange btn-sm">
+              <Link href="/disnakertrans/admin" className={buttonVariants({ variant: "orange", size: "sm" })}>
                 Kelola aktivasi admin
               </Link>
             </div>
           </section>
         </>
       )}
+
+      <DashboardStats />
     </>
   );
 }

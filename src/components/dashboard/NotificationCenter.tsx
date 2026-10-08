@@ -13,6 +13,9 @@ import { IconBell, IconCheck, IconClock, IconClose, IconTrash } from "../Icons";
 import { useToast } from "../Toast";
 import { EmptyState, Loading, PageHeader, Pagination } from "../ui";
 import styles from "./NotificationCenter.module.css";
+import { Alert } from "@/components/shadcn/alert";
+import { Card } from "@/components/shadcn/card";
+import { PillTabs } from "./PillTabs";
 
 type Tab = "all" | "unread" | "read";
 const LIMIT = 10;
@@ -78,20 +81,25 @@ export function NotificationCenter() {
     <>
       <PageHeader title="NOTIFIKASI" />
       <div className={styles.bar}>
-        <div className={styles.tabs} role="tablist">
-          {(
-            [
-              ["all", "Semua"],
-              ["unread", "Belum Dibaca"],
-              ["read", "Dibaca"],
-            ] as const
-          ).map(([key, label]) => (
-            <button key={key} type="button" role="tab" aria-selected={tab === key} className={tab === key ? styles.tabActive : ""} onClick={() => setTab(key)}>
-              {label}
-              {key === "unread" && unread > 0 && <b>{unread}</b>}
-            </button>
-          ))}
-        </div>
+        <PillTabs<Tab>
+          label="Filter notifikasi"
+          className="mb-0"
+          value={tab}
+          onChange={setTab}
+          items={[
+            { value: "all", label: "Semua" },
+            {
+              value: "unread",
+              label: (
+                <>
+                  Belum Dibaca
+                  {unread > 0 && <b className="ml-1.5 rounded-full bg-white px-2 text-[0.72rem] text-brand-navy">{unread}</b>}
+                </>
+              ),
+            },
+            { value: "read", label: "Dibaca" },
+          ]}
+        />
         <button type="button" className={styles.markAll} onClick={markAll} disabled={unread === 0}>
           Tandai semua sebagai sudah dibaca
         </button>
@@ -100,11 +108,11 @@ export function NotificationCenter() {
       {loading && !data ? (
         <Loading />
       ) : error ? (
-        <div className="alert alert-error">{error}</div>
+        <Alert variant="destructive">{error}</Alert>
       ) : items.length === 0 ? (
-        <div className="card">
+        <Card>
           <EmptyState title="Tidak ada notifikasi">Notifikasi baru akan muncul di sini.</EmptyState>
-        </div>
+        </Card>
       ) : (
         <ul className={styles.list}>
           {items.map((n) => {

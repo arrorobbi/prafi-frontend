@@ -58,6 +58,22 @@ in the **backend** `.env` to this site's URL.
 | `/superadmin/*` | superadmin | Dashboard, Akun Disnakertrans (create + resend activation), Semua Pengguna, Data Produk, Data UMKM, Kategori UMKM (read-only), Log API (signed-in users' create/update/delete requests and every auth action incl. guests' failed logins with the email tried, successful and failed, with result summary), Notifikasi, Pengaturan |
 | `/disnakertrans/*` | disnakertrans | Dashboard, Aktivasi Admin (activate/deactivate admins), Konfirmasi Produk (approve/reject/deactivate, like admin), Data Produk, Data UMKM, Notifikasi, Pengaturan |
 
+## UI components (shadcn/ui + Tailwind)
+
+The shared building blocks are [shadcn/ui](https://ui.shadcn.com) components in `src/components/shadcn/`
+(`components.json`; add more with `npx shadcn@latest add <name>`), styled in Trans Niaga colours:
+
+- **Button** (`variant`: navy, orange, green, red, blue, light, white, icon / icon-green / icon-red / icon-yellow;
+  `size`: sm, default, lg, icon; `shape`: pill or square). Links and labels use `buttonVariants()`.
+- **Input, Textarea, NativeSelect, Checkbox, Badge** (status variants active / pending / rejected / inactive),
+  **Alert** (info / success / warning / destructive), **Card** (`cardClassName` for non-div elements), **Table**,
+  **Tabs** (`components/dashboard/PillTabs.tsx`), **Dialog / AlertDialog** (behind `Modal` / `ConfirmDialog`),
+  **Sonner** (behind `useToast`), **Chart** (Recharts; `components/dashboard/StatsCharts.tsx`).
+
+Tailwind CSS v4 is loaded in `src/app/shadcn.css` (before `globals.css`) **without its global reset**, so the
+existing page styles (CSS modules) keep working; theme tokens map shadcn's colours to the brand. Page layout rules can
+target any button through the `btn-ui` class.
+
 ## Code map
 
 ```

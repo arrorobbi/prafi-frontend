@@ -7,6 +7,7 @@ import { AuthFrame } from "@/components/auth/AuthFrame";
 import { OtpForm } from "@/components/auth/OtpForm";
 import styles from "@/components/auth/auth.module.css";
 import { Loading } from "@/components/ui";
+import { buttonVariants } from "@/components/shadcn/button";
 
 /** Email verification for an account that tried to log in before verifying (403 EMAIL_NOT_VERIFIED). */
 function Verify() {
@@ -19,7 +20,7 @@ function Verify() {
     return (
       <div className={`${styles.narrow} ${styles.center}`}>
         <p>Tautan verifikasi tidak lengkap.</p>
-        <Link href="/login" className="btn btn-orange">
+        <Link href="/login" className={buttonVariants({ variant: "orange" })}>
           Kembali ke Login
         </Link>
       </div>

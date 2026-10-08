@@ -79,7 +79,8 @@ export const GUIDES: Guide[] = [
         </Step>
         <Step image="pengunjung-3-detail" alt="Halaman detail produk">
           Halaman detail menampilkan harga, deskripsi, informasi produk, dan ulasan pembeli. Anda dapat memberi
-          bintang dan ulasan tanpa login. Klik nama toko untuk membuka halaman UMKM: profil, alamat, jam buka,
+          bintang dan ulasan tanpa login. Tombol <b>Hubungi &amp; Kunjungi Toko</b> (WhatsApp, Shopee, Instagram, Google Bisnis, Facebook,
+          Lokasi) hanya muncul untuk tautan yang diisi penjual. Klik nama toko untuk membuka halaman UMKM: profil, alamat, jam buka,
           tombol WhatsApp/Instagram/Shopee/Google Bisnis, jumlah produk, rata-rata bintang, dan semua produknya.
         </Step>
       </Steps>
@@ -309,6 +310,8 @@ export const GUIDES: Guide[] = [
           Produk aktif dapat dinonaktifkan dari halaman yang sama.
         </Step>
         <Step image="admin-4-umkm" alt="Manajemen UMKM">
+          <b>Dashboard</b> menampilkan grafik <b>Statistik</b>: aktivitas produk, UMKM, dan akun baru per hari, status
+          produk, UMKM per kategori, dan akun per role (pilih 7, 30, atau 90 hari terakhir).{" "}
           <b>Manajemen UMKM</b>: aktifkan/nonaktifkan akun penjual (tab <b>Akun Penjual</b>) dan lihat detail toko
           (tab <b>Profil Toko</b>). <b>Manajemen Produk</b> menampilkan semua produk per status, kategori, dan
           penjual; <b>Notifikasi</b> berisi pengajuan produk baru dan pendaftaran penjual.
@@ -347,7 +350,8 @@ export const GUIDES: Guide[] = [
           password salah, daftar, OTP, lupa/reset password) termasuk dari tamu beserta email yang dicoba, baik yang
           berhasil maupun yang gagal. Permintaan baca dan permintaan tamu lainnya tidak dicatat. Gunakan filter{" "}
           <b>Hasil</b> untuk melihat yang gagal dan filter <b>Email</b> untuk mencari satu akun. Log baru muncul otomatis
-          di halaman ini (tanda <b>● Live</b>) tanpa perlu memuat ulang.
+          di halaman ini (tanda <b>● Live</b>) tanpa perlu memuat ulang. Di bagian atas ada <b>Grafik Log</b>: permintaan
+          per hari (berhasil / gagal), per method, endpoint terbanyak, dan error terbanyak.
         </p>
       </>
     ),

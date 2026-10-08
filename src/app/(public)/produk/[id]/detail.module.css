@@ -184,3 +184,22 @@
     border-top: 2px solid var(--gray-300);
   }
 }
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 22px;
+}
+
+.links h2 {
+  color: var(--navy);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.linkRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

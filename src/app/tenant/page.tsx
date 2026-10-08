@@ -10,6 +10,8 @@ import { formatNumber, productStatus } from "@/lib/format";
 import { useTenantProfile } from "@/lib/tenantProfile";
 import { useAsync } from "@/lib/useAsync";
 import local from "./dashboard.module.css";
+import { buttonVariants } from "@/components/shadcn/button";
+import { Alert } from "@/components/shadcn/alert";
 
 export default function TenantDashboardPage() {
   const { profile, loading: profileLoading } = useTenantProfile();
@@ -22,7 +24,7 @@ export default function TenantDashboardPage() {
       <PageHeader title="DASHBOARD" />
 
       {!profileLoading && !profile && (
-        <div className={`alert alert-warning ${local.banner}`}>
+        <Alert variant="warning" className={local.banner}>
           <IconWarning />
           <div>
             <strong>Profil toko belum dibuat.</strong> Lengkapi profil UMKM (logo, kategori, alamat, kontak) agar pembeli
@@ -31,14 +33,14 @@ export default function TenantDashboardPage() {
               Lengkapi sekarang
             </Link>
           </div>
-        </div>
+        </Alert>
       )}
 
       <h2 className={styles.sectionTitle}>Ringkasan</h2>
       {loading ? (
         <Loading />
       ) : error ? (
-        <div className="alert alert-error">{error}</div>
+        <Alert variant="destructive">{error}</Alert>
       ) : (
         <div className={styles.stats}>
           <StatCard icon={IconBox} color="#ffffff" bg="#1d5fa3" label="Total Produk" value={formatNumber(products.length)} note="Semua Produk" />
@@ -50,10 +52,10 @@ export default function TenantDashboardPage() {
       )}
 
       <div className={local.actions}>
-        <Link href="/tenant/profil" className="btn btn-orange btn-lg">
+        <Link href="/tenant/profil" className={buttonVariants({ variant: "orange", size: "lg" })}>
           Edit Profil
         </Link>
-        <Link href="/tenant/produk/tambah" className="btn btn-orange btn-lg">
+        <Link href="/tenant/produk/tambah" className={buttonVariants({ variant: "orange", size: "lg" })}>
           <IconPlus /> Tambah Produk
         </Link>
       </div>

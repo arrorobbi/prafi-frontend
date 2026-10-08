@@ -77,3 +77,9 @@
     order: -1;
   }
 }
+
+/* shadcn TableCell is whitespace-nowrap; long category names wrap */
+.grid td {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}

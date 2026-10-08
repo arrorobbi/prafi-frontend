@@ -7,6 +7,7 @@ import { Loading, PageHeader, StatusBadge } from "@/components/ui";
 import { api } from "@/lib/api";
 import { approvalReason, productStatus } from "@/lib/format";
 import { useAsync } from "@/lib/useAsync";
+import { Alert } from "@/components/shadcn/alert";
 
 export default function EditProductPage() {
   const { id } = useParams<{ id: string }>();
@@ -17,7 +18,7 @@ export default function EditProductPage() {
     return (
       <>
         <PageHeader title="UBAH PRODUK" backHref="/tenant/produk" />
-        <div className="alert alert-error">{error ?? "Produk tidak ditemukan"}</div>
+        <Alert variant="destructive">{error ?? "Produk tidak ditemukan"}</Alert>
       </>
     );
 
@@ -32,7 +33,7 @@ export default function EditProductPage() {
           Status: <StatusBadge status={status} />
         </div>
         {(status === "rejected" || status === "inactive") && (
-          <div className="alert alert-warning">
+          <Alert variant="warning">
             <IconWarning />
             <span>
               {status === "rejected" ? "Produk ditolak" : "Produk dinonaktifkan"} administrator
@@ -44,7 +45,7 @@ export default function EditProductPage() {
               ) : null}
               . Perbaiki data produk lalu simpan untuk mengajukan ulang.
             </span>
-          </div>
+          </Alert>
         )}
       </div>
       <ProductForm key={data.id} product={data} />

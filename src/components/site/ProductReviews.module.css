@@ -45,7 +45,7 @@
   font-weight: 700;
 }
 
-.form :global(.btn) {
+.form :global(.btn-ui) {
   align-self: flex-start;
 }
 
@@ -84,7 +84,7 @@
   margin-top: 20px;
 }
 
-.list > :global(.btn) {
+.list > :global(.btn-ui) {
   align-self: center;
 }
 
@@ -115,7 +115,7 @@
     grid-template-columns: 1fr;
   }
 
-  .form :global(.btn) {
+  .form :global(.btn-ui) {
     align-self: stretch;
   }
 }

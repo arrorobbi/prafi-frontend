@@ -8,6 +8,7 @@ import { EmptyState, Thumb } from "@/components/ui";
 import { formatRating, imageSrc } from "@/lib/format";
 import { getLandingProducts, getLandingTenant, getLandingTenants } from "@/lib/server-api";
 import styles from "../umkm.module.css";
+import { buttonVariants } from "@/components/shadcn/button";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -59,32 +60,32 @@ export default async function SellerPage({ params }: Props) {
           </ul>
           <div className={styles.links}>
             {isLink(tenant.whatsappLink) && (
-              <a href={tenant.whatsappLink} target="_blank" rel="noreferrer" className="btn btn-green btn-sm">
+              <a href={tenant.whatsappLink} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "green", size: "sm" })}>
                 <IconWhatsapp /> WhatsApp
               </a>
             )}
             {isLink(tenant.gmapsLink) && (
-              <a href={tenant.gmapsLink} target="_blank" rel="noreferrer" className="btn btn-navy btn-sm">
+              <a href={tenant.gmapsLink} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "navy", size: "sm" })}>
                 <IconMapPin /> Lokasi
               </a>
             )}
             {isLink(tenant.instagramLink) && (
-              <a href={tenant.instagramLink!} target="_blank" rel="noreferrer" className="btn btn-orange btn-sm">
+              <a href={tenant.instagramLink!} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "orange", size: "sm" })}>
                 <IconInstagram /> Instagram
               </a>
             )}
             {isLink(tenant.shopeeLink) && (
-              <a href={tenant.shopeeLink!} target="_blank" rel="noreferrer" className="btn btn-orange btn-sm">
+              <a href={tenant.shopeeLink!} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "orange", size: "sm" })}>
                 <IconShopee /> Shopee
               </a>
             )}
             {isLink(tenant.googleBusinessLink) && (
-              <a href={tenant.googleBusinessLink!} target="_blank" rel="noreferrer" className="btn btn-blue btn-sm">
+              <a href={tenant.googleBusinessLink!} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "blue", size: "sm" })}>
                 <IconGoogle /> Google Bisnis
               </a>
             )}
             {isLink(tenant.fbLink) && (
-              <a href={tenant.fbLink} target="_blank" rel="noreferrer" className="btn btn-blue btn-sm">
+              <a href={tenant.fbLink} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "blue", size: "sm" })}>
                 <IconFacebook /> Facebook
               </a>
             )}

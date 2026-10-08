@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Brand } from "@/components/ui";
+import { buttonVariants } from "@/components/shadcn/button";
 
 export default function NotFound() {
   return (
@@ -10,7 +11,7 @@ export default function NotFound() {
           404
         </h1>
         <p>Halaman yang Anda cari tidak ditemukan atau produk sudah tidak tersedia.</p>
-        <Link href="/" className="btn btn-orange btn-lg">
+        <Link href="/" className={buttonVariants({ variant: "orange", size: "lg" })}>
           Kembali ke Beranda
         </Link>
       </div>

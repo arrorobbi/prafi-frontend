@@ -13,6 +13,11 @@ import { formatDate, formatRupiah, imageSrc, productStatus, type ProductStatus }
 import type { Product } from "@/lib/types";
 import { useAsync } from "@/lib/useAsync";
 import local from "./produk.module.css";
+import { Button, buttonVariants } from "@/components/shadcn/button";
+import { NativeSelect } from "@/components/shadcn/native-select";
+import { Badge } from "@/components/shadcn/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table";
+import { Alert } from "@/components/shadcn/alert";
 
 const PER_PAGE = 10;
 
@@ -66,8 +71,8 @@ export default function MyProductsPage() {
         <Link href="/tenant/produk/tambah" className={local.add} aria-label="Tambah produk" title="Tambah produk">
           <IconPlus />
         </Link>
-        <select
-          className={`${styles.filter} ${styles.filterWhite}`}
+        <NativeSelect wrapperClassName="w-auto max-sm:w-full"
+          className={"h-[38px] min-w-[200px] rounded-full border-0 bg-white pr-11 pl-5 text-[0.88rem] text-foreground shadow-[0_14px_30px_rgba(14,60,105,0.12)]"}
           value={status}
           aria-label="Status"
           onChange={(e) => {
@@ -80,20 +85,20 @@ export default function MyProductsPage() {
           <option value="pending">Menunggu Konfirmasi</option>
           <option value="rejected">Ditolak</option>
           <option value="inactive">Dinonaktifkan</option>
-        </select>
+        </NativeSelect>
       </div>
 
       <div className={styles.panel}>
         {loading && !data ? (
           <Loading />
         ) : error ? (
-          <div className="alert alert-error">{error}</div>
+          <Alert variant="destructive">{error}</Alert>
         ) : list.length === 0 ? (
           <EmptyState title={data?.length ? "Produk tidak ditemukan" : "Belum ada produk"}>
             {data?.length ? (
               "Ubah kata kunci atau filter status."
             ) : (
-              <Link href="/tenant/produk/tambah" className="btn btn-orange">
+              <Link href="/tenant/produk/tambah" className={buttonVariants({ variant: "orange" })}>
                 <IconPlus /> Tambah Produk Pertama
               </Link>
             )}
@@ -101,55 +106,55 @@ export default function MyProductsPage() {
         ) : (
           <>
             <div className="table-wrap">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Foto</th>
-                    <th>Nama Produk</th>
-                    <th>Harga</th>
-                    <th>Ulasan</th>
-                    <th>Diajukan</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table className="table">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Foto</TableHead>
+                    <TableHead>Nama Produk</TableHead>
+                    <TableHead>Harga</TableHead>
+                    <TableHead>Ulasan</TableHead>
+                    <TableHead>Diajukan</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="col-actions">Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {shown.map((p) => (
-                    <tr key={p.id}>
-                      <td data-label="">
+                    <TableRow key={p.id}>
+                      <TableCell data-label="">
                         <Thumb src={imageSrc(p.image)} alt={p.name} className="thumb" />
-                      </td>
-                      <td data-label="Nama Produk">
+                      </TableCell>
+                      <TableCell data-label="Nama Produk">
                         {p.name}
                         {p.isRecommended && (
                           <>
                             {" "}
-                            <span className="badge badge-active">Rekomendasi</span>
+                            <Badge variant="active">Rekomendasi</Badge>
                           </>
                         )}
-                      </td>
-                      <td data-label="Harga">{formatRupiah(p.price)}</td>
-                      <td data-label="Ulasan">
+                      </TableCell>
+                      <TableCell data-label="Harga">{formatRupiah(p.price)}</TableCell>
+                      <TableCell data-label="Ulasan">
                         <RatingSummary average={p.ratingAverage} count={p.reviewCount} />
-                      </td>
-                      <td data-label="Diajukan">{formatDate(p.createdAt)}</td>
-                      <td data-label="Status">
+                      </TableCell>
+                      <TableCell data-label="Diajukan">{formatDate(p.createdAt)}</TableCell>
+                      <TableCell data-label="Status">
                         <StatusBadge status={productStatus(p)} />
-                      </td>
-                      <td data-label="">
+                      </TableCell>
+                      <TableCell data-label="">
                         <span className="actions">
-                          <Link href={`/tenant/produk/${p.id}/edit`} className="icon-btn" aria-label={`Ubah ${p.name}`}>
+                          <Link href={`/tenant/produk/${p.id}/edit`} className={buttonVariants({ variant: "icon", size: "icon" })} aria-label={`Ubah ${p.name}`}>
                             <IconPencil />
                           </Link>
-                          <button type="button" className="icon-btn" aria-label={`Hapus ${p.name}`} onClick={() => setDeleting(p)}>
+                          <Button type="button" variant="icon" size="icon" aria-label={`Hapus ${p.name}`} onClick={() => setDeleting(p)}>
                             <IconTrash />
-                          </button>
+                          </Button>
                         </span>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
             <Pagination page={current} totalPages={totalPages} total={list.length} shown={shown.length} noun="produk" onChange={setPage} />
           </>

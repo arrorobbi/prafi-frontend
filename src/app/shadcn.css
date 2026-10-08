@@ -1,0 +1,91 @@
+/*
+ * Tailwind CSS v4 + the shadcn/ui theme, in Trans Niaga colours. Loaded before globals.css.
+ *
+ * - No Tailwind "preflight" (global reset): the site keeps its own reset in globals.css, so existing pages don't shift.
+ * - Utilities are NOT in a cascade layer, so shadcn components' classes win over the old element rules
+ *   (e.g. `button { color: inherit }`), while class rules in globals.css / CSS modules still apply where used.
+ */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css";
+@import "tw-animate-css";
+
+:root {
+  --radius: 0.75rem;
+
+  --background: #ffffff;
+  --foreground: #1b1b1b;
+  --card: #ffffff;
+  --card-foreground: #1b1b1b;
+  --popover: #ffffff;
+  --popover-foreground: #1b1b1b;
+  /* Navy is the main action colour, orange the accent, like the landing page */
+  --primary: #0e3c69;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f5f7;
+  --secondary-foreground: #0e3c69;
+  --muted: #f4f5f7;
+  --muted-foreground: #6b7280;
+  --accent: #fff4e8;
+  --accent-foreground: #b4520f;
+  --destructive: #e53935;
+  --border: #e3e3e3;
+  --input: #d9d9d9;
+  --ring: #ea7b25;
+
+  --brand-navy: #0e3c69;
+  --brand-orange: #ea7b25;
+  --brand-orange-dark: #d0661a;
+  --brand-green: #00b85c;
+  --brand-blue: #1a7fd9;
+
+  --chart-1: #0e3c69;
+  --chart-2: #ea7b25;
+  --chart-3: #00b85c;
+  --chart-4: #1aa5d9;
+  --chart-5: #e53935;
+}
+
+@theme inline {
+  --font-sans: var(--font-poppins), system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-orange-dark: var(--brand-orange-dark);
+  --color-brand-green: var(--brand-green);
+  --color-brand-blue: var(--brand-blue);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* Layered on purpose: only fills in what nothing else sets (unlayered rules in globals.css always win) */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-border);
+  }
+}

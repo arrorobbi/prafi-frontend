@@ -5,6 +5,8 @@ import { EmptyState, Loading, PageHeader } from "@/components/ui";
 import { api, fetchAll } from "@/lib/api";
 import { formatDate } from "@/lib/format";
 import { useAsync } from "@/lib/useAsync";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table";
+import { Alert } from "@/components/shadcn/alert";
 
 /** Read-only for the superadmin; admins manage categories. */
 export default function CategoriesPage() {
@@ -28,31 +30,31 @@ export default function CategoriesPage() {
         {loading ? (
           <Loading />
         ) : error ? (
-          <div className="alert alert-error">{error}</div>
+          <Alert variant="destructive">{error}</Alert>
         ) : data!.categories.length === 0 ? (
           <EmptyState title="Belum ada kategori" />
         ) : (
           <div className="table-wrap">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Nama Kategori</th>
-                  <th>Jumlah UMKM</th>
-                  <th>Dibuat</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table className="table">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>No</TableHead>
+                  <TableHead>Nama Kategori</TableHead>
+                  <TableHead>Jumlah UMKM</TableHead>
+                  <TableHead>Dibuat</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {data!.categories.map((c, i) => (
-                  <tr key={c.id}>
-                    <td data-label="No">{i + 1}</td>
-                    <td data-label="Kategori">{c.name}</td>
-                    <td data-label="Jumlah UMKM">{data!.counts.get(c.id) ?? 0}</td>
-                    <td data-label="Dibuat">{formatDate(c.createdAt)}</td>
-                  </tr>
+                  <TableRow key={c.id}>
+                    <TableCell data-label="No">{i + 1}</TableCell>
+                    <TableCell data-label="Kategori">{c.name}</TableCell>
+                    <TableCell data-label="Jumlah UMKM">{data!.counts.get(c.id) ?? 0}</TableCell>
+                    <TableCell data-label="Dibuat">{formatDate(c.createdAt)}</TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         )}
       </div>

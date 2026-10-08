@@ -8,6 +8,12 @@ import { useAsync } from "@/lib/useAsync";
 import { Stars } from "../Stars";
 import { useToast } from "../Toast";
 import styles from "./ProductReviews.module.css";
+import { Button } from "@/components/shadcn/button";
+import { Input } from "@/components/shadcn/input";
+import { Textarea } from "@/components/shadcn/textarea";
+import { Alert } from "@/components/shadcn/alert";
+import { Card, cardClassName } from "@/components/shadcn/card";
+import { cn } from "@/lib/utils";
 
 const PER_PAGE = 5;
 const LABELS = ["", "Sangat buruk", "Buruk", "Cukup", "Baik", "Sangat baik"];
@@ -64,7 +70,7 @@ export function ProductReviews({ productId, initial }: { productId: string; init
     <section className={styles.section} id="ulasan">
       <h2>ULASAN PEMBELI</h2>
       <div className={styles.layout}>
-        <div className={`card ${styles.summary}`}>
+        <Card className={styles.summary}>
           {summary.reviewCount && summary.ratingAverage != null ? (
             <>
               <strong className={styles.big}>{formatRating(summary.ratingAverage)}</strong>
@@ -74,9 +80,9 @@ export function ProductReviews({ productId, initial }: { productId: string; init
           ) : (
             <span className="muted">Belum ada ulasan. Jadilah yang pertama!</span>
           )}
-        </div>
+        </Card>
 
-        <form className={`card ${styles.form}`} onSubmit={submit} noValidate>
+        <form className={cn(cardClassName, styles.form)} onSubmit={submit} noValidate>
           <h3>Tulis Ulasan</h3>
           <div className="field">
             <span className="label">Penilaian</span>
@@ -101,13 +107,13 @@ export function ProductReviews({ productId, initial }: { productId: string; init
           </div>
           <label className="field">
             <span className="label">Nama</span>
-            <input className="input" value={name} onChange={(e) => setName(e.target.value)} maxLength={100} placeholder="Nama Anda" />
+            <Input value={name} onChange={(e) => setName(e.target.value)} maxLength={100} placeholder="Nama Anda" />
             {errors.name && <span className="field-error">{errors.name}</span>}
           </label>
           <label className="field">
             <span className="label">Ulasan</span>
-            <textarea
-              className="textarea"
+            <Textarea
+             
               value={text}
               onChange={(e) => setText(e.target.value)}
               maxLength={1000}
@@ -115,9 +121,9 @@ export function ProductReviews({ productId, initial }: { productId: string; init
             />
             {errors.review && <span className="field-error">{errors.review}</span>}
           </label>
-          <button type="submit" className="btn btn-orange" disabled={busy}>
+          <Button type="submit" variant="orange" disabled={busy}>
             {busy ? "Mengirim..." : "Kirim Ulasan"}
-          </button>
+          </Button>
         </form>
       </div>
 
@@ -125,10 +131,10 @@ export function ProductReviews({ productId, initial }: { productId: string; init
         {loading && !data ? (
           <p className="muted">Memuat ulasan...</p>
         ) : error ? (
-          <div className="alert alert-error">{error}</div>
+          <Alert variant="destructive">{error}</Alert>
         ) : (
           reviews.map((r) => (
-            <article key={r.id} className={`card ${styles.item}`}>
+            <article key={r.id} className={cn(cardClassName, styles.item)}>
               <div className={styles.itemHead}>
                 <strong>{r.name}</strong>
                 <Stars value={r.stars} size="sm" />
@@ -139,9 +145,9 @@ export function ProductReviews({ productId, initial }: { productId: string; init
           ))
         )}
         {reviews.length < total && (
-          <button type="button" className="btn btn-light" onClick={() => setLimit((l) => l + PER_PAGE)} disabled={loading}>
+          <Button type="button" variant="light" onClick={() => setLimit((l) => l + PER_PAGE)} disabled={loading}>
             {loading ? "Memuat..." : "Lihat ulasan lainnya"}
-          </button>
+          </Button>
         )}
       </div>
     </section>

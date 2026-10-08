@@ -1,7 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
+import { Suspense } from "react";
 import { ToastProvider } from "@/components/Toast";
 import { AuthProvider } from "@/lib/auth";
+import { NavHistoryTracker } from "@/lib/navHistory";
+import "./shadcn.css";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -31,6 +34,10 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body className={poppins.variable}>
+        {/* Pages visited in this tab, for the back arrows (useSearchParams needs a Suspense boundary) */}
+        <Suspense fallback={null}>
+          <NavHistoryTracker />
+        </Suspense>
         <AuthProvider>
           <ToastProvider>{children}</ToastProvider>
         </AuthProvider>

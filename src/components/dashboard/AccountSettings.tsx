@@ -12,6 +12,10 @@ import { useLeaveGuard } from "../LeaveGuard";
 import { usePendingImage } from "../UploadDialog";
 import styles from "./dashboard.module.css";
 import local from "./AccountSettings.module.css";
+import { Button, buttonVariants } from "@/components/shadcn/button";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/shadcn/input";
+import { Alert } from "@/components/shadcn/alert";
 
 /** PATCH /api/auth/me — name, email, phone, photo (faceImageId), tenantName and password. */
 export function AccountSettings({ title }: { title: string }) {
@@ -102,7 +106,7 @@ export function AccountSettings({ title }: { title: string }) {
           {isTenant && !user.faceImageId && !photo.pending && (
             <span className={local.pendingNote}>Unggah foto profil agar Anda dapat menambahkan produk.</span>
           )}
-          <label className={`btn btn-navy btn-lg ${photo.uploading ? local.disabled : ""}`}>
+          <label className={cn(buttonVariants({ variant: "navy", size: "lg" }), "cursor-pointer", photo.uploading && local.disabled)}>
             {photo.uploading ? "Mengunggah..." : "Ubah Foto"}
             <input
               type="file"
@@ -121,7 +125,7 @@ export function AccountSettings({ title }: { title: string }) {
         <form className="stack" onSubmit={save}>
           <label className="field">
             <span className="label">Nama Akun</span>
-            <input className="input" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" />
+            <Input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" />
             {(errors.name || errors.firstName || errors.lastName) && (
               <span className="field-error">{errors.name || errors.firstName || errors.lastName}</span>
             )}
@@ -129,36 +133,36 @@ export function AccountSettings({ title }: { title: string }) {
           {isTenant && (
             <label className="field">
               <span className="label">Nama Usaha/Toko</span>
-              <input className="input" value={tenantName} onChange={(e) => setTenantName(e.target.value)} />
+              <Input value={tenantName} onChange={(e) => setTenantName(e.target.value)} />
               {errors.tenantName && <span className="field-error">{errors.tenantName}</span>}
             </label>
           )}
           <label className="field">
             <span className="label">Email</span>
-            <input className="input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
+            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
             {errors.email && <span className="field-error">{errors.email}</span>}
           </label>
           <label className="field">
             <span className="label">Nomor Telfon / Whatsapp</span>
-            <input className="input" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" />
+            <Input inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" />
             {errors.phoneNumber && <span className="field-error">{errors.phoneNumber}</span>}
           </label>
           <div className="field">
             <span className="label">Password</span>
             <div className={local.passwordRow}>
               <span>••••••••</span>
-              <button type="button" className="btn btn-white btn-sm" onClick={() => setPwOpen(true)}>
+              <Button type="button" variant="white" size="sm" onClick={() => setPwOpen(true)}>
                 <IconLock /> Ubah Password
-              </button>
+              </Button>
             </div>
           </div>
           <div className={local.buttons}>
-            <button type="submit" className="btn btn-green btn-lg" disabled={saving}>
+            <Button type="submit" variant="green" size="lg" disabled={saving}>
               {saving ? "MENYIMPAN..." : "SIMPAN PERUBAHAN"}
-            </button>
-            <button type="button" className="btn btn-red btn-lg" onClick={cancel} disabled={saving}>
+            </Button>
+            <Button type="button" variant="red" size="lg" onClick={cancel} disabled={saving}>
               BATALKAN PERUBAHAN
-            </button>
+            </Button>
           </div>
         </form>
       </div>
@@ -218,10 +222,10 @@ function ChangePassword({ open, onClose }: { open: boolean; onClose: () => void 
           <span className="label">Konfirmasi Ulang</span>
           <PasswordInput placeholder="Min. 8 karakter" value={confirm} onChange={(e) => setConfirm(e.target.value)} autoComplete="new-password" />
         </label>
-        {error && <div className="alert alert-error">{error}</div>}
-        <button type="submit" className="btn btn-navy" disabled={busy}>
+        {error && <Alert variant="destructive">{error}</Alert>}
+        <Button type="submit" variant="navy" disabled={busy}>
           {busy ? "Menyimpan..." : "Simpan Password"}
-        </button>
+        </Button>
       </form>
     </Modal>
   );

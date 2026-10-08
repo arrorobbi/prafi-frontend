@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import styles from "@/components/dashboard/dashboard.module.css";
 import { ROLE_LABEL } from "@/components/dashboard/UserAccounts";
@@ -11,6 +12,18 @@ import type { ApiLog, LogLevel, LogSummary } from "@/lib/types";
 import { useRealtime, useRealtimeStatus } from "@/lib/realtime";
 import { useAsync } from "@/lib/useAsync";
 import s from "./log.module.css";
+import { Button } from "@/components/shadcn/button";
+import { Input } from "@/components/shadcn/input";
+import { NativeSelect } from "@/components/shadcn/native-select";
+import { Badge } from "@/components/shadcn/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table";
+import { Alert } from "@/components/shadcn/alert";
+
+/** The charts (Recharts) load separately, so the page shows right away */
+const LogStatsCharts = dynamic(() => import("@/components/dashboard/StatsCharts").then((m) => m.LogStatsCharts), {
+  ssr: false,
+  loading: () => <Loading label="Memuat grafik..." />,
+});
 
 const LIMIT = 20;
 /** Only changes are stored (reads are not) */
@@ -28,11 +41,12 @@ type Filters = typeof EMPTY;
 
 const LEVEL_LABEL: Record<LogLevel, string> = { info: "Berhasil", warn: "Gagal (permintaan ditolak)", error: "Gagal (kesalahan server)" };
 
+/** shadcn Badge variant for an HTTP status */
 function statusBadge(code: number) {
-  if (code >= 500) return "badge badge-rejected";
-  if (code >= 400) return "badge badge-pending";
-  if (code >= 300) return "badge badge-inactive";
-  return "badge badge-active";
+  if (code >= 500) return "rejected" as const;
+  if (code >= 400) return "pending" as const;
+  if (code >= 300) return "inactive" as const;
+  return "active" as const;
 }
 
 /** Whether a pushed row belongs in the list with these filters (same rules as GET /api/logs). */
@@ -87,6 +101,8 @@ export default function LogsPage() {
   const [page, setPage] = useState(1);
   const [openId, setOpenId] = useState<number | null>(null);
 
+  // "Muat Ulang" also refreshes the charts
+  const [chartsKey, setChartsKey] = useState(0);
   const { data, loading, error, reload, setData } = useAsync(
     () =>
       api.logs.list({
@@ -154,6 +170,7 @@ export default function LogsPage() {
   return (
     <>
       <PageHeader title="LOG API" />
+      <LogStatsCharts reloadKey={chartsKey} />
       <p className="muted" style={{ marginBottom: 14 }}>
         Setiap perubahan data (tambah, ubah, hapus) oleh pengguna yang login, ditambah semua aktivitas akun (login,
         password salah, daftar, OTP, lupa/reset password) termasuk dari tamu, baik yang berhasil maupun yang gagal,
@@ -164,50 +181,50 @@ export default function LogsPage() {
       <form className={s.filters} onSubmit={apply}>
         <label className="field">
           <span className={s.filterLabel}>Hasil</span>
-          <select className="select" value={draft.result} onChange={set("result")}>
+          <NativeSelect value={draft.result} onChange={set("result")}>
             <option value="">Semua</option>
             <option value="success">Berhasil</option>
             <option value="failed">Gagal (semua)</option>
             <option value="client">Gagal – permintaan ditolak (4xx)</option>
             <option value="server">Gagal – kesalahan server (5xx)</option>
-          </select>
+          </NativeSelect>
         </label>
         <label className="field">
           <span className={s.filterLabel}>Method</span>
-          <select className="select" value={draft.method} onChange={set("method")}>
+          <NativeSelect value={draft.method} onChange={set("method")}>
             <option value="">Semua</option>
             {METHODS.map((m) => (
               <option key={m}>{m}</option>
             ))}
-          </select>
+          </NativeSelect>
         </label>
         <label className="field">
           <span className={s.filterLabel}>Status</span>
-          <input className="input" value={draft.status} onChange={set("status")} placeholder="mis. 404 atau 5xx" />
+          <Input value={draft.status} onChange={set("status")} placeholder="mis. 404 atau 5xx" />
         </label>
         <label className="field">
           <span className={s.filterLabel}>Path</span>
-          <input className="input" value={draft.path} onChange={set("path")} placeholder="mis. /api/tenants" />
+          <Input value={draft.path} onChange={set("path")} placeholder="mis. /api/tenants" />
         </label>
         <label className="field">
           <span className={s.filterLabel}>Email</span>
-          <input className="input" value={draft.email} onChange={set("email")} placeholder="Pengguna / email yang dicoba" />
+          <Input value={draft.email} onChange={set("email")} placeholder="Pengguna / email yang dicoba" />
         </label>
         <label className="field">
           <span className={s.filterLabel}>Dari Tanggal</span>
-          <input className="input" type="date" value={draft.from} onChange={set("from")} />
+          <Input type="date" value={draft.from} onChange={set("from")} />
         </label>
         <label className="field">
           <span className={s.filterLabel}>Sampai Tanggal</span>
-          <input className="input" type="date" value={draft.to} onChange={set("to")} />
+          <Input type="date" value={draft.to} onChange={set("to")} />
         </label>
         <div className={s.filterActions}>
-          <button type="submit" className="btn btn-navy">
+          <Button type="submit" variant="navy">
             Terapkan
-          </button>
-          <button type="button" className="btn btn-light" onClick={clear}>
+          </Button>
+          <Button type="button" variant="light" onClick={clear}>
             Reset
-          </button>
+          </Button>
         </div>
       </form>
 
@@ -218,55 +235,58 @@ export default function LogsPage() {
             {live ? "● Live" : "○ Offline"}
           </span>
           {waiting > 0 && (
-            <button type="button" className="btn btn-orange btn-sm" onClick={showWaiting}>
+            <Button type="button" variant="orange" size="sm" onClick={showWaiting}>
               {waiting} log baru · Tampilkan
-            </button>
+            </Button>
           )}
           <span className={styles.toolbarSpacer} />
-          <button type="button" className="btn btn-light btn-sm" onClick={reload} disabled={loading}>
+          <Button type="button" variant="light" size="sm" onClick={() => {
+              reload();
+              setChartsKey((k) => k + 1);
+            }} disabled={loading}>
             {loading ? "Memuat..." : "Muat Ulang"}
-          </button>
+          </Button>
         </div>
         {loading && !data ? (
           <Loading />
         ) : error ? (
-          <div className="alert alert-error">{error}</div>
+          <Alert variant="destructive">{error}</Alert>
         ) : data!.data.length === 0 ? (
           <EmptyState title="Tidak ada log">Ubah atau reset filter.</EmptyState>
         ) : (
           <>
             <div className="table-wrap">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Waktu</th>
-                    <th>Permintaan</th>
-                    <th>Status</th>
-                    <th>Durasi</th>
-                    <th>Pengguna</th>
-                    <th>Hasil</th>
-                    <th>Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <Table className="table">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Waktu</TableHead>
+                    <TableHead>Permintaan</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Durasi</TableHead>
+                    <TableHead>Pengguna</TableHead>
+                    <TableHead>Hasil</TableHead>
+                    <TableHead className="col-actions">Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {data!.data.map((log) => (
-                    <tr
+                    <TableRow
                       key={log.id}
                       className={[log.statusCode >= 400 ? s.failedRow : "", fresh.has(log.id) ? s.freshRow : ""].join(" ").trim() || undefined}
                     >
-                      <td data-label="Waktu">{when(log.createdAt)}</td>
-                      <td data-label="Permintaan" className={s.mono}>
+                      <TableCell data-label="Waktu">{when(log.createdAt)}</TableCell>
+                      <TableCell data-label="Permintaan" className={s.mono}>
                         <span className={s.method}>{log.method}</span> {log.path}
                         {log.query && <span className={s.query}>?{log.query}</span>}
-                      </td>
-                      <td data-label="Status">
-                        <span className={statusBadge(log.statusCode)}>{log.statusCode}</span>
-                      </td>
-                      <td data-label="Durasi">{log.durationMs} ms</td>
-                      <td data-label="Pengguna" className={styles.wrap}>
+                      </TableCell>
+                      <TableCell data-label="Status">
+                        <Badge variant={statusBadge(log.statusCode)}>{log.statusCode}</Badge>
+                      </TableCell>
+                      <TableCell data-label="Durasi">{log.durationMs} ms</TableCell>
+                      <TableCell data-label="Pengguna" className={styles.wrap}>
                         {who(log)}
-                      </td>
-                      <td data-label="Hasil" className={styles.wrap}>
+                      </TableCell>
+                      <TableCell data-label="Hasil" className={styles.wrap}>
                         {log.errorCode ? (
                           <span className={s.error}>
                             <strong>{log.errorCode}</strong>
@@ -276,16 +296,16 @@ export default function LogsPage() {
                         ) : (
                           summaryLine(log.responseSummary)
                         )}
-                      </td>
-                      <td data-label="Aksi">
-                        <button type="button" className="btn btn-orange btn-sm" onClick={() => setOpenId(log.id)}>
+                      </TableCell>
+                      <TableCell data-label="Aksi">
+                        <Button type="button" variant="orange" size="sm" onClick={() => setOpenId(log.id)}>
                           Detail
-                        </button>
-                      </td>
-                    </tr>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
             <Pagination
               page={page}
@@ -314,7 +334,7 @@ function LogDetail({ id, onClose }: { id: number | null; onClose: () => void }) 
       {loading || (!log && !error) ? (
         <Loading />
       ) : error ? (
-        <div className="alert alert-error">{error}</div>
+        <Alert variant="destructive">{error}</Alert>
       ) : (
         log && (
           <div className="stack">
@@ -328,7 +348,7 @@ function LogDetail({ id, onClose }: { id: number | null; onClose: () => void }) 
               </dd>
               <dt>Status</dt>
               <dd>
-                <span className={statusBadge(log.statusCode)}>{log.statusCode}</span> {LEVEL_LABEL[log.level]}
+                <Badge variant={statusBadge(log.statusCode)}>{log.statusCode}</Badge> {LEVEL_LABEL[log.level]}
               </dd>
               <dt>Durasi</dt>
               <dd>{log.durationMs} ms</dd>

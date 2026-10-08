@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { api, ApiError, errorMessage } from "@/lib/api";
 import type { User } from "@/lib/types";
 import styles from "./auth.module.css";
+import { Button } from "@/components/shadcn/button";
+import { Alert } from "@/components/shadcn/alert";
 
 const LENGTH = 6;
 const RESEND_SECONDS = 60;
@@ -125,14 +127,14 @@ export function OtpForm({
         ))}
       </div>
       {hint && <p className="hint">Mode pengembangan: kode OTP = {hint}</p>}
-      {error && <div className="alert alert-error">{error}</div>}
-      {info && <div className="alert alert-success">{info}</div>}
-      <button type="submit" className="btn btn-navy btn-lg" disabled={busy}>
+      {error && <Alert variant="destructive">{error}</Alert>}
+      {info && <Alert variant="success">{info}</Alert>}
+      <Button type="submit" variant="navy" size="lg" disabled={busy}>
         {busy ? "Memverifikasi..." : "VERIFIKASI"}
-      </button>
-      <button type="button" className="btn btn-light btn-sm" onClick={resend} disabled={cooldown > 0}>
+      </Button>
+      <Button type="button" variant="light" size="sm" onClick={resend} disabled={cooldown > 0}>
         {cooldown > 0 ? `Kirim ulang kode (${cooldown} dtk)` : "Kirim ulang kode"}
-      </button>
+      </Button>
     </form>
   );
 }

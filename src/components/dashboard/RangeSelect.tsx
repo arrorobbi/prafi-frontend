@@ -2,6 +2,7 @@
 
 import { IconCalendar } from "../Icons";
 import styles from "./dashboard.module.css";
+import { NativeSelect } from "../shadcn/native-select";
 
 export type Range = "all" | "7d" | "30d" | "year";
 
@@ -32,13 +33,18 @@ export function RangeSelect({ value, onChange }: { value: Range; onChange: (r: R
     <label className={styles.rangeChip}>
       <IconCalendar />
       <span className="sr-only">Rentang waktu</span>
-      <select value={value} onChange={(e) => onChange(e.target.value as Range)}>
+      <NativeSelect
+        value={value}
+        onChange={(e) => onChange(e.target.value as Range)}
+        wrapperClassName="w-auto"
+        className="h-auto border-0 bg-transparent py-0 pr-7 pl-0 text-[0.85rem] text-white shadow-none [&>option]:text-foreground"
+      >
         {(Object.keys(LABELS) as Range[]).map((r) => (
           <option key={r} value={r}>
             {LABELS[r]}
           </option>
         ))}
-      </select>
+      </NativeSelect>
     </label>
   );
 }
