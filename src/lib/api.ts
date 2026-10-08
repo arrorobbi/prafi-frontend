@@ -332,6 +332,8 @@ export const api = {
     list: (
       q: Paged & {
         level?: LogLevel;
+        /** success = status < 400, failed = 4xx and 5xx */
+        outcome?: "success" | "failed";
         method?: string;
         status?: string;
         path?: string;

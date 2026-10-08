@@ -14,10 +14,18 @@ import s from "./log.module.css";
 const LIMIT = 20;
 /** Only changes are stored (reads are not) */
 const METHODS = ["POST", "PATCH", "PUT", "DELETE"];
-const EMPTY = { level: "", method: "", status: "", path: "", email: "", from: "", to: "" };
+const EMPTY = { result: "", method: "", status: "", path: "", email: "", from: "", to: "" };
+
+/** The "Hasil" filter → API query (outcome for success/all failures, level for one kind of failure) */
+const RESULT_QUERY: Record<string, { outcome?: "success" | "failed"; level?: LogLevel }> = {
+  success: { outcome: "success" },
+  failed: { outcome: "failed" },
+  client: { level: "warn" },
+  server: { level: "error" },
+};
 type Filters = typeof EMPTY;
 
-const LEVEL_LABEL: Record<LogLevel, string> = { info: "Info", warn: "Peringatan", error: "Error" };
+const LEVEL_LABEL: Record<LogLevel, string> = { info: "Berhasil", warn: "Gagal (permintaan ditolak)", error: "Gagal (kesalahan server)" };
 
 function statusBadge(code: number) {
   if (code >= 500) return "badge badge-rejected";
@@ -57,7 +65,7 @@ export default function LogsPage() {
       api.logs.list({
         page,
         limit: LIMIT,
-        level: (filters.level || undefined) as LogLevel | undefined,
+        ...RESULT_QUERY[filters.result],
         method: filters.method,
         status: filters.status.trim(),
         path: filters.path.trim(),
@@ -87,19 +95,20 @@ export default function LogsPage() {
     <>
       <PageHeader title="LOG API" />
       <p className="muted" style={{ marginBottom: 14 }}>
-        Setiap perubahan data lewat API (tambah, ubah, hapus) beserta hasil atau error-nya, terbaru di atas. Permintaan
+        Setiap perubahan data lewat API (tambah, ubah, hapus), baik yang berhasil maupun yang gagal, terbaru di atas. Permintaan
         baca (GET) tidak dicatat. Yang disimpan hanya nama field yang dikirim dan ringkasan hasil (mis. nama, email,
         status), tidak pernah isi password atau token.
       </p>
 
       <form className={s.filters} onSubmit={apply}>
         <label className="field">
-          <span className={s.filterLabel}>Level</span>
-          <select className="select" value={draft.level} onChange={set("level")}>
+          <span className={s.filterLabel}>Hasil</span>
+          <select className="select" value={draft.result} onChange={set("result")}>
             <option value="">Semua</option>
-            <option value="info">Info (sukses)</option>
-            <option value="warn">Peringatan (4xx)</option>
-            <option value="error">Error (5xx)</option>
+            <option value="success">Berhasil</option>
+            <option value="failed">Gagal (semua)</option>
+            <option value="client">Gagal – permintaan ditolak (4xx)</option>
+            <option value="server">Gagal – kesalahan server (5xx)</option>
           </select>
         </label>
         <label className="field">
@@ -172,7 +181,7 @@ export default function LogsPage() {
                 </thead>
                 <tbody>
                   {data!.data.map((log) => (
-                    <tr key={log.id}>
+                    <tr key={log.id} className={log.statusCode >= 400 ? s.failedRow : undefined}>
                       <td data-label="Waktu">{when(log.createdAt)}</td>
                       <td data-label="Permintaan" className={s.mono}>
                         <span className={s.method}>{log.method}</span> {log.path}

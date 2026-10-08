@@ -98,3 +98,8 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 0.8rem;
 }
+
+/* Failed requests (4xx / 5xx) stand out in the list */
+.failedRow > td:first-child {
+  box-shadow: inset 4px 0 0 #e53935;
+}
