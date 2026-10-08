@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { AuthFrame } from "@/components/auth/AuthFrame";
 import styles from "@/components/auth/auth.module.css";
 import { IconEye, IconEyeOff } from "@/components/Icons";
@@ -21,6 +21,19 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [resendUserId, setResendUserId] = useState<string | null>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+
+  /**
+   * Enter logs in (also explicit, so it works the same with every browser and password manager).
+   * In the email field it first moves on to the password when that is still empty.
+   */
+  const onEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== "Enter" || e.nativeEvent.isComposing) return;
+    e.preventDefault();
+    if (busy) return;
+    if (e.currentTarget.type === "email" && !password) passwordRef.current?.focus();
+    else e.currentTarget.form?.requestSubmit();
+  };
 
   // Message left by an ended session (expired token, logout, password reset)
   useEffect(() => {
@@ -108,6 +121,8 @@ function LoginForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={onEnter}
+            enterKeyHint="next"
           />
         </label>
         <label className={`${styles.pillInput} ${styles.pwInput}`}>
@@ -117,8 +132,11 @@ function LoginForm() {
             placeholder="Password"
             autoComplete="current-password"
             required
+            ref={passwordRef}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={onEnter}
+            enterKeyHint="go"
           />
           <button
             type="button"

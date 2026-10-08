@@ -6,13 +6,14 @@ import { ROLE_LABEL } from "@/components/dashboard/UserAccounts";
 import { Modal } from "@/components/Modal";
 import { EmptyState, Loading, PageHeader, Pagination } from "@/components/ui";
 import { api } from "@/lib/api";
-import { formatDate, formatTime } from "@/lib/format";
-import type { ApiLog, LogLevel } from "@/lib/types";
+import { formatDate, formatRupiah, formatTime } from "@/lib/format";
+import type { ApiLog, LogLevel, LogSummary } from "@/lib/types";
 import { useAsync } from "@/lib/useAsync";
 import s from "./log.module.css";
 
 const LIMIT = 20;
-const METHODS = ["GET", "POST", "PATCH", "PUT", "DELETE"];
+/** Only changes are stored (reads are not) */
+const METHODS = ["POST", "PATCH", "PUT", "DELETE"];
 const EMPTY = { level: "", method: "", status: "", path: "", email: "", from: "", to: "" };
 type Filters = typeof EMPTY;
 
@@ -23,6 +24,22 @@ function statusBadge(code: number) {
   if (code >= 400) return "badge badge-pending";
   if (code >= 300) return "badge badge-inactive";
   return "badge badge-active";
+}
+
+/** One line for the table: what was created/changed (name, email, price, status), or how many rows a list had */
+function summaryLine(s: LogSummary | null) {
+  if (!s) return "-";
+  if (typeof s.count === "number") return `${s.count} data`;
+  const parts: string[] = [];
+  const main = s.name ?? s.tenantName ?? (s.firstName ? `${s.firstName} ${s.lastName ?? ""}`.trim() : null) ?? (s.user?.firstName ? `${s.user.firstName} ${s.user.lastName ?? ""}`.trim() : null);
+  if (main) parts.push(main);
+  const email = s.email ?? s.user?.email;
+  if (email) parts.push(email);
+  if (typeof s.price === "number") parts.push(formatRupiah(s.price));
+  const active = s.isActive ?? s.approval?.isActive;
+  if (typeof active === "boolean") parts.push(active ? "Aktif" : "Nonaktif");
+  if (!parts.length && s.message) parts.push(s.message);
+  return parts.join(" · ") || "-";
 }
 
 const when = (iso: string) => `${formatDate(iso)} ${formatTime(iso)}`;
@@ -70,8 +87,9 @@ export default function LogsPage() {
     <>
       <PageHeader title="LOG API" />
       <p className="muted" style={{ marginBottom: 14 }}>
-        Setiap permintaan ke API beserta error-nya, terbaru di atas. Isi permintaan (body) tidak pernah disimpan, dan token
-        pada URL disamarkan.
+        Setiap perubahan data lewat API (tambah, ubah, hapus) beserta hasil atau error-nya, terbaru di atas. Permintaan
+        baca (GET) tidak dicatat. Yang disimpan hanya nama field yang dikirim dan ringkasan hasil (mis. nama, email,
+        status), tidak pernah isi password atau token.
       </p>
 
       <form className={s.filters} onSubmit={apply}>
@@ -148,7 +166,7 @@ export default function LogsPage() {
                     <th>Status</th>
                     <th>Durasi</th>
                     <th>Pengguna</th>
-                    <th>Error</th>
+                    <th>Hasil</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
@@ -167,15 +185,15 @@ export default function LogsPage() {
                       <td data-label="Pengguna" className={styles.wrap}>
                         {who(log)}
                       </td>
-                      <td data-label="Error" className={styles.wrap}>
+                      <td data-label="Hasil" className={styles.wrap}>
                         {log.errorCode ? (
-                          <>
+                          <span className={s.error}>
                             <strong>{log.errorCode}</strong>
                             <br />
                             {log.errorMessage}
-                          </>
+                          </span>
                         ) : (
-                          "-"
+                          summaryLine(log.responseSummary)
                         )}
                       </td>
                       <td data-label="Aksi">
@@ -248,6 +266,24 @@ function LogDetail({ id, onClose }: { id: number | null; onClose: () => void }) 
                 </>
               )}
             </dl>
+            {log.requestFields && log.requestFields.length > 0 && (
+              <div>
+                <p className={s.filterLabel}>Field yang dikirim (tanpa isi)</p>
+                <div className={s.chips}>
+                  {log.requestFields.map((f) => (
+                    <span key={f} className={s.chip}>
+                      {f}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {log.responseSummary && (
+              <div>
+                <p className={s.filterLabel}>Hasil (ringkasan)</p>
+                <pre className={s.code}>{JSON.stringify(log.responseSummary, null, 2)}</pre>
+              </div>
+            )}
             {log.errorDetails != null && (
               <div>
                 <p className={s.filterLabel}>Detail Error</p>

@@ -44,8 +44,8 @@ in the **backend** `.env` to this site's URL.
 | --- | --- | --- |
 | `/` | public | Landing: featured carousel, recommended products, "why Transniaga" |
 | `/produk`, `/produk?q=` | public | All approved products + search |
-| `/produk/[id]` | public | Product detail |
-| `/umkm`, `/umkm/[id]` | public | Sellers (derived from approved products) and their products |
+| `/produk/[id]` | public | Product detail: price, rating, public reviews (read + write without login) |
+| `/umkm`, `/umkm/[id]` | public | UMKM directory and page: profile, contact links, product count, rating, products (`/api/landing/tenants`) |
 | `/panduan` | public | User guide |
 | `/maintenance` | public | The old "under construction" page |
 | `/login` | public | Login for every role, redirects by role |
@@ -55,8 +55,8 @@ in the **backend** `.env` to this site's URL.
 | `/lupa-password`, `/reset-password` | public | Forgot / reset password |
 | `/admin/*` | admin | Dashboard, Konfirmasi Produk, Manajemen Produk, Kategori UMKM, Manajemen UMKM, Notifikasi, Pengaturan |
 | `/tenant/*` | tenant | Dashboard, Produk Saya, Tambah/Ubah Produk, Produk Ditolak, Profil UMKM, Notifikasi, Bantuan, Pengaturan |
-| `/superadmin/*` | superadmin | Dashboard, Akun Disnakertrans (create + resend activation), Semua Pengguna, Data Produk, Data UMKM, Kategori UMKM (read-only), Notifikasi, Pengaturan |
-| `/disnakertrans/*` | disnakertrans | Dashboard, Aktivasi Admin (activate/deactivate admins), Data Produk, Data UMKM, Notifikasi, Pengaturan |
+| `/superadmin/*` | superadmin | Dashboard, Akun Disnakertrans (create + resend activation), Semua Pengguna, Data Produk, Data UMKM, Kategori UMKM (read-only), Log API (create/update/delete requests with result summary), Notifikasi, Pengaturan |
+| `/disnakertrans/*` | disnakertrans | Dashboard, Aktivasi Admin (activate/deactivate admins), Konfirmasi Produk (approve/reject/deactivate, like admin), Data Produk, Data UMKM, Notifikasi, Pengaturan |
 
 ## Code map
 
@@ -69,13 +69,18 @@ src/
     dashboard/         sidebar shell, notifications, product form/review/browser, user accounts table,
                        shop profiles, account settings, stats
     ui.tsx             brand, page header, pagination, image picker, password input, ...
+    UploadDialog.tsx   photo upload with progress popup; a photo is "pending" until the form's Simpan attaches it
+    LeaveGuard.tsx     "Tinggalkan halaman ini?" when leaving with an unsaved photo (Setuju deletes it)
+    Stars.tsx          star rating display
     Icons.tsx, Modal.tsx, Toast.tsx, GuideList.tsx
   lib/
     api.ts             browser API client — one function per documented endpoint
     server-api.ts      landing data for server components
     auth.tsx           session (token in localStorage, 1-hour expiry, 401 → logout)
     notifications.tsx  unread badge (polling)
-    format.ts          dates, names, product status logic
+    format.ts          dates, names, rupiah, ratings, product status logic
+    notificationText.ts  notification titles/messages in Bahasa Indonesia, per type and role
+    pendingUploads.ts  unsaved uploads in localStorage, deleted on leave / next visit
     guides.tsx         user-guide content (used by /panduan and /tenant/bantuan)
     types.ts           API response types
 ```
@@ -83,7 +88,9 @@ src/
 ### API coverage
 
 Every endpoint in the API docs is wired in `src/lib/api.ts`. Admin-only/tenant-only endpoints are used by those
-dashboards; the superadmin creates disnakertrans accounts and reads everything; disnakertrans activates admins. Product approval stays admin-only (superadmin and disnakertrans see products read-only, as the API allows).
+dashboards; the superadmin creates disnakertrans accounts, reads everything and views the API log; disnakertrans
+activates admins and approves products like admins. Tenants need a complete UMKM profile and an account photo before
+they can add products.
 
 ### Product status
 
@@ -93,9 +100,9 @@ productStatus`):
 | status | rule |
 | --- | --- |
 | Aktif | `isActive: true` |
-| Menunggu Konfirmasi | inactive and reason is `Waiting for approval`, **or** the product was edited after the admin's last decision (re-submitted) |
-| Ditolak | inactive and reason starts with `Ditolak: ` (written by the admin "Tolak" action) |
-| Dinonaktifkan | any other inactive product (admin took it down) |
+| Menunggu Konfirmasi | inactive and reason is `Waiting for approval`, **or** the product was edited after the last decision (re-submitted) |
+| Ditolak | inactive and reason starts with `Ditolak: ` (written by the admin / disnakertrans "Tolak" action) |
+| Dinonaktifkan | any other inactive product (an admin or disnakertrans took it down) |
 
 ### Realtime
 

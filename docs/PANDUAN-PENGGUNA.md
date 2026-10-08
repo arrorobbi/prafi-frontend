@@ -15,6 +15,7 @@ halaman `/panduan`.
 
 - Menu **Produk** menampilkan semua produk; menu **UMKM** menampilkan daftar toko beserta produknya.
 - Klik produk untuk melihat detail: harga, deskripsi, informasi produk, ulasan pembeli, dan toko penjualnya. Siapa pun dapat memberi bintang dan ulasan tanpa login.
+- Klik nama toko atau **Lihat UMKM** untuk membuka halaman UMKM: profil, alamat, jam buka, tombol WhatsApp/Instagram/Shopee/Google Bisnis, jumlah produk, rata-rata bintang, dan semua produknya.
 
   ![Detail produk](../public/panduan/pengunjung-3-detail.jpg)
 
@@ -56,25 +57,27 @@ halaman `/panduan`.
 
    ![Profil UMKM](../public/panduan/profil-1-lihat.jpg)
 
-2. Unggah logo/foto toko (JPG, PNG, WEBP, atau GIF, maks. 5 MB).
+2. Pilih logo/foto toko (JPG, PNG, WEBP, atau GIF, maks. 5 MB). Foto langsung terunggah, tetapi baru tersimpan setelah Anda klik **SIMPAN PROFIL**.
 3. Isi nama toko, **wilayah** (SP 1 – SP 4 atau *Lainnya*), **kategori usaha**, deskripsi, dan alamat.
 4. Isi jam operasional (hari, jam buka, jam tutup) dan nomor WhatsApp.
-5. Tautan Google Maps dan Facebook/toko online boleh dikosongkan.
+5. Tautan Google Maps, Facebook, Instagram, Google Bisnis, dan Shopee boleh dikosongkan.
 
    ![Formulir profil toko](../public/panduan/profil-2-form.jpg)
 
 6. Klik **SIMPAN PROFIL**. Ubah kapan saja lewat **Ubah Profil**.
+
+> Agar dapat menambahkan produk, profil harus lengkap **dan** akun Anda harus memiliki **foto profil** (menu *Pengaturan Akun*).
 
    ![Simpan profil](../public/panduan/profil-3-simpan.jpg)
 
 
 ### 2.3 Menambahkan produk
 
-1. Klik menu **Tambah Produk** (atau tombol **+** di *Produk Saya*).
+1. Klik menu **Tambah Produk** (atau tombol **+** di *Produk Saya*). Bila muncul pesan *Lengkapi data Anda dulu*, klik tombolnya untuk melengkapi Profil UMKM atau mengunggah foto profil akun.
 
    ![Menu Tambah Produk](../public/panduan/produk-1-menu.jpg)
 
-2. Klik **UNGGAH FOTO PRODUK → PILIH FILE**.
+2. Klik **UNGGAH FOTO PRODUK → PILIH FILE**. Foto langsung terunggah (ada tanda persen), tetapi baru tersimpan setelah Anda klik **Ajukan Produk**.
 
    ![Unggah foto produk](../public/panduan/produk-2-foto.jpg)
 
@@ -89,8 +92,8 @@ halaman `/panduan`.
 
    ![Ajukan produk](../public/panduan/produk-4-ajukan.jpg)
 
-6. Setelah disetujui, status menjadi **Aktif**, produk tampil di beranda, dan Anda mendapat notifikasi
-   *Produk Disetujui*.
+6. Setelah disetujui administrator atau Disnakertrans, status menjadi **Aktif**, produk tampil di beranda, dan Anda
+   mendapat notifikasi *Produk Disetujui*.
 
    ![Status produk](../public/panduan/produk-5-status.jpg)
 
@@ -102,10 +105,10 @@ halaman `/panduan`.
 
   | Status | Arti |
   | --- | --- |
-  | Menunggu Konfirmasi | sedang diperiksa administrator |
+  | Menunggu Konfirmasi | sedang diperiksa administrator atau Disnakertrans |
   | Aktif | disetujui dan tampil untuk pengunjung |
   | Ditolak | belum memenuhi ketentuan — lihat alasan di *Produk Ditolak* |
-  | Dinonaktifkan | diturunkan administrator |
+  | Dinonaktifkan | diturunkan administrator atau Disnakertrans |
 
 - **Produk Ditolak:** baca alasan penolakan, klik ikon pensil, perbaiki, lalu klik **Simpan & Ajukan Ulang**.
   Produk kembali berstatus *Menunggu Konfirmasi*.
@@ -124,7 +127,17 @@ halaman `/panduan`.
 ### 2.6 Notifikasi
 
 Menu **Notifikasi** (dengan angka belum dibaca) memiliki tab *Semua*, *Belum Dibaca*, dan *Dibaca*. Klik notifikasi
-untuk membuka produk terkait; klik **Tandai semua sebagai sudah dibaca** untuk membersihkan badge.
+untuk membuka halaman terkait; klik **Tandai semua sebagai sudah dibaca** untuk membersihkan badge.
+
+Penjual menerima notifikasi untuk setiap perubahan pada produknya:
+
+| Notifikasi | Kapan |
+| --- | --- |
+| Produk Berhasil Diajukan | Anda menambahkan produk |
+| Produk Disetujui | produk disetujui atau diaktifkan kembali |
+| Produk Ditolak / Produk Dinonaktifkan | administrator atau Disnakertrans menolak / menurunkan produk, **beserta alasannya** |
+| Perubahan Produk Tersimpan | Anda mengubah produk (tetap tayang, atau menunggu konfirmasi ulang) |
+| Ulasan Baru | pembeli memberi bintang dan ulasan |
 
 ![Notifikasi](../public/panduan/notifikasi-1.jpg)
 
@@ -133,7 +146,10 @@ untuk membuka produk terkait; klik **Tandai semua sebagai sudah dibaca** untuk m
 
 ## 3. Akun & keamanan (semua pengguna)
 
-- **Pengaturan Akun:** ubah nama, email, nomor telepon, nama toko, dan foto profil → **SIMPAN PERUBAHAN**.
+- **Pengaturan Akun:** ubah nama, email, nomor telepon, nama toko, dan foto profil → **SIMPAN PERUBAHAN**. Foto baru
+  langsung terunggah saat dipilih, tetapi baru terpasang setelah **SIMPAN PERUBAHAN**.
+- **Foto belum disimpan?** Jika Anda meninggalkan halaman sebelum menyimpan, muncul konfirmasi *Tinggalkan halaman ini?*:
+  **Lanjut Suntingan** untuk kembali menyunting, atau **Setuju** untuk keluar (foto dihapus, tidak ada data yang berubah).
 - **Ubah Password:** masukkan password saat ini dan password baru (min. 8 karakter).
 
   ![Pengaturan akun](../public/panduan/akun-1-pengaturan.jpg)
@@ -198,8 +214,9 @@ yang diberikan superadmin.
 | --- | --- |
 | Dashboard | Jumlah admin, admin belum aktif, UMKM, dan produk |
 | Aktivasi Admin | Aktifkan atau nonaktifkan akun admin (alasan opsional). Admin baru hanya bisa login setelah diaktifkan |
-| Data Produk / Data UMKM | Melihat semua produk dan profil toko (hanya baca) |
-| Notifikasi | *Admin Baru Menunggu Aktivasi* — klik untuk membuka halaman Aktivasi Admin |
+| Konfirmasi Produk | Menyetujui, menolak (dengan alasan), atau menonaktifkan produk — sama seperti admin |
+| Data Produk / Data UMKM | Melihat semua produk dan profil toko; produk dibuka ke halaman konfirmasinya |
+| Notifikasi | *Admin Baru Menunggu Aktivasi*, serta notifikasi produk yang sama dengan admin (produk baru, diperbarui, ditayangkan) |
 
 ![Aktivasi admin](../public/panduan/disnakertrans-1-aktivasi.jpg)
 
@@ -216,7 +233,8 @@ Akun superadmin dibuat oleh pengelola server. Superadmin **hanya membaca** data,
 | Akun Disnakertrans | **TAMBAH AKUN**: isi nama, telepon, email, dan password. Sistem mengirim tautan aktivasi ke email; berikan password secara langsung. Bila tautan kedaluwarsa, klik **Kirim Ulang Verifikasi** |
 | Semua Pengguna | Semua akun, disaring per role |
 | Data Produk / Data UMKM / Kategori UMKM | Melihat data (hanya baca) |
-| Notifikasi | Akun baru, produk baru, serta akun/produk yang dinonaktifkan |
+| Log API | Catatan setiap penambahan, perubahan, dan penghapusan data (bukan permintaan baca): siapa, kapan, field yang dikirim, dan ringkasan hasil atau error-nya. Dapat disaring per status, method, path, email, dan tanggal |
+| Notifikasi | Akun baru, produk baru, serta akun yang dinonaktifkan dan produk tayang yang diturunkan |
 
 ![Tambah akun Disnakertrans](../public/panduan/superadmin-1-tambah.jpg)
 

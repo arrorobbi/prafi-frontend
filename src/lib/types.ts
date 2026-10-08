@@ -154,7 +154,10 @@ export type NotificationType =
   | "TENANT_PROFILE_UPDATED"
   | "TENANT_REGISTERED"
   | "PRODUCT_UNDER_REVIEW"
-  | "PRODUCT_APPROVED";
+  | "PRODUCT_APPROVED"
+  | "PRODUCT_TAKEN_DOWN"
+  | "PRODUCT_CHANGES_SAVED"
+  | "PRODUCT_REVIEWED";
 
 export interface AppNotification {
   id: number;
@@ -206,5 +209,25 @@ export interface ApiLog {
   errorMessage: string | null;
   errorDetails: unknown;
   errorStack?: string | null;
+  /** Names of the fields that were sent (never their values) */
+  requestFields: string[] | null;
+  /** Safe extract of a successful response (id, name, email, role, isActive…); lists: { count } */
+  responseSummary: LogSummary | null;
   createdAt: string;
+}
+
+export interface LogSummary {
+  [key: string]: unknown;
+  id?: string | number;
+  name?: string;
+  email?: string;
+  tenantName?: string | null;
+  firstName?: string;
+  lastName?: string;
+  price?: number;
+  isActive?: boolean;
+  message?: string;
+  count?: number;
+  user?: { email?: string; firstName?: string; lastName?: string };
+  approval?: { isActive?: boolean; reason?: string };
 }

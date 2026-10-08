@@ -79,7 +79,8 @@ export const GUIDES: Guide[] = [
         </Step>
         <Step image="pengunjung-3-detail" alt="Halaman detail produk">
           Halaman detail menampilkan harga, deskripsi, informasi produk, dan ulasan pembeli. Anda dapat memberi
-          bintang dan ulasan tanpa login. Klik nama toko untuk melihat profil dan produk lain dari UMKM tersebut.
+          bintang dan ulasan tanpa login. Klik nama toko untuk membuka halaman UMKM: profil, alamat, jam buka,
+          tombol WhatsApp/Instagram/Shopee/Google Bisnis, jumlah produk, rata-rata bintang, dan semua produknya.
         </Step>
       </Steps>
     ),
@@ -128,13 +129,15 @@ export const GUIDES: Guide[] = [
           langsung terbuka.
         </Step>
         <Step image="profil-2-form" alt="Formulir profil toko">
-          Unggah logo atau foto toko (JPG/PNG/WEBP, maksimal 5 MB). Isi nama toko, wilayah (SP 1 – SP 4 atau lainnya),
-          kategori usaha, deskripsi, alamat lengkap, jam operasional (hari, jam buka, jam tutup), dan nomor WhatsApp.
-          Tautan Google Maps, Facebook, Instagram, Google Bisnis, dan Shopee boleh dikosongkan. Profil harus lengkap
-          sebelum Anda dapat menambahkan produk.
+          Pilih logo atau foto toko (JPG/PNG/WEBP, maksimal 5 MB): foto langsung terunggah, tetapi baru tersimpan
+          setelah Anda klik <b>SIMPAN PROFIL</b>. Isi nama toko, wilayah (SP 1 – SP 4 atau lainnya), kategori usaha,
+          deskripsi, alamat lengkap, jam operasional (hari, jam buka, jam tutup), dan nomor WhatsApp. Tautan Google
+          Maps, Facebook, Instagram, Google Bisnis, dan Shopee boleh dikosongkan.
         </Step>
         <Step image="profil-3-simpan" alt="Tombol simpan profil">
-          Klik <b>SIMPAN PROFIL</b>. Profil dapat diubah kapan saja lewat tombol <b>Ubah Profil</b>.
+          Klik <b>SIMPAN PROFIL</b>. Profil dapat diubah kapan saja lewat tombol <b>Ubah Profil</b>. Agar dapat
+          menambahkan produk, profil harus lengkap <b>dan</b> akun Anda harus memiliki foto profil (menu{" "}
+          <b>Pengaturan Akun</b>).
         </Step>
       </Steps>
     ),
@@ -150,9 +153,12 @@ export const GUIDES: Guide[] = [
       <Steps>
         <Step image="produk-1-menu" alt="Menu Tambah Produk">
           Masuk ke dashboard penjual, lalu klik menu <b>Tambah Produk</b> (atau tombol <b>+</b> di halaman Produk Saya).
+          Bila muncul pesan <b>Lengkapi data Anda dulu</b>, klik tombolnya untuk melengkapi Profil UMKM atau
+          mengunggah foto profil akun.
         </Step>
         <Step image="produk-2-foto" alt="Kotak unggah foto produk">
-          Klik kotak <b>UNGGAH FOTO PRODUK</b> → <b>PILIH FILE</b> dan pilih foto produk.
+          Klik kotak <b>UNGGAH FOTO PRODUK</b> → <b>PILIH FILE</b> dan pilih foto produk. Foto langsung terunggah
+          (ada tanda persen), tetapi baru tersimpan setelah Anda klik <b>Ajukan Produk</b>.
         </Step>
         <Step image="produk-3-isi-data" alt="Isian data produk">
           Isi <b>Nama Produk</b> dan <b>Harga</b> (dalam Rupiah), lalu <b>Deskripsi Produk</b> (penjelasan singkat) dan
@@ -163,8 +169,9 @@ export const GUIDES: Guide[] = [
           Klik <b>Ajukan Produk</b>. Status produk menjadi <b>Menunggu Konfirmasi</b> dan Anda menerima notifikasi.
         </Step>
         <Step image="produk-5-status" alt="Status produk di Produk Saya">
-          Pantau status di <b>Produk Saya</b>. Setelah administrator menyetujui, status berubah menjadi <b>Aktif</b>{" "}
-          dan produk tampil di halaman utama.
+          Pantau status di <b>Produk Saya</b>. Setelah administrator atau Disnakertrans menyetujui, status berubah
+          menjadi <b>Aktif</b> dan produk tampil di halaman utama. Anda juga menerima notifikasi untuk setiap
+          perubahan status.
         </Step>
       </Steps>
     ),
@@ -180,7 +187,7 @@ export const GUIDES: Guide[] = [
       <>
         <ul>
           <li>
-            <b>Menunggu Konfirmasi</b> – produk sedang diperiksa administrator.
+            <b>Menunggu Konfirmasi</b> – produk sedang diperiksa administrator atau Disnakertrans.
           </li>
           <li>
             <b>Aktif</b> – produk disetujui dan tampil untuk pengunjung.
@@ -189,7 +196,7 @@ export const GUIDES: Guide[] = [
             <b>Ditolak</b> – produk belum memenuhi ketentuan; alasannya terlihat di menu <b>Produk Ditolak</b>.
           </li>
           <li>
-            <b>Dinonaktifkan</b> – produk diturunkan administrator dari halaman utama.
+            <b>Dinonaktifkan</b> – produk diturunkan administrator atau Disnakertrans dari halaman utama.
           </li>
         </ul>
         <p>Untuk mengajukan ulang produk yang ditolak:</p>
@@ -208,7 +215,7 @@ export const GUIDES: Guide[] = [
   {
     id: "notifikasi",
     title: "Notifikasi",
-    summary: "Membaca pemberitahuan pengajuan dan persetujuan produk",
+    summary: "Pemberitahuan untuk setiap perubahan pada produk Anda",
     icon: IconBell,
     color: "#ea7b25",
     audience: ["public", "tenant"],
@@ -216,8 +223,13 @@ export const GUIDES: Guide[] = [
       <Steps>
         <Step image="notifikasi-1" alt="Halaman notifikasi">
           Menu <b>Notifikasi</b> (dengan angka belum dibaca) memiliki tab <b>Semua</b>, <b>Belum Dibaca</b>, dan{" "}
-          <b>Dibaca</b>. Klik notifikasi untuk membuka produk terkait, atau klik{" "}
+          <b>Dibaca</b>. Klik notifikasi untuk membuka halaman terkait, atau klik{" "}
           <b>Tandai semua sebagai sudah dibaca</b>.
+        </Step>
+        <Step>
+          Penjual menerima notifikasi untuk setiap perubahan pada produknya: <b>Produk Berhasil Diajukan</b>,{" "}
+          <b>Produk Disetujui</b>, <b>Produk Ditolak</b> atau <b>Produk Dinonaktifkan</b> (beserta alasannya),{" "}
+          <b>Perubahan Produk Tersimpan</b>, dan <b>Ulasan Baru</b> dari pembeli.
         </Step>
       </Steps>
     ),
@@ -252,14 +264,20 @@ export const GUIDES: Guide[] = [
         <Steps>
           <Step image="akun-1-pengaturan" alt="Halaman pengaturan akun">
             Menu <b>Pengaturan Akun</b>: ubah nama, email, nomor telepon, atau foto profil, lalu klik{" "}
-            <b>SIMPAN PERUBAHAN</b>. Untuk mengganti password, klik <b>Ubah Password</b>, masukkan password saat ini dan
-            password baru (minimal 8 karakter).
+            <b>SIMPAN PERUBAHAN</b>. Foto baru langsung terunggah saat dipilih, tetapi baru terpasang setelah Anda
+            klik <b>SIMPAN PERUBAHAN</b>. Untuk mengganti password, klik <b>Ubah Password</b>, masukkan password saat
+            ini dan password baru (minimal 8 karakter).
           </Step>
           <Step image="akun-2-lupa-password" alt="Halaman lupa password">
             Lupa password? Di halaman Login klik <b>Lupa Password</b>, masukkan email, lalu buka tautan di email
             (berlaku 30 menit, sekali pakai) untuk membuat password baru. Semua sesi login lain akan berakhir.
           </Step>
         </Steps>
+        <p>
+          Jika Anda meninggalkan halaman sebelum menyimpan foto yang baru diunggah, akan muncul konfirmasi{" "}
+          <b>Tinggalkan halaman ini?</b>: pilih <b>Lanjut Suntingan</b> untuk kembali menyunting, atau <b>Setuju</b>{" "}
+          untuk keluar (foto tersebut dihapus dan tidak ada data yang berubah).
+        </p>
         <p>Demi keamanan, sesi login berakhir otomatis setelah 1 jam; silakan login kembali.</p>
       </>
     ),
@@ -318,7 +336,14 @@ export const GUIDES: Guide[] = [
             admin tersebut.
           </Step>
         </Steps>
-        <p>Superadmin dan Disnakertrans dapat melihat semua produk dan profil UMKM, tetapi persetujuan produk tetap dilakukan admin.</p>
+        <p>
+          <b>Disnakertrans</b> juga dapat menyetujui, menolak, dan menonaktifkan produk di menu{" "}
+          <b>Konfirmasi Produk</b>, sama seperti admin, dan menerima notifikasi produk yang sama.
+        </p>
+        <p>
+          <b>Superadmin</b> dapat melihat semua data (hanya baca) dan membuka menu <b>Log API</b>: catatan setiap
+          penambahan, perubahan, dan penghapusan data beserta hasil atau error-nya.
+        </p>
       </>
     ),
   },
