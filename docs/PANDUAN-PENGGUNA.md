@@ -218,6 +218,7 @@ yang diberikan superadmin.
 | Aktivasi Admin | Aktifkan atau nonaktifkan akun admin (alasan opsional). Admin baru hanya bisa login setelah diaktifkan |
 | Konfirmasi Produk | Menyetujui, menolak (dengan alasan), atau menonaktifkan produk — sama seperti admin |
 | Data Produk / Data UMKM | Melihat semua produk dan profil toko; produk dibuka ke halaman konfirmasinya |
+| Kategori Produk | Tambah, ubah, dan hapus kategori produk beserta gambarnya (carousel Beranda) — sama seperti admin |
 | Notifikasi | *Admin Baru Menunggu Aktivasi*, serta notifikasi produk yang sama dengan admin (produk baru, diperbarui, ditayangkan) |
 
 ![Aktivasi admin](../public/panduan/disnakertrans-1-aktivasi.jpg)

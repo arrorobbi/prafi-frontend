@@ -326,7 +326,7 @@ export const GUIDES: Guide[] = [
   {
     id: "panduan-disnakertrans",
     title: "Panduan Disnakertrans & Superadmin",
-    summary: "Aktivasi akun admin dan pembuatan akun Disnakertrans",
+    summary: "Aktivasi akun admin, kategori produk, dan pembuatan akun Disnakertrans",
     icon: IconUser,
     color: "#0e3c69",
     audience: ["public"],
@@ -346,7 +346,8 @@ export const GUIDES: Guide[] = [
         </Steps>
         <p>
           <b>Disnakertrans</b> juga dapat menyetujui, menolak, dan menonaktifkan produk di menu{" "}
-          <b>Konfirmasi Produk</b>, sama seperti admin, dan menerima notifikasi produk yang sama.
+          <b>Konfirmasi Produk</b>, sama seperti admin, dan menerima notifikasi produk yang sama. Disnakertrans juga
+          mengelola <b>Kategori Produk</b> (tambah, ubah, hapus, dan gambar carousel Beranda) seperti admin.
         </p>
         <p>
           <b>Superadmin</b> dapat melihat semua data (hanya baca) dan membuka menu <b>Log API</b>: catatan setiap

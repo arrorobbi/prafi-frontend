@@ -16,7 +16,7 @@ export default function CategoriesPage() {
     <>
       <PageHeader title="KATEGORI PRODUK" />
       <p className="muted" style={{ marginBottom: 16 }}>
-        Kategori produk dikelola oleh admin. Superadmin hanya dapat melihat. Gambarnya tampil di carousel halaman Beranda.
+        Kategori produk dikelola oleh admin dan Disnakertrans. Superadmin hanya dapat melihat. Gambarnya tampil di carousel halaman Beranda.
       </p>
       <div className={styles.panel}>
         {loading ? (
