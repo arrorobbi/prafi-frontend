@@ -152,12 +152,12 @@ export function ProfileForm({
       {logo.dialog}
       <div className={local.left}>
         <label className="field">
-          <span className="label">Nama Usaha/Toko</span>
+          <span className="label">Nama Usaha/Toko (wajib diisi)</span>
           <Input placeholder="Masukan nama usaha/toko" value={name} onChange={(e) => setName(e.target.value)} maxLength={255} />
           {errors.name && <span className="field-error">{errors.name}</span>}
         </label>
         <label className="field">
-          <span className="label">Wilayah Usaha/Toko</span>
+          <span className="label">Wilayah Usaha/Toko (wajib diisi)</span>
           <NativeSelect value={area} onChange={(e) => setArea(e.target.value)}>
             <option value="" disabled>
               Pilih wilayah
@@ -175,7 +175,7 @@ export function ProfileForm({
           {errors.area && <span className="field-error">{errors.area}</span>}
         </label>
         <label className="field">
-          <span className="label">Deskripsi Usaha/Toko</span>
+          <span className="label">Deskripsi Usaha/Toko (wajib diisi)</span>
           <Textarea
            
             placeholder="Ceritakan tentang usaha/toko anda (maks. 255 karakter)"
@@ -186,12 +186,12 @@ export function ProfileForm({
           {errors.description && <span className="field-error">{errors.description}</span>}
         </label>
         <label className="field">
-          <span className="label">Alamat Usaha/Toko</span>
+          <span className="label">Alamat Usaha/Toko (wajib diisi)</span>
           <Input placeholder="Contoh: Jalur 6 Bawah, SP 2, Distrik Prafi, Kab. Manokwari" value={address} maxLength={255} onChange={(e) => setAddress(e.target.value)} />
           {errors.address && <span className="field-error">{errors.address}</span>}
         </label>
         <div className="field">
-          <span className="label">Jam Operasional</span>
+          <span className="label">Jam Operasional (wajib diisi)</span>
           <div className={local.hours}>
             <Input placeholder="Hari (mis. Senin - Jumat)" value={days} onChange={(e) => setDays(e.target.value)} aria-label="Hari operasional" />
             <Input type="time" value={open} onChange={(e) => setOpen(e.target.value)} aria-label="Jam buka" />
@@ -211,7 +211,7 @@ export function ProfileForm({
           onFile={(f) => void logo.pick(f, `Logo ${name.trim() || "toko"}`)}
         />
         <label className="field">
-          <span className="label">Nomor WhatsApp</span>
+          <span className="label">Nomor WhatsApp (wajib diisi)</span>
           <Input inputMode="tel" placeholder="0812-8899-0067" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
           {errors.whatsappLink && <span className="field-error">{errors.whatsappLink}</span>}
         </label>
