@@ -39,8 +39,19 @@ const LEAVE_TITLE = "Tinggalkan halaman ini?";
 /** Marks our extra history entry, so the back button lands on it first instead of leaving the page */
 const MARK = "__transniagaLeaveGuard";
 
-export function LeaveGuardProvider({ children, onUnload }: { children: React.ReactNode; onUnload: (ids: number[]) => void }) {
+export function LeaveGuardProvider({
+  children,
+  onUnload,
+  onAsk,
+}: {
+  children: React.ReactNode;
+  onUnload: (ids: number[]) => void;
+  /** Called when the "leave this page?" dialog opens, e.g. so the dashboard closes its phone sidebar (it covers the dialog) */
+  onAsk?: () => void;
+}) {
   const router = useRouter();
+  const onAskRef = useRef(onAsk);
+  onAskRef.current = onAsk;
   const guards = useRef(new Map<string, Guard>());
   const [active, setActive] = useState(false);
   const [pending, setPending] = useState<(() => void | Promise<void>) | null>(null);
@@ -58,10 +69,12 @@ export function LeaveGuardProvider({ children, onUnload }: { children: React.Rea
 
   const confirmLeave = useCallback((action: () => void | Promise<void>, customTitle?: string) => {
     if (guards.current.size === 0) return void action();
+    onAskRef.current?.();
     setTitle(customTitle ?? LEAVE_TITLE);
     setPending(() => action);
   }, []);
   const ask = (action: () => void | Promise<void>) => {
+    onAskRef.current?.();
     setTitle(LEAVE_TITLE);
     setPending(() => action);
   };

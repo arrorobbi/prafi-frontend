@@ -126,7 +126,8 @@ export function DashboardShell({
   }
 
   return (
-    <LeaveGuardProvider onUnload={discardOnUnload}>
+    // The leave dialog would open under the phone sidebar (a link's own close never runs: the guard stops the click)
+    <LeaveGuardProvider onUnload={discardOnUnload} onAsk={() => setOpen(false)}>
     <RealtimeProvider>
     <NotificationProvider>
       <div className={styles.shell}>
