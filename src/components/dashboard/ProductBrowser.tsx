@@ -202,7 +202,7 @@ function ProductDetail({ product }: { product: Product }) {
         </div>
         <div>
           <dt className="label">Rekomendasi</dt>
-          <dd>{product.isRecommended ? "Ya, rata-rata ulasan 4,8 atau lebih" : "Tidak"}</dd>
+          <dd>{product.isRecommended ? "Ya, minimal 3 ulasan dengan rata-rata 4,8 atau lebih" : "Tidak"}</dd>
         </div>
         <div>
           <dt className="label">Ulasan</dt>

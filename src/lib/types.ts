@@ -153,6 +153,24 @@ export interface Review {
   updatedAt: string;
 }
 
+/** A seller's report on a review: waiting for an admin / disnakertrans, or their decision */
+export type ReportStatus = "pending" | "kept" | "hidden";
+
+/** A review as sellers (their products) and admins / disnakertrans (reported ones) see it */
+export interface ModeratedReview extends Omit<Review, "updatedAt"> {
+  /** Hidden by an admin / disnakertrans: not shown publicly, not counted in the rating */
+  isHidden: boolean;
+  /** null = never reported */
+  reportStatus: ReportStatus | null;
+  reportReason: string | null;
+  reportedAt: string | null;
+  moderatedAt: string | null;
+  moderationNote: string | null;
+  product?: { id: string; name: string; tenantId: string; tenant?: ProductOwner | null };
+  reporter?: Pick<ProductOwner, "id" | "tenantName" | "firstName" | "lastName"> | null;
+  moderator?: { id: string; firstName: string; lastName: string; role: Role } | null;
+}
+
 export interface RatingSummary {
   ratingAverage: number | null;
   reviewCount: number;
@@ -173,7 +191,9 @@ export type NotificationType =
   | "PRODUCT_APPROVED"
   | "PRODUCT_TAKEN_DOWN"
   | "PRODUCT_CHANGES_SAVED"
-  | "PRODUCT_REVIEWED";
+  | "PRODUCT_REVIEWED"
+  | "REVIEW_REPORTED"
+  | "REVIEW_MODERATED";
 
 export interface AppNotification {
   id: number;

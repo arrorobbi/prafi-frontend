@@ -73,7 +73,7 @@ export const GUIDES: Guide[] = [
         <Step image="pengunjung-1-beranda" alt="Menu utama di beranda">
           Gunakan menu <b>Beranda</b>, <b>Produk</b>, dan <b>UMKM</b> di bagian atas untuk menjelajah produk dan toko. Di
           Beranda, carousel menampilkan gambar setiap <b>kategori produk</b>, dan di sebelahnya produk dari kategori yang sedang
-          tampil. Produk berikon jempol adalah <b>rekomendasi</b>: rata-rata ulasannya 4,8 bintang atau lebih.
+          tampil. Produk berikon jempol adalah <b>rekomendasi</b>: memiliki minimal 3 ulasan dengan rata-rata 4,8 bintang atau lebih.
         </Step>
         <Step image="pengunjung-2-cari" alt="Kotak pencarian">
           Klik ikon <b>kaca pembesar</b>, ketik nama produk atau toko. Pilih salah satu saran, atau tekan <b>Enter</b>{" "}
@@ -81,7 +81,8 @@ export const GUIDES: Guide[] = [
         </Step>
         <Step image="pengunjung-3-detail" alt="Halaman detail produk">
           Halaman detail menampilkan harga, deskripsi, informasi produk, dan ulasan pembeli. Anda dapat memberi
-          bintang dan ulasan tanpa login. Tombol <b>Hubungi &amp; Kunjungi Toko</b> (WhatsApp, Shopee, Instagram, Google Bisnis, Facebook,
+          bintang dan ulasan tanpa login, setelah verifikasi singkat <b>&quot;Saya bukan robot&quot;</b>; satu ulasan per produk per hari
+          dari perangkat dan jaringan yang sama. Tombol <b>Hubungi &amp; Kunjungi Toko</b> (WhatsApp, Shopee, Instagram, Google Bisnis, Facebook,
           Lokasi) hanya muncul untuk tautan yang diisi penjual; tombol <b>WhatsApp</b> membuka chat dengan pesan tentang produk itu
           (nama dan tautannya) yang siap dikirim. Klik nama toko untuk membuka halaman UMKM: profil, alamat, jam buka,
           tombol WhatsApp/Instagram/Shopee/Google Bisnis, jumlah produk, rata-rata bintang, dan semua produknya.
@@ -168,7 +169,7 @@ export const GUIDES: Guide[] = [
         <Step image="produk-3-isi-data" alt="Isian data produk">
           Isi <b>Nama Produk</b>, <b>Harga</b> (dalam Rupiah), dan pilih <b>Kategori Produk</b>, lalu <b>Deskripsi Produk</b>{" "}
           (penjelasan singkat) dan <b>Informasi Produk</b> (bahan, ukuran, cara penggunaan, keunggulan). Masing-masing maksimal
-          255 karakter. Produk otomatis menjadi <b>rekomendasi</b> bila rata-rata ulasan pembeli 4,8 bintang atau lebih.
+          255 karakter. Produk otomatis menjadi <b>rekomendasi</b> bila memiliki minimal 3 ulasan dengan rata-rata 4,8 bintang atau lebih.
         </Step>
         <Step image="produk-4-ajukan" alt="Tombol Ajukan Produk">
           Klik <b>Ajukan Produk</b>. Status produk menjadi <b>Menunggu Konfirmasi</b> dan Anda menerima notifikasi.
@@ -235,7 +236,13 @@ export const GUIDES: Guide[] = [
         <Step>
           Penjual menerima notifikasi untuk setiap perubahan pada produknya: <b>Produk Berhasil Diajukan</b>,{" "}
           <b>Produk Disetujui</b>, <b>Produk Ditolak</b> atau <b>Produk Dinonaktifkan</b> (beserta alasannya),{" "}
-          <b>Perubahan Produk Tersimpan</b>, dan <b>Ulasan Baru</b> dari pembeli.
+          <b>Perubahan Produk Tersimpan</b>, <b>Ulasan Baru</b> dari pembeli, dan <b>Keputusan Laporan Ulasan</b>.
+        </Step>
+        <Step>
+          Menu <b>Ulasan Produk</b> menampilkan semua ulasan untuk produk Anda. Ulasan palsu, kasar, atau tidak berkaitan
+          dengan produk dapat Anda <b>Laporkan</b> (dengan alasan). Administrator atau Disnakertrans akan menyembunyikannya
+          atau tetap menampilkannya; ulasan yang disembunyikan tidak dihitung dalam rating. Setiap ulasan hanya dapat
+          dilaporkan satu kali.
         </Step>
       </Steps>
     ),
@@ -320,6 +327,12 @@ export const GUIDES: Guide[] = [
           <b>Manajemen UMKM</b>: aktifkan/nonaktifkan akun penjual (tab <b>Akun Penjual</b>) dan lihat detail toko
           (tab <b>Profil Toko</b>). <b>Manajemen Produk</b> menampilkan semua produk per status, kategori, dan
           penjual; <b>Notifikasi</b> berisi pengajuan produk baru dan pendaftaran penjual.
+        </Step>
+        <Step>
+          <b>Laporan Ulasan</b>: ulasan yang dilaporkan penjual tampil di tab <b>Menunggu</b>. Periksa isinya, lalu pilih{" "}
+          <b>Sembunyikan</b> (tidak tampil dan tidak dihitung dalam rating) atau <b>Tetap Tampilkan</b>, dengan catatan opsional
+          untuk penjual. Ulasan yang disembunyikan dapat ditampilkan lagi dari tab <b>Disembunyikan</b>. Disnakertrans memiliki
+          menu yang sama.
         </Step>
       </Steps>
     ),

@@ -16,6 +16,8 @@ import type {
   Review,
   Role,
   ProductCategory,
+  ModeratedReview,
+  ReportStatus,
   TenantProfile,
   User,
   Verification,
@@ -302,7 +304,8 @@ export const api = {
         data: Review[];
         meta?: PageMeta & RatingSummary;
       }>,
-    addReview: (productId: string, input: { name: string; stars: number; review: string }) =>
+    /** clientId: this browser's id (lib/clientId); turnstileToken: the "not a robot" check */
+    addReview: (productId: string, input: { name: string; stars: number; review: string; clientId: string; turnstileToken?: string }) =>
       request<Review>("POST", `/landing/products/${productId}/reviews`, { body: input, anonymous: true }) as Promise<{
         data: Review;
         meta?: RatingSummary;
@@ -315,6 +318,18 @@ export const api = {
     create: (input: CategoryInput) => post<ProductCategory>("/product-categories", input),
     update: (id: number, changes: Partial<CategoryInput>) => patch<ProductCategory>(`/product-categories/${id}`, changes),
     remove: (id: number) => del<null>(`/product-categories/${id}`),
+  },
+
+  reviews: {
+    /** Tenant: reviews of their own products (hidden ones too) */
+    mine: (q: Paged & { productId?: string } = {}) => get<ModeratedReview[]>("/reviews/mine", { page: 1, limit: 20, ...q }),
+    /** Tenant: report a review of their own product */
+    report: (id: number, reason: string) => post<ModeratedReview>(`/reviews/${id}/report`, { reason }),
+    /** Admin / disnakertrans: reported reviews by status */
+    reported: (q: Paged & { status?: ReportStatus | "all" } = {}) => get<ModeratedReview[]>("/reviews", { page: 1, limit: 20, status: "pending", ...q }),
+    /** Admin / disnakertrans: hide, keep (a pending report) or show a hidden review again */
+    moderate: (id: number, action: "hide" | "keep" | "unhide", note?: string) =>
+      patch<ModeratedReview>(`/reviews/${id}/moderation`, { action, ...(note ? { note } : {}) }),
   },
 
   tenants: {

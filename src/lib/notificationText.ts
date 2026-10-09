@@ -21,6 +21,8 @@ const TITLES: Record<NotificationType, string> = {
   PRODUCT_TAKEN_DOWN: "Produk Dinonaktifkan",
   PRODUCT_CHANGES_SAVED: "Perubahan Produk Tersimpan",
   PRODUCT_REVIEWED: "Ulasan Baru",
+  REVIEW_REPORTED: "Ulasan Dilaporkan",
+  REVIEW_MODERATED: "Keputusan Laporan Ulasan",
 };
 
 const BY_ROLE: Record<string, string> = { admin: "administrator", disnakertrans: "Disnakertrans" };
@@ -68,6 +70,18 @@ export function notificationMessage(n: AppNotification) {
       const m = d.match(/^([\s\S]*?) gave "([\s\S]*)" (\d) stars: ([\s\S]*)$/);
       return m ? `${m[1]} memberi ${"★".repeat(Number(m[3]))} untuk "${m[2]}": "${m[4]}"` : d;
     }
+    case "REVIEW_REPORTED": {
+      // '<seller> reported <name>'s <n>-star review of "<product>": <reason>'
+      const m = d.match(/^([\s\S]*?) reported ([\s\S]*?)'s (\d)-star review of "([\s\S]*)"(?:: ([\s\S]*)|\.)$/);
+      return m ? `${m[1]} melaporkan ulasan ${m[3]} bintang dari ${m[2]} untuk "${m[4]}"${m[5] ? `: "${m[5]}".` : "."} Silakan periksa.` : d;
+    }
+    case "REVIEW_MODERATED": {
+      // '<name>'s <n>-star review of "<product>" was hidden | stays visible | is visible again (by <role>). Note: <note>'
+      const m = d.match(/^([\s\S]*?)'s (\d)-star review of "([\s\S]*)" (was hidden|stays visible|is visible again) \(by (\w+)\)(?:\. Note: ([\s\S]*)|\.)$/);
+      if (!m) return d;
+      const result = { "was hidden": "disembunyikan", "stays visible": "tetap ditampilkan", "is visible again": "ditampilkan kembali" }[m[4]];
+      return `Ulasan ${m[2]} bintang dari ${m[1]} untuk "${m[3]}" ${result} oleh ${BY_ROLE[m[5]] ?? m[5]}${m[6] ? `. Catatan: "${m[6]}"` : "."}`;
+    }
     case "PRODUCT_SUBMITTED": {
       const by = before(d, " created");
       return product ? `${by ?? "Penjual"} mengajukan produk "${product}". Silakan periksa dan konfirmasi.` : d;
@@ -111,6 +125,8 @@ export function notificationMessage(n: AppNotification) {
 
 /** Where clicking a notification leads, per role. */
 export function notificationHref(n: AppNotification, role: Role) {
+  if (n.type === "REVIEW_REPORTED" && (role === "admin" || role === "disnakertrans")) return `/${role}/ulasan`;
+  if (n.type === "REVIEW_MODERATED" && role === "tenant") return "/tenant/ulasan";
   if (role === "admin") {
     if (n.entityType === "product" && n.entityId) return `/admin/konfirmasi/${n.entityId}`;
     if (n.entityType === "user" || n.entityType === "tenant") return "/admin/umkm";
@@ -138,6 +154,7 @@ export function notificationTone(type: NotificationType): NotificationTone {
   if (type === "PRODUCT_APPROVED" || type === "PRODUCT_PUBLISHED") return "success";
   if (type === "USER_DEACTIVATED" || type === "PRODUCT_DEACTIVATED" || type === "PRODUCT_TAKEN_DOWN" || type === "PRODUCT_DELETED") return "danger";
   if (type === "PRODUCT_REVIEWED" || type === "PRODUCT_CHANGES_SAVED") return "success";
+  if (type === "REVIEW_REPORTED") return "pending";
   if (type === "PRODUCT_UNDER_REVIEW" || type === "PRODUCT_SUBMITTED" || type === "ADMIN_PENDING_ACTIVATION") return "pending";
   return "info";
 }

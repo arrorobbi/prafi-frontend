@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { api, ApiError, errorMessage } from "@/lib/api";
+import { getClientId } from "@/lib/clientId";
 import { formatDate, formatRating } from "@/lib/format";
 import type { RatingSummary, Review } from "@/lib/types";
 import { useAsync } from "@/lib/useAsync";
 import { Stars } from "../Stars";
 import { useToast } from "../Toast";
+import { Turnstile, TURNSTILE_SITE_KEY, type TurnstileHandle } from "./Turnstile";
 import styles from "./ProductReviews.module.css";
 import { Button } from "@/components/shadcn/button";
 import { Input } from "@/components/shadcn/input";
@@ -18,7 +20,10 @@ import { cn } from "@/lib/utils";
 const PER_PAGE = 5;
 const LABELS = ["", "Sangat buruk", "Buruk", "Cukup", "Baik", "Sangat baik"];
 
-/** Reviews of one approved product: anyone can read them and write one, no login (GET/POST /api/landing/products/:id/reviews). */
+/**
+ * Reviews of one approved product: anyone can read them and write one, no login (GET/POST /api/landing/products/:id/reviews).
+ * Writing needs the "not a robot" check (Turnstile); the same browser on the same network can review a product once a day.
+ */
 export function ProductReviews({ productId, initial }: { productId: string; initial: RatingSummary }) {
   const toast = useToast();
   const [limit, setLimit] = useState(PER_PAGE);
@@ -29,6 +34,10 @@ export function ProductReviews({ productId, initial }: { productId: string; init
   const [text, setText] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const [checkFailed, setCheckFailed] = useState(false);
+  const turnstile = useRef<TurnstileHandle>(null);
+  const needsCheck = !!TURNSTILE_SITE_KEY;
 
   const { data, loading, error, reload } = useAsync(async () => {
     const res = await api.landing.reviews(productId, { page: 1, limit });
@@ -42,12 +51,19 @@ export function ProductReviews({ productId, initial }: { productId: string; init
     if (!name.trim()) found.name = "Nama wajib diisi";
     if (!stars) found.stars = "Pilih jumlah bintang";
     if (!text.trim()) found.review = "Ulasan wajib diisi";
+    if (needsCheck && !token) found.turnstile = "Tunggu verifikasi \"Saya bukan robot\" selesai";
     setErrors(found);
     if (Object.keys(found).length) return;
 
     setBusy(true);
     try {
-      const { meta } = await api.landing.addReview(productId, { name: name.trim(), stars, review: text.trim() });
+      const { meta } = await api.landing.addReview(productId, {
+        name: name.trim(),
+        stars,
+        review: text.trim(),
+        clientId: getClientId(),
+        ...(token ? { turnstileToken: token } : {}),
+      });
       if (meta) setSummary(meta);
       setName("");
       setStars(0);
@@ -56,9 +72,12 @@ export function ProductReviews({ productId, initial }: { productId: string; init
       reload();
     } catch (err) {
       if (err instanceof ApiError) setErrors(err.fieldErrors);
-      toast.error("Ulasan gagal dikirim", errorMessage(err));
+      const already = err instanceof ApiError && err.code === "ALREADY_REVIEWED";
+      toast.error(already ? "Anda sudah mengulas produk ini" : "Ulasan gagal dikirim", errorMessage(err));
     } finally {
       setBusy(false);
+      // A Turnstile token works once: get a fresh one for the next try
+      turnstile.current?.reset();
     }
   };
 
@@ -121,9 +140,21 @@ export function ProductReviews({ productId, initial }: { productId: string; init
             />
             {errors.review && <span className="field-error">{errors.review}</span>}
           </label>
-          <Button type="submit" variant="orange" disabled={busy}>
-            {busy ? "Mengirim..." : "Kirim Ulasan"}
+          {needsCheck && (
+            <div className="field">
+              <Turnstile ref={turnstile} onToken={(t) => { setToken(t); if (t) setCheckFailed(false); }} onError={() => setCheckFailed(true)} />
+              {checkFailed && (
+                <span className="field-error">
+                  Verifikasi &quot;Saya bukan robot&quot; gagal dimuat. Periksa koneksi Anda lalu muat ulang halaman.
+                </span>
+              )}
+              {errors.turnstile && !checkFailed && <span className="field-error">{errors.turnstile}</span>}
+            </div>
+          )}
+          <Button type="submit" variant="orange" disabled={busy || (needsCheck && !token)}>
+            {busy ? "Mengirim..." : needsCheck && !token ? "Menunggu verifikasi..." : "Kirim Ulasan"}
           </Button>
+          <p className="hint">Satu ulasan per produk per hari dari perangkat dan jaringan yang sama.</p>
         </form>
       </div>
 

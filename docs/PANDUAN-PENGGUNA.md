@@ -9,13 +9,13 @@ halaman `/panduan`.
 ## 1. Pengunjung
 
 - **Beranda**: carousel menampilkan gambar setiap **kategori produk**; di sebelahnya tampil produk dari kategori yang sedang tampil (berganti mengikuti carousel, rating tertinggi lebih dulu). Klik gambar atau **Lihat semua** untuk membuka semua produk kategori itu. Di bawahnya ada produk rekomendasi lainnya.
-- Produk berlabel **rekomendasi** (ikon jempol) adalah produk dengan rata-rata ulasan **4,8 bintang atau lebih**.
+- Produk berlabel **rekomendasi** (ikon jempol) adalah produk dengan **minimal 3 ulasan** dan rata-rata **4,8 bintang atau lebih**.
 - Klik ikon **kaca pembesar** di kanan atas untuk mencari produk atau toko. Tekan *Enter* untuk melihat semua hasil.
 
   ![Mencari produk](../public/panduan/pengunjung-2-cari.jpg)
 
 - Menu **Produk** menampilkan semua produk; menu **UMKM** menampilkan daftar toko beserta produknya.
-- Klik produk untuk melihat detail: harga, deskripsi, informasi produk, ulasan pembeli, dan toko penjualnya. Siapa pun dapat memberi bintang dan ulasan tanpa login.
+- Klik produk untuk melihat detail: harga, deskripsi, informasi produk, ulasan pembeli, dan toko penjualnya. Siapa pun dapat memberi bintang dan ulasan tanpa login, setelah verifikasi singkat **"Saya bukan robot"**. Satu ulasan per produk per hari dari perangkat dan jaringan yang sama.
 - Di halaman produk, tombol **Hubungi & Kunjungi Toko** (WhatsApp, Shopee, Instagram, Google Bisnis, Facebook, Lokasi) hanya muncul untuk tautan yang diisi penjual. Tombol **WhatsApp** membuka chat dengan pesan siap kirim: *"Halo kak saya ingin menanyakan tentang produk <nama produk> apakah masih ada? <tautan produk>"*.
 - Klik nama toko atau **Lihat UMKM** untuk membuka halaman UMKM: profil, alamat, jam buka, tombol WhatsApp/Instagram/Shopee/Google Bisnis, jumlah produk, rata-rata bintang, dan semua produknya. Tombol WhatsApp di sini membuka chat dengan pesan *"Hi kak, saya mau bertanya tentang produk di toko <nama toko>"*.
 
@@ -83,7 +83,7 @@ halaman `/panduan`.
 
    ![Unggah foto produk](../public/panduan/produk-2-foto.jpg)
 
-3. Isi **Nama Produk**, **Harga** (Rupiah), dan pilih **Kategori Produk** (dibuat oleh administrator). Label **rekomendasi** diberikan otomatis bila rata-rata ulasan pembeli mencapai **4,8 bintang atau lebih**; penjual tidak lagi mencentangnya sendiri.
+3. Isi **Nama Produk**, **Harga** (Rupiah), dan pilih **Kategori Produk** (dibuat oleh administrator). Label **rekomendasi** diberikan otomatis bila produk memiliki **minimal 3 ulasan** dengan rata-rata **4,8 bintang atau lebih**; penjual tidak lagi mencentangnya sendiri.
 4. Isi **Deskripsi Produk** (singkat) dan **Informasi Produk** (bahan, ukuran, harga, cara pakai, keunggulan) —
    masing-masing maksimal 255 karakter.
 
@@ -120,16 +120,23 @@ halaman `/panduan`.
   ![Ajukan ulang](../public/panduan/status-2-ajukan-ulang.jpg)
 
 
-### 2.5 Ketentuan foto & deskripsi
+### 2.5 Ulasan produk
+
+- Menu **Ulasan Produk** menampilkan semua ulasan pembeli untuk produk Anda, termasuk yang sudah disembunyikan.
+- Ulasan yang palsu, kasar, atau tidak berkaitan dengan produk dapat Anda **Laporkan** dengan menuliskan alasannya.
+- Administrator atau Disnakertrans memeriksa laporan lalu **menyembunyikan** ulasan (tidak tampil dan tidak dihitung dalam rating) atau **tetap menampilkannya**. Anda menerima notifikasi *Keputusan Laporan Ulasan* beserta catatannya.
+- Setiap ulasan hanya dapat dilaporkan satu kali.
+
+### 2.6 Ketentuan foto & deskripsi
 
 - Foto jelas, terang, tidak buram, dan menampilkan produk yang sebenarnya.
 - Tanpa nomor telepon, tautan, atau watermark toko lain. Satu foto hanya untuk satu produk.
 - Nama dan deskripsi jujur, tidak menyesatkan, dan tidak melanggar hukum/hak cipta.
 
-### 2.6 Notifikasi
+### 2.7 Notifikasi
 
 Notifikasi baru langsung muncul tanpa memuat ulang halaman. Menu **Notifikasi** (dengan angka belum dibaca) memiliki tab *Semua*, *Belum Dibaca*, dan *Dibaca*. Klik notifikasi
-untuk membuka halaman terkait; klik **Tandai semua sebagai sudah dibaca** untuk membersihkan badge.
+untuk membuka halaman terkait; klik **Tandai semua dibaca** untuk membersihkan badge.
 
 Penjual menerima notifikasi untuk setiap perubahan pada produknya:
 
@@ -140,6 +147,7 @@ Penjual menerima notifikasi untuk setiap perubahan pada produknya:
 | Produk Ditolak / Produk Dinonaktifkan | administrator atau Disnakertrans menolak / menurunkan produk, **beserta alasannya** |
 | Perubahan Produk Tersimpan | Anda mengubah produk (tetap tayang, atau menunggu konfirmasi ulang) |
 | Ulasan Baru | pembeli memberi bintang dan ulasan |
+| Keputusan Laporan Ulasan | administrator atau Disnakertrans menyembunyikan / mempertahankan ulasan yang Anda laporkan, beserta catatannya |
 
 ![Notifikasi](../public/panduan/notifikasi-1.jpg)
 
@@ -182,7 +190,8 @@ Penjual menerima notifikasi untuk setiap perubahan pada produknya:
 | Manajemen Produk | Semua produk dengan tab status, pencarian, filter kategori, dan filter penjual |
 | Kategori Produk | Tambah, ubah, dan hapus kategori produk beserta **gambarnya** (wajib; tampil di carousel Beranda, dapat diganti tetapi tidak dihapus). Kategori yang masih dipakai produk tidak bisa dihapus |
 | Manajemen UMKM | *Akun Penjual*: aktifkan/nonaktifkan akun. *Profil Toko*: detail toko, WhatsApp, lokasi |
-| Notifikasi | Produk baru diajukan, produk diperbarui, penjual baru, profil toko diperbarui |
+| Laporan Ulasan | Ulasan yang dilaporkan penjual (tab *Menunggu*, *Disembunyikan*, *Dipertahankan*, *Semua*). **Sembunyikan** (tidak tampil, tidak dihitung dalam rating), **Tetap Tampilkan**, atau **Tampilkan Lagi**, dengan catatan opsional untuk penjual |
+| Notifikasi | Produk baru diajukan, produk diperbarui, penjual baru, profil toko diperbarui, ulasan dilaporkan |
 | Pengaturan Administrator | Data akun, foto, dan password |
 
 ![Kategori Produk](../public/panduan/admin-1-kategori.jpg)
@@ -219,6 +228,7 @@ yang diberikan superadmin.
 | Konfirmasi Produk | Menyetujui, menolak (dengan alasan), atau menonaktifkan produk — sama seperti admin |
 | Data Produk / Data UMKM | Melihat semua produk dan profil toko; produk dibuka ke halaman konfirmasinya |
 | Kategori Produk | Tambah, ubah, dan hapus kategori produk beserta gambarnya (wajib; carousel Beranda) — sama seperti admin |
+| Laporan Ulasan | Memeriksa ulasan yang dilaporkan penjual dan menyembunyikan / mempertahankannya — sama seperti admin |
 | Notifikasi | *Admin Baru Menunggu Aktivasi*, serta notifikasi produk yang sama dengan admin (produk baru, diperbarui, ditayangkan) |
 
 ![Aktivasi admin](../public/panduan/disnakertrans-1-aktivasi.jpg)

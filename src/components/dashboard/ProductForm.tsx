@@ -257,8 +257,8 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
           )}
         </label>
         <p className="hint">
-          Produk otomatis menjadi <strong>rekomendasi</strong> (tampil di halaman utama) bila rata-rata ulasan pembeli mencapai 4,8
-          bintang atau lebih.
+          Produk otomatis menjadi <strong>rekomendasi</strong> (tampil di halaman utama) bila memiliki minimal 3 ulasan pembeli dengan
+          rata-rata 4,8 bintang atau lebih.
         </p>
       </div>
       <label className={`field ${styles.full}`}>

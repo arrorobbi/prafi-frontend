@@ -23,6 +23,7 @@ npm run build && npm start   # production (port 80, see deploy/)
 | --- | --- |
 | `API_URL` | Backend base URL (default `https://api.transniaga.manokwarikab.go.id`). Read at **build time**. |
 | `SITE_URL` | This site's public address (default `https://transniaga.manokwarikab.go.id`), used for the product link in the WhatsApp message. Read at **build time**. |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key for the review form's "not a robot" check (the secret key is in the backend `.env`). Read at **build time**. |
 | `NEXT_PUBLIC_ADMIN_WHATSAPP`, `NEXT_PUBLIC_ADMIN_EMAIL` | Contact shown under *Hubungi Administrator* (optional). |
 | `REVALIDATE_SECRET` | Shared with the backend `.env`: lets it refresh the cached landing pages right after a change (see *Landing page cache*). Read at runtime. |
 
@@ -128,7 +129,12 @@ the change shows at once. Without the secret (or if the call fails) the pages st
   required in the product form); UMKM profiles no longer have one. Each category must have an image (required on create, can be replaced but not removed): the home page
   (`components/site/HomeHero.tsx`) shows one carousel slide per category with approved products (its image; older categories without one use
   their best product's photo until an image is added), and the cards beside it show that category's 3 best rated products.
-- **Recommended** (`isRecommended`) is set by the backend: reviews average 4.8 stars or more. Tenants can't set it.
+- **Recommended** (`isRecommended`) is set by the backend: at least 3 visible reviews averaging 4.8 stars or more.
+  Tenants can't set it.
+- **Reviews are guarded**: the form has a Cloudflare Turnstile "not a robot" check (`components/site/Turnstile.tsx`,
+  site key `NEXT_PUBLIC_TURNSTILE_SITE_KEY`) and sends a random browser id (`lib/clientId.ts`); the backend allows
+  one review per product per day from the same browser on the same IP. Sellers report reviews in **Ulasan Produk**
+  (`/tenant/ulasan`); admins and disnakertrans hide / keep them in **Laporan Ulasan** (`components/dashboard/ReviewModeration.tsx`).
 - **WhatsApp buttons** open with a prefilled message (`lib/format.ts → whatsappWithText`): on a product page
   `Halo kak saya ingin menanyakan tentang produk <name> apakah masih ada? <SITE_URL>/produk/<id>`, on a UMKM page
   `Hi kak, saya mau bertanya tentang produk di toko <name>`.
