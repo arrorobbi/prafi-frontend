@@ -171,7 +171,7 @@ Penjual menerima notifikasi untuk setiap perubahan pada produknya:
 
 1. Buka `/register/admin`, isi data, kirim, dan verifikasi email dengan OTP.
 2. Tunggu akun **diaktifkan oleh Disnakertrans**. Sebelum itu login akan ditolak dengan pesan
-   *akun belum diaktifkan*.
+   *akun belum diaktifkan*. Begitu akun diaktifkan, Anda menerima **email** pemberitahuan berisi tombol untuk masuk.
 
 ### 4.2 Menu admin
 
@@ -215,7 +215,7 @@ yang diberikan superadmin.
 | Menu | Fungsi |
 | --- | --- |
 | Dashboard | Jumlah admin, admin belum aktif, UMKM, dan produk, serta grafik **Statistik** (aktivitas, status produk, produk per kategori, akun admin) |
-| Aktivasi Admin | Aktifkan atau nonaktifkan akun admin (alasan opsional). Admin baru hanya bisa login setelah diaktifkan |
+| Aktivasi Admin | Aktifkan atau nonaktifkan akun admin (alasan opsional). Admin baru hanya bisa login setelah diaktifkan, dan menerima email saat akunnya diaktifkan (alasan yang diisi ikut tercantum) |
 | Konfirmasi Produk | Menyetujui, menolak (dengan alasan), atau menonaktifkan produk — sama seperti admin |
 | Data Produk / Data UMKM | Melihat semua produk dan profil toko; produk dibuka ke halaman konfirmasinya |
 | Kategori Produk | Tambah, ubah, dan hapus kategori produk beserta gambarnya (wajib; carousel Beranda) — sama seperti admin |

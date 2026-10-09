@@ -13,7 +13,8 @@ export default function AdminActivationPage() {
       <Alert variant="info" style={{ marginBottom: 20 }}>
         <IconWarning />
         <span>
-          Admin yang mendaftar sendiri baru bisa login setelah diaktifkan di sini. Pastikan identitas admin sudah
+          Admin yang mendaftar sendiri baru bisa login setelah diaktifkan di sini; admin tersebut langsung menerima email
+          bahwa akunnya sudah aktif (alasan yang Anda isi ikut tercantum sebagai catatan). Pastikan identitas admin sudah
           diperiksa sebelum mengaktifkan. Menonaktifkan akun langsung mengakhiri sesi login admin tersebut.
         </span>
       </Alert>

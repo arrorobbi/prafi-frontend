@@ -299,7 +299,7 @@ export const GUIDES: Guide[] = [
       <Steps>
         <Step>
           Daftar di <Link href="/register/admin">halaman pendaftaran admin</Link>, verifikasi email dengan OTP, lalu
-          tunggu akun diaktifkan oleh Disnakertrans.
+          tunggu akun diaktifkan oleh Disnakertrans. Anda akan menerima <b>email</b> begitu akun sudah aktif dan siap dipakai untuk masuk.
         </Step>
         <Step image="admin-1-kategori" alt="Halaman Kategori Produk">
           <b>Kategori Produk</b>: isi nama kategori di panel oranye, unggah <b>gambarnya</b> (wajib; tampil di carousel Beranda, dapat diganti tetapi tidak dihapus),
