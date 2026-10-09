@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { IconDocs, IconHeart, IconMapPin, IconThumb } from "@/components/Icons";
+import { IconChevronRight, IconDocs, IconHeart, IconMapPin, IconThumb } from "@/components/Icons";
 import { MapArt } from "@/components/site/MapArt";
 import { HomeHero, type CategorySlide } from "@/components/site/HomeHero";
 import { ProductStrip } from "@/components/site/ProductStrip";
 import { imageSrc } from "@/lib/format";
 import { getLandingCategories, getLandingProducts } from "@/lib/server-api";
+import type { ProductCategory } from "@/lib/types";
 import styles from "./home.module.css";
 import { buttonVariants } from "@/components/shadcn/button";
 import { Alert } from "@/components/shadcn/alert";
@@ -33,13 +34,15 @@ const REASONS = [
   },
 ] as const;
 
+/** The BUMDES category (village-owned enterprises) has its own feature card instead of a carousel slide */
+const isBumdes = (c: ProductCategory) => /\bbumdes\b/i.test(c.name);
+
 /**
- * The carousel: one slide per category that has approved products, showing the category's image (or, without
- * one, its best product's photo). Next to it, that category's 3 best rated products.
+ * The carousel: one slide per category that has approved products (except BUMDES), showing the category's image
+ * (or, without one, its best product's photo). Next to it, that category's 3 best rated products.
  */
-async function categorySlides(): Promise<CategorySlide[]> {
-  const { categories } = await getLandingCategories();
-  const withProducts = categories.filter((c) => c.productCount > 0);
+async function categorySlides(categories: ProductCategory[]): Promise<CategorySlide[]> {
+  const withProducts = categories.filter((c) => c.productCount > 0 && !isBumdes(c));
   const lists = await Promise.all(withProducts.map((c) => getLandingProducts(1, 3, { categoryId: c.id, sort: "rating" })));
   return withProducts
     .map((c, i) => ({ category: c, products: lists[i].products }))
@@ -57,11 +60,14 @@ async function categorySlides(): Promise<CategorySlide[]> {
 }
 
 export default async function HomePage() {
+  const { categories } = await getLandingCategories();
   const [{ products, failed }, recommended, slides] = await Promise.all([
     getLandingProducts(1, 20),
     getLandingProducts(1, 12, { recommended: true }),
-    categorySlides(),
+    categorySlides(categories),
   ]);
+  // The card beside the carousel features BUMDES (when its category has an image); otherwise the map card
+  const bumdes = categories.find((c) => isBumdes(c) && c.image);
   // Without category slides, the hero shows recommended products (reviews average 4.8+), or the newest ones
   const fallback = recommended.products.length ? recommended.products.slice(0, 3) : products.slice(0, 3);
   // "Produk rekomendasi lainnya": recommended first, then the newest
@@ -74,15 +80,36 @@ export default async function HomePage() {
         slides={slides}
         fallback={fallback}
         side={
-          <Card className={styles.mapCard}>
-            <MapArt className={styles.map} />
-            <div className={styles.mapText}>
-              <h1>CARI PRODUK REKOMENDASI DAN PILIHAN ANDA DISINI</h1>
-              <Link href="/umkm" className={buttonVariants({ variant: "navy", size: "sm" })}>
-                <IconMapPin /> Cek UMKM Disini!
-              </Link>
-            </div>
-          </Card>
+          <>
+            <h1 className="sr-only">Trans Niaga: produk pilihan UMKM Kawasan Transmigrasi Prafi</h1>
+            {bumdes ? (
+              <Card className={`${styles.mapCard} ${styles.bumdesCard}`}>
+                <Link href={`/produk?kategori=${bumdes.id}`} className={styles.bumdesPhoto} tabIndex={-1} aria-hidden>
+                  <img src={imageSrc(bumdes.image)} alt="" />
+                </Link>
+                <div className={styles.mapText}>
+                  <span className={styles.bumdesKicker}>Badan Usaha Milik Desa</span>
+                  <h2>Ada apa saja di BUMDES Prafi?</h2>
+                  <p className={styles.bumdesText}>
+                    Produk hasil desa, dikelola bersama warga kampung transmigrasi. Penasaran apa saja yang mereka tawarkan?
+                  </p>
+                  <Link href={`/produk?kategori=${bumdes.id}`} className={buttonVariants({ variant: "orange", size: "sm" })}>
+                    Intip Produk BUMDES <IconChevronRight />
+                  </Link>
+                </div>
+              </Card>
+            ) : (
+              <Card className={styles.mapCard}>
+                <MapArt className={styles.map} />
+                <div className={styles.mapText}>
+                  <h2>CARI PRODUK REKOMENDASI DAN PILIHAN ANDA DISINI</h2>
+                  <Link href="/umkm" className={buttonVariants({ variant: "navy", size: "sm" })}>
+                    <IconMapPin /> Cek UMKM Disini!
+                  </Link>
+                </div>
+              </Card>
+            )}
+          </>
         }
       />
 
