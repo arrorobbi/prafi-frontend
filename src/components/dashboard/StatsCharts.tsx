@@ -14,7 +14,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "../shadcn/chart";
-import { NativeSelect } from "../shadcn/native-select";
+import { PeriodSelect } from "./PeriodSelect";
 import { Loading } from "../ui";
 import { ROLE_LABEL } from "./UserAccounts";
 
@@ -41,21 +41,7 @@ function Empty({ children = "Belum ada data pada periode ini." }: { children?: R
 }
 
 function RangePicker({ value, options, onChange }: { value: number; options: number[]; onChange: (d: number) => void }) {
-  return (
-    <NativeSelect
-      aria-label="Periode"
-      value={value}
-      onChange={(e) => onChange(Number(e.target.value))}
-      wrapperClassName="w-auto"
-      className="h-9 rounded-full bg-white pr-9 pl-4 text-sm shadow-[0_14px_30px_rgba(14,60,105,0.12)]"
-    >
-      {options.map((d) => (
-        <option key={d} value={d}>
-          {d} hari terakhir
-        </option>
-      ))}
-    </NativeSelect>
-  );
+  return <PeriodSelect label="Periode grafik" value={value} onChange={onChange} options={options.map((d) => ({ value: d, label: `${d} hari terakhir` }))} />;
 }
 
 function Section({ title, picker, children }: { title: string; picker: React.ReactNode; children: React.ReactNode }) {

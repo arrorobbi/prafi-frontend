@@ -165,6 +165,15 @@ export function ProductDetailSkeleton() {
   );
 }
 
+/** The public page placeholder for a path: the shape of the page being opened */
+export function PublicSkeleton({ path }: { path: string }) {
+  if (/^\/produk\/[^/]+/.test(path)) return <ProductDetailSkeleton />;
+  if (path.startsWith("/produk")) return <ListSkeleton />;
+  if (/^\/umkm\/[^/]+/.test(path)) return <ListSkeleton variant="profile" />;
+  if (path.startsWith("/umkm")) return <ListSkeleton variant="cards" />;
+  return <HomeSkeleton />;
+}
+
 /** Dashboards: title + a few cards (inside the dashboard's own sidebar layout) */
 export function DashboardSkeleton() {
   return (

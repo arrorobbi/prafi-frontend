@@ -170,7 +170,8 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <AuthFrame title="LOGIN/SIGN UP">
+    // The back arrow always leads to Beranda (e.g. after a logout, "back" would return to the dashboard)
+    <AuthFrame title="LOGIN/SIGN UP" backHref="/" backAlways>
       <Suspense fallback={<Loading />}>
         <LoginForm />
       </Suspense>

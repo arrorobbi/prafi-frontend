@@ -141,6 +141,11 @@ arrives: grey placeholders shaped like the real page (`components/site/PageSkele
 The `/produk` and `/umkm` lists live in a `(list)` route group so their placeholder doesn't also cover the detail
 pages (`/produk/[id]`, `/umkm/[id]` have their own). Each dashboard (`/admin`, `/tenant`…) has one too.
 
+Next.js can only show a `loading.tsx` it has already prefetched. For a tap that comes first (e.g. in the phone
+menu), `lib/navPending.tsx` (in the root layout) notices the click on any internal link and gives feedback until
+the new page arrives: a thin orange progress bar at the top, and on public pages the target's placeholder
+(`components/site/PendingContent.tsx`). Both wait 120 ms first, so pages that open instantly don't flicker.
+
 ### Product status
 
 The API stores only `approval.isActive` and `approval.reason`. The frontend derives four statuses (`lib/format.ts →

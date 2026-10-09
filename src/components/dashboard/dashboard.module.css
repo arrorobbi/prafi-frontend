@@ -52,31 +52,6 @@
   pointer-events: none;
 }
 
-.rangeChip {
-  position: relative;
-  display: inline-block;
-  max-width: 100%;
-}
-
-/* the calendar sits inside the select's left padding */
-.rangeIcon {
-  position: absolute;
-  z-index: 1;
-  top: 50%;
-  left: 16px;
-  width: 20px;
-  height: 20px;
-  color: var(--navy);
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-
-/* the shadcn select's chevron in navy, like the text */
-.rangeChip :global([data-slot="native-select-icon"]) {
-  color: var(--navy);
-  opacity: 1;
-}
-
 /* stat cards */
 .stats {
   display: grid;

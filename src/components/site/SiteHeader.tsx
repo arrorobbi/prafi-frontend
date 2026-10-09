@@ -89,7 +89,12 @@ export function SiteHeader() {
       <div className={styles.inner}>
         <Brand />
 
-        <nav className={`${styles.nav} ${menuOpen ? styles.navOpen : ""}`} aria-label="Navigasi utama">
+        {/* A tapped link closes the phone menu at once (not only when the new page arrives), so the page's placeholder shows */}
+        <nav
+          className={`${styles.nav} ${menuOpen ? styles.navOpen : ""}`}
+          aria-label="Navigasi utama"
+          onClick={(e) => (e.target as Element).closest("a") && setMenuOpen(false)}
+        >
           {NAV.map((item) => (
             <Link key={item.href} href={item.href} className={isActive(item.href) ? styles.active : ""}>
               {item.label}

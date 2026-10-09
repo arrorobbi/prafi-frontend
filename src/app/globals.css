@@ -319,3 +319,35 @@ button:disabled {
     font-size: 16px !important;
   }
 }
+
+/* Thin progress bar at the top while a clicked page loads (lib/navPending.tsx). Appears after a short delay, so
+   pages that open instantly don't flicker; creeps towards the end until the page arrives. */
+.nav-progress {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0;
+  background: linear-gradient(90deg, var(--orange), #ffb066);
+  box-shadow: 0 0 10px rgba(234, 123, 37, 0.7);
+  border-radius: 0 2px 2px 0;
+  pointer-events: none;
+  animation: nav-progress 8s cubic-bezier(0.1, 0.7, 0.2, 1) 120ms forwards;
+}
+
+@keyframes nav-progress {
+  from {
+    width: 0;
+  }
+  to {
+    width: 90%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-progress {
+    width: 90%;
+    animation: none;
+  }
+}

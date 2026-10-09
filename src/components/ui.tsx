@@ -32,11 +32,14 @@ export function PageHeader({
   backHref,
   children,
   hideBrand,
+  backAlways,
 }: {
   title: string;
   backHref?: string;
   children?: React.ReactNode;
   hideBrand?: boolean;
+  /** Always go to backHref (e.g. login → Beranda), instead of the previous page */
+  backAlways?: boolean;
 }) {
   const router = useRouter();
   // Asks first when the page has an unsaved photo (LeaveGuard); goes straight back otherwise
@@ -49,7 +52,7 @@ export function PageHeader({
           className={styles.back}
           aria-label="Kembali"
           // Back to the previous page of this site; opened directly (link, new tab) → the fallback page
-          onClick={() => confirmLeave(() => (canGoBack() ? router.back() : router.push(backHref ?? "/")))}
+          onClick={() => confirmLeave(() => (canGoBack() && !backAlways ? router.back() : router.push(backHref ?? "/")))}
         >
           <IconBack />
         </button>

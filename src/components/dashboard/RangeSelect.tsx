@@ -1,8 +1,6 @@
 "use client";
 
-import { IconCalendar } from "../Icons";
-import styles from "./dashboard.module.css";
-import { NativeSelect } from "../shadcn/native-select";
+import { PeriodSelect } from "./PeriodSelect";
 
 export type Range = "all" | "7d" | "30d" | "year";
 
@@ -27,28 +25,14 @@ export function inRange(iso: string, range: Range) {
   return !start || new Date(iso) >= start;
 }
 
-/**
- * The date-range chip: white with navy border and text. The select itself is the chip, with a minimum width that fits
- * the longest label (phones show selects at 16px, see globals.css). Light on purpose: some browsers draw a native
- * select's text in their own (black) colour, which was unreadable on the former navy chip.
- */
+/** The dashboards' date-range picker (PeriodSelect). */
 export function RangeSelect({ value, onChange }: { value: Range; onChange: (r: Range) => void }) {
   return (
-    <label className={styles.rangeChip}>
-      <IconCalendar className={styles.rangeIcon} />
-      <span className="sr-only">Rentang waktu</span>
-      <NativeSelect
-        value={value}
-        onChange={(e) => onChange(e.target.value as Range)}
-        wrapperClassName="w-auto"
-        className="h-10 min-w-[14.5rem] rounded-[14px] border-[1.5px] border-brand-navy bg-white pr-10 pl-12 text-[0.88rem] font-semibold text-brand-navy shadow-[var(--shadow)] [&>option]:text-foreground"
-      >
-        {(Object.keys(LABELS) as Range[]).map((r) => (
-          <option key={r} value={r}>
-            {LABELS[r]}
-          </option>
-        ))}
-      </NativeSelect>
-    </label>
+    <PeriodSelect
+      label="Periode"
+      value={value}
+      onChange={onChange}
+      options={(Object.keys(LABELS) as Range[]).map((r) => ({ value: r, label: LABELS[r] }))}
+    />
   );
 }

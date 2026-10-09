@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { ToastProvider } from "@/components/Toast";
 import { AuthProvider } from "@/lib/auth";
 import { NavHistoryTracker } from "@/lib/navHistory";
+import { NavPendingProvider } from "@/lib/navPending";
 import "./shadcn.css";
 import "./globals.css";
 
@@ -39,7 +40,10 @@ export default function RootLayout({
           <NavHistoryTracker />
         </Suspense>
         <AuthProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <ToastProvider>
+            {/* A link click shows feedback at once (progress bar, public placeholders) until the page arrives */}
+            <NavPendingProvider>{children}</NavPendingProvider>
+          </ToastProvider>
         </AuthProvider>
       </body>
     </html>

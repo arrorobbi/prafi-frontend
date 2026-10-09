@@ -6,16 +6,19 @@ export function AuthFrame({
   title,
   step,
   backHref = "/",
+  backAlways,
   children,
 }: {
   title: string;
   step?: string;
   backHref?: string;
+  /** The back arrow always goes to backHref, not to the previous page */
+  backAlways?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <main className={styles.frame}>
-      <PageHeader title={title} backHref={backHref}>
+      <PageHeader title={title} backHref={backHref} backAlways={backAlways}>
         {step && <span className={styles.step}>{step}</span>}
       </PageHeader>
       {children}
