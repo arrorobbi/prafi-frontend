@@ -7,10 +7,13 @@
   margin-bottom: 22px;
 }
 
-.markAll {
-  color: var(--orange);
-  font-size: 0.82rem;
-  text-decoration: underline;
+/* phones: the tabs fill the first row, "Tandai semua dibaca" gets a full-width row of its own */
+@media (max-width: 640px) {
+  .bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
 }
 
 .list {

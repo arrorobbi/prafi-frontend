@@ -17,6 +17,8 @@ import styles from "./NotificationCenter.module.css";
 import { Alert } from "@/components/shadcn/alert";
 import { Card } from "@/components/shadcn/card";
 import { PILL_COUNT, PillTabs } from "./PillTabs";
+import { Button } from "@/components/shadcn/button";
+import { cn } from "@/lib/utils";
 
 type Tab = "all" | "unread" | "read";
 const LIMIT = 10;
@@ -116,9 +118,19 @@ export function NotificationCenter() {
             { value: "read", label: "Dibaca" },
           ]}
         />
-        <button type="button" className={styles.markAll} onClick={markAll} disabled={unread === 0}>
-          Tandai semua sebagai sudah dibaca
-        </button>
+        <Button
+          type="button"
+          variant="white"
+          className={cn(
+            "rounded-full border-[1.5px] border-brand-orange font-semibold text-brand-orange shadow-sm",
+            "hover:bg-brand-orange hover:text-white disabled:border-gray-300 disabled:text-gray-500 max-sm:w-full",
+          )}
+          onClick={markAll}
+          disabled={unread === 0}
+          title={unread === 0 ? "Semua notifikasi sudah dibaca" : undefined}
+        >
+          <IconCheck /> Tandai semua dibaca
+        </Button>
       </div>
 
       {loading && !data ? (

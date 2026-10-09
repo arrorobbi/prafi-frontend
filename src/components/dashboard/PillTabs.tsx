@@ -50,8 +50,11 @@ export function PillTabs<T extends string>({
               "group/tab h-auto min-w-[140px] flex-none rounded-full border-[1.5px] border-brand-navy/25 bg-white px-4 py-2 text-[0.85rem] font-semibold text-brand-navy shadow-sm",
               "transition-colors hover:border-brand-navy/50 hover:bg-brand-navy/5 hover:text-brand-navy",
               "data-[state=active]:border-brand-orange data-[state=active]:bg-brand-orange data-[state=active]:text-white data-[state=active]:shadow-md",
-              // Phones: up to 3 tabs share one row, more wrap two per row
-              items.length <= 3 ? "max-sm:min-w-0 max-sm:flex-1 max-sm:px-2" : "max-sm:min-w-0 max-sm:flex-[1_1_calc(50%-10px)] max-sm:px-3",
+              // Phones: tabs share the row but never shrink below their text (min-w-fit); what doesn't fit wraps.
+              // Up to 3 tabs grow to fill one row, more go two per row
+              items.length <= 3
+                ? "max-sm:min-w-fit max-sm:flex-auto max-sm:px-3 max-sm:text-[0.8rem]"
+                : "max-sm:min-w-fit max-sm:flex-[1_1_calc(50%-10px)] max-sm:px-3",
             )}
           >
             {item.label}
