@@ -133,6 +133,14 @@ the change shows at once. Without the secret (or if the call fails) the pages st
   `Halo kak saya ingin menanyakan tentang produk <name> apakah masih ada? <SITE_URL>/produk/<id>`, on a UMKM page
   `Hi kak, saya mau bertanya tentang produk di toko <name>`.
 
+### Loading screens
+
+Public pages are rendered on the server for each visit. So a click never seems to do nothing, every slow route has a
+`loading.tsx` that Next.js shows **the moment a link is clicked** (it prefetches it with the link) until the page
+arrives: grey placeholders shaped like the real page (`components/site/PageSkeletons.tsx`, shadcn `Skeleton`).
+The `/produk` and `/umkm` lists live in a `(list)` route group so their placeholder doesn't also cover the detail
+pages (`/produk/[id]`, `/umkm/[id]` have their own). Each dashboard (`/admin`, `/tenant`…) has one too.
+
 ### Product status
 
 The API stores only `approval.isActive` and `approval.reason`. The frontend derives four statuses (`lib/format.ts →

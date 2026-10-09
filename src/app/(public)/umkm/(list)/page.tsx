@@ -7,7 +7,7 @@ import { RatingSummary } from "@/components/Stars";
 import { EmptyState, Thumb } from "@/components/ui";
 import { imageSrc } from "@/lib/format";
 import { getLandingTenants } from "@/lib/server-api";
-import styles from "./umkm.module.css";
+import styles from "../umkm.module.css";
 
 export const metadata: Metadata = { title: "UMKM" };
 

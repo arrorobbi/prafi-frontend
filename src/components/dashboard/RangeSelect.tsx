@@ -28,8 +28,9 @@ export function inRange(iso: string, range: Range) {
 }
 
 /**
- * The navy date-range chip from the admin designs. The select itself is the chip, with a minimum width that fits the
- * longest label, so the text never runs past it (phones show selects at 16px, see globals.css).
+ * The date-range chip: white with navy border and text. The select itself is the chip, with a minimum width that fits
+ * the longest label (phones show selects at 16px, see globals.css). Light on purpose: some browsers draw a native
+ * select's text in their own (black) colour, which was unreadable on the former navy chip.
  */
 export function RangeSelect({ value, onChange }: { value: Range; onChange: (r: Range) => void }) {
   return (
@@ -40,7 +41,7 @@ export function RangeSelect({ value, onChange }: { value: Range; onChange: (r: R
         value={value}
         onChange={(e) => onChange(e.target.value as Range)}
         wrapperClassName="w-auto"
-        className="h-10 min-w-[14.5rem] rounded-[14px] border-0 bg-brand-navy pr-10 pl-12 text-[0.88rem] font-medium text-white shadow-[var(--shadow-lg)] [&>option]:text-foreground"
+        className="h-10 min-w-[14.5rem] rounded-[14px] border-[1.5px] border-brand-navy bg-white pr-10 pl-12 text-[0.88rem] font-semibold text-brand-navy shadow-[var(--shadow)] [&>option]:text-foreground"
       >
         {(Object.keys(LABELS) as Range[]).map((r) => (
           <option key={r} value={r}>
