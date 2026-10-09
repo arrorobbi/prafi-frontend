@@ -6,8 +6,10 @@
 
 .step {
   display: inline-block;
-  min-width: 300px;
+  /* sized by its text (all step labels fit one line), so the header can make room for it */
+  min-width: 260px;
   padding: 8px 24px;
+  white-space: nowrap;
   border-radius: var(--radius-pill);
   background: var(--navy);
   color: var(--white);

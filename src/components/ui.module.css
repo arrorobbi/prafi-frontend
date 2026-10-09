@@ -81,10 +81,12 @@
 }
 
 .pageHeaderMiddle {
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   justify-content: center;
-  min-width: 0;
+  /* never narrower than what it holds (e.g. the registration step): the title gives way instead of the step
+     sliding under the logo */
+  min-width: max-content;
 }
 
 .pageHeaderBrand {
@@ -121,6 +123,7 @@
 
   .pageHeaderMiddle {
     flex: 1 1 100%;
+    min-width: 0;
   }
 
   .pageHeaderLeft {
