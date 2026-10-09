@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { LiveBadge } from "@/components/dashboard/LiveBadge";
 import { ReviewCard } from "@/components/dashboard/ReviewCard";
 import { IconWarning } from "@/components/Icons";
 import { Modal } from "@/components/Modal";
@@ -8,6 +9,7 @@ import { useToast } from "@/components/Toast";
 import { EmptyState, Loading, PageHeader, Pagination } from "@/components/ui";
 import { api, errorMessage } from "@/lib/api";
 import type { ModeratedReview } from "@/lib/types";
+import { useRealtime } from "@/lib/realtime";
 import { useAsync } from "@/lib/useAsync";
 import { Alert } from "@/components/shadcn/alert";
 import { Button } from "@/components/shadcn/button";
@@ -17,7 +19,8 @@ const PER_PAGE = 10;
 
 /**
  * The seller's reviews (GET /api/reviews/mine), hidden ones too. A review that looks fake or abusive can be reported
- * once (POST /api/reviews/:id/report); an admin or disnakertrans then hides it or keeps it.
+ * once (POST /api/reviews/:id/report); an admin or disnakertrans then hides it or keeps it. Updates live
+ * (review:changed over Socket.IO): new reviews, reports and decisions appear without reloading.
  */
 export default function TenantReviewsPage() {
   const toast = useToast();
@@ -27,6 +30,7 @@ export default function TenantReviewsPage() {
   const [reasonError, setReasonError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const { data, loading, error, reload } = useAsync(() => api.reviews.mine({ page, limit: PER_PAGE }), [page]);
+  useRealtime("review:changed", () => reload());
 
   const open = (r: ModeratedReview) => {
     setTarget(r);
@@ -54,6 +58,7 @@ export default function TenantReviewsPage() {
   return (
     <>
       <PageHeader title="ULASAN PRODUK" />
+      <LiveBadge className="mb-3" />
       <Alert variant="info" className="mb-5">
         <IconWarning />
         <span>

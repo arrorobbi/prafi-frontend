@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { api, errorMessage } from "@/lib/api";
 import type { ModeratedReview, ReportStatus } from "@/lib/types";
+import { useRealtime } from "@/lib/realtime";
 import { useAsync } from "@/lib/useAsync";
 import { IconWarning } from "../Icons";
 import { Modal } from "../Modal";
@@ -11,6 +12,7 @@ import { EmptyState, Loading, PageHeader, Pagination } from "../ui";
 import { Alert } from "../shadcn/alert";
 import { Button } from "../shadcn/button";
 import { Textarea } from "../shadcn/textarea";
+import { LiveBadge } from "./LiveBadge";
 import { PILL_COUNT, PillTabs } from "./PillTabs";
 import { ReviewCard } from "./ReviewCard";
 
@@ -43,6 +45,7 @@ const ACTION_TEXT: Record<Action, { title: string; confirm: string; done: string
 /**
  * Admin / disnakertrans: reviews reported by sellers (GET /api/reviews) and the decision (PATCH /api/reviews/:id/moderation):
  * hide (not shown, not counted), keep (stays visible) or show a hidden one again. The seller is notified.
+ * Updates live (review:changed over Socket.IO): new reports and decisions by other admins appear without reloading.
  */
 export function ReviewModeration() {
   const toast = useToast();
@@ -56,6 +59,10 @@ export function ReviewModeration() {
   // The "Menunggu" count on its tab
   const { data: pending, reload: reloadPending } = useAsync(() => api.reviews.reported({ status: "pending", limit: 1 }), []);
   const waiting = pending?.meta?.total ?? 0;
+  useRealtime("review:changed", () => {
+    reload();
+    reloadPending();
+  });
 
   const open = (review: ModeratedReview, action: Action) => {
     setTarget({ review, action });
@@ -105,6 +112,7 @@ export function ReviewModeration() {
   return (
     <>
       <PageHeader title="LAPORAN ULASAN" />
+      <LiveBadge className="mb-3" />
       <Alert variant="info" className="mb-5">
         <IconWarning />
         <span>
