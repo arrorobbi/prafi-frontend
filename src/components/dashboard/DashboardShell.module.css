@@ -109,7 +109,7 @@
    * (e.g. "no data") spread the leftover height over the top bar too, making it taller and pushing it down.
    */
   .shell {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr);
   }
 

@@ -16,7 +16,7 @@ import { EmptyState, Loading, PageHeader, Pagination } from "../ui";
 import styles from "./NotificationCenter.module.css";
 import { Alert } from "@/components/shadcn/alert";
 import { Card } from "@/components/shadcn/card";
-import { PillTabs } from "./PillTabs";
+import { PILL_COUNT, PillTabs } from "./PillTabs";
 
 type Tab = "all" | "unread" | "read";
 const LIMIT = 10;
@@ -109,7 +109,7 @@ export function NotificationCenter() {
               label: (
                 <>
                   Belum Dibaca
-                  {unread > 0 && <b className="ml-1.5 rounded-full bg-white px-2 text-[0.72rem] text-brand-navy">{unread}</b>}
+                  {unread > 0 && <b className={PILL_COUNT}>{unread}</b>}
                 </>
               ),
             },

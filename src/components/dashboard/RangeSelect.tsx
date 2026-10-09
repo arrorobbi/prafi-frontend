@@ -27,17 +27,20 @@ export function inRange(iso: string, range: Range) {
   return !start || new Date(iso) >= start;
 }
 
-/** The navy date-range chip from the admin designs. */
+/**
+ * The navy date-range chip from the admin designs. The select itself is the chip, with a minimum width that fits the
+ * longest label, so the text never runs past it (phones show selects at 16px, see globals.css).
+ */
 export function RangeSelect({ value, onChange }: { value: Range; onChange: (r: Range) => void }) {
   return (
     <label className={styles.rangeChip}>
-      <IconCalendar />
+      <IconCalendar className={styles.rangeIcon} />
       <span className="sr-only">Rentang waktu</span>
       <NativeSelect
         value={value}
         onChange={(e) => onChange(e.target.value as Range)}
         wrapperClassName="w-auto"
-        className="h-auto border-0 bg-transparent py-0 pr-7 pl-0 text-[0.85rem] text-white shadow-none [&>option]:text-foreground"
+        className="h-10 min-w-[14.5rem] rounded-[14px] border-0 bg-brand-navy pr-10 pl-12 text-[0.88rem] font-medium text-white shadow-[var(--shadow-lg)] [&>option]:text-foreground"
       >
         {(Object.keys(LABELS) as Range[]).map((r) => (
           <option key={r} value={r}>

@@ -14,6 +14,12 @@
 .filterActions {
   display: flex;
   gap: 8px;
+  /* two buttons need two filter columns (one column is only 170px wide); on phones that is the whole row */
+  grid-column: span 2;
+}
+
+.filterActions > * {
+  flex: 1;
 }
 
 .mono {
@@ -62,7 +68,7 @@
 
 @media (max-width: 640px) {
   .details {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 2px;
   }
 

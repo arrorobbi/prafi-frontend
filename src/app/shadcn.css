@@ -9,6 +9,13 @@
 @import "tailwindcss/utilities.css";
 @import "tw-animate-css";
 
+/*
+ * The site has no dark theme. Tailwind v4's `dark:` variant follows the device's dark mode by default, which made
+ * shadcn components half-dark on a light page (grey tab text, dark inputs). `dark:` now only applies inside `.dark`,
+ * which the site never sets.
+ */
+@custom-variant dark (&:is(.dark *));
+
 :root {
   --radius: 0.75rem;
 

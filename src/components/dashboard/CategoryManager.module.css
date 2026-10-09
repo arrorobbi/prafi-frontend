@@ -69,8 +69,9 @@
 }
 
 @media (max-width: 960px) {
+  /* minmax(0, …): a wide table scrolls inside its box instead of stretching the page */
   .layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .form {
@@ -97,4 +98,30 @@
   color: #d31919;
   font-size: 0.8rem;
   font-weight: 600;
+}
+
+/* phones: the table fits the screen (no row number, tighter cells), so the edit / delete buttons stay visible */
+@media (max-width: 600px) {
+  .colNo,
+  .wideOnly {
+    display: none;
+  }
+
+  .grid {
+    font-size: 0.8rem;
+  }
+
+  .grid th,
+  .grid td {
+    padding: 8px 6px;
+  }
+
+  .grid :global(.actions) {
+    flex-direction: column;
+  }
+
+  .thumb {
+    width: 44px;
+    height: 44px;
+  }
 }

@@ -194,12 +194,12 @@
 
 @media (max-width: 1000px) {
   .hero {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     padding: 20px 16px 40px;
   }
 
   .reasons {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .reasons h2 {
@@ -207,7 +207,7 @@
   }
 
   .reasonGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

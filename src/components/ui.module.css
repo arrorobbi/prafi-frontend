@@ -115,6 +115,12 @@
 @media (max-width: 900px) {
   .pageHeader {
     min-height: 40px;
+    /* the extra part (e.g. the registration step) gets its own row under the title */
+    flex-wrap: wrap;
+  }
+
+  .pageHeaderMiddle {
+    flex: 1 1 100%;
   }
 
   .pageHeaderLeft {
@@ -305,4 +311,31 @@
   font-size: 0.82rem;
   font-weight: 600;
   text-align: center;
+}
+
+/* small phones (≤400px): a smaller brand, so the header's search, Login and menu still fit beside it */
+@media (max-width: 400px) {
+  .brand {
+    gap: 6px;
+  }
+
+  .brand img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .brand strong {
+    font-size: 1.05rem;
+  }
+
+  .brand em {
+    font-size: 0.6rem;
+  }
+}
+
+/* very small phones (under 360px): the logo alone */
+@media (max-width: 359px) {
+  .brand span {
+    display: none;
+  }
 }

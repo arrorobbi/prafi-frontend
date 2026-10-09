@@ -114,7 +114,7 @@ export function DashboardStats() {
             <ChartCard title="Aktivitas" description={`Produk, UMKM, dan akun baru per hari (${days} hari terakhir)`} className="lg:col-span-2">
               {s.perDay.some((d) => d.products || d.tenants || d.users) ? (
                 <ChartContainer config={activityConfig} className="aspect-auto h-[260px] w-full">
-                  <AreaChart data={s.perDay} margin={{ left: -16, right: 8 }}>
+                  <AreaChart data={s.perDay} margin={{ left: 0, right: 8 }}>
                     <CartesianGrid vertical={false} />
                     <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} minTickGap={24} tickFormatter={shortDate} />
                     <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={40} />
@@ -198,7 +198,7 @@ export function DashboardStats() {
                 className="lg:col-span-2"
               >
                 <ChartContainer config={usersConfig} className="aspect-auto h-[220px] w-full">
-                  <BarChart data={s.users.byRole.map((r) => ({ ...r, label: ROLE_LABEL[r.role] }))} margin={{ left: -16, right: 8 }}>
+                  <BarChart data={s.users.byRole.map((r) => ({ ...r, label: ROLE_LABEL[r.role] }))} margin={{ left: 0, right: 8 }}>
                     <CartesianGrid vertical={false} />
                     <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={8} />
                     <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={40} />
@@ -265,7 +265,7 @@ export function LogStatsCharts({ reloadKey = 0 }: { reloadKey?: number }) {
             >
               {s.total ? (
                 <ChartContainer config={logDayConfig} className="aspect-auto h-[240px] w-full">
-                  <BarChart data={s.perDay} margin={{ left: -16, right: 8 }}>
+                  <BarChart data={s.perDay} margin={{ left: 0, right: 8 }}>
                     <CartesianGrid vertical={false} />
                     <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} minTickGap={20} tickFormatter={shortDate} />
                     <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={40} />

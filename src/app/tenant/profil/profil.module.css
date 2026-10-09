@@ -34,7 +34,7 @@
 
 @media (max-width: 960px) {
   .form {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     padding: 22px 16px;
   }
 }

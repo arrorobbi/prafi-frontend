@@ -143,17 +143,19 @@ export function CategoryManager() {
               <Table className={styles.grid}>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>NO</TableHead>
+                    <TableHead className={styles.colNo}>NO</TableHead>
                     <TableHead>GAMBAR</TableHead>
                     <TableHead>NAMA KATEGORI</TableHead>
-                    <TableHead>JUMLAH PRODUK</TableHead>
+                    <TableHead>
+                      JUMLAH <span className={styles.wideOnly}>PRODUK</span>
+                    </TableHead>
                     <TableHead className="col-actions">AKSI</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {data!.map((c, i) => (
                     <TableRow key={c.id} className={editing?.id === c.id ? styles.editingRow : ""}>
-                      <TableCell>{i + 1}</TableCell>
+                      <TableCell className={styles.colNo}>{i + 1}</TableCell>
                       <TableCell>
                         {c.image ? (
                           <Thumb src={imageSrc(c.image)} alt={c.image.altText || c.name} className={styles.thumb} />

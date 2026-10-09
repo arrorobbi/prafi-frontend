@@ -43,7 +43,7 @@
 @media (max-width: 600px) {
   .detail,
   .detail dl {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .detail dl {
