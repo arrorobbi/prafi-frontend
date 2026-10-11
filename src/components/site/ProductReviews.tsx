@@ -19,6 +19,9 @@ import { cn } from "@/lib/utils";
 
 const PER_PAGE = 5;
 const LABELS = ["", "Sangat buruk", "Buruk", "Cukup", "Baik", "Sangat baik"];
+/** Same rule as the API: a word has a letter or a digit */
+const MIN_WORDS = 3;
+const countWords = (text: string) => text.split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).length;
 
 /**
  * Reviews of one approved product: anyone can read them and write one, no login (GET/POST /api/landing/products/:id/reviews).
@@ -51,6 +54,7 @@ export function ProductReviews({ productId, initial }: { productId: string; init
     if (!name.trim()) found.name = "Nama wajib diisi";
     if (!stars) found.stars = "Pilih jumlah bintang";
     if (!text.trim()) found.review = "Ulasan wajib diisi";
+    else if (countWords(text) < MIN_WORDS) found.review = `Ulasan minimal ${MIN_WORDS} kata`;
     if (needsCheck && !token) found.turnstile = "Tunggu verifikasi \"Saya bukan robot\" selesai";
     setErrors(found);
     if (Object.keys(found).length) return;
@@ -136,7 +140,7 @@ export function ProductReviews({ productId, initial }: { productId: string; init
               value={text}
               onChange={(e) => setText(e.target.value)}
               maxLength={1000}
-              placeholder="Bagaimana pengalaman Anda dengan produk ini?"
+              placeholder="Bagaimana pengalaman Anda dengan produk ini? (minimal 3 kata)"
             />
             {errors.review && <span className="field-error">{errors.review}</span>}
           </label>

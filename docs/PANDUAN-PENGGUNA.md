@@ -15,7 +15,7 @@ halaman `/panduan`.
   ![Mencari produk](../public/panduan/pengunjung-2-cari.jpg)
 
 - Menu **Produk** menampilkan semua produk; menu **UMKM** menampilkan daftar toko beserta produknya.
-- Klik produk untuk melihat detail: harga, deskripsi, informasi produk, ulasan pembeli, dan toko penjualnya. Siapa pun dapat memberi bintang dan ulasan tanpa login, setelah verifikasi singkat **"Saya bukan robot"**. Satu ulasan per produk per hari dari perangkat dan jaringan yang sama.
+- Klik produk untuk melihat detail: harga, deskripsi, informasi produk, ulasan pembeli, dan toko penjualnya. Siapa pun dapat memberi bintang dan ulasan tanpa login, setelah verifikasi singkat **"Saya bukan robot"**. Ulasan minimal **3 kata**, dan satu ulasan per produk per hari dari perangkat dan jaringan yang sama.
 - Di halaman produk, tombol **Hubungi & Kunjungi Toko** (WhatsApp, Shopee, Instagram, Google Bisnis, Facebook, Lokasi) hanya muncul untuk tautan yang diisi penjual. Tombol **WhatsApp** membuka chat dengan pesan siap kirim: *"Halo kak saya ingin menanyakan tentang produk <nama produk> apakah masih ada? <tautan produk>"*.
 - Klik nama toko atau **Lihat UMKM** untuk membuka halaman UMKM: profil, alamat, jam buka, tombol WhatsApp/Instagram/Shopee/Google Bisnis, jumlah produk, rata-rata bintang, dan semua produknya. Tombol WhatsApp di sini membuka chat dengan pesan *"Hi kak, saya mau bertanya tentang produk di toko <nama toko>"*.
 

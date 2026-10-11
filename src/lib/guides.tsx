@@ -81,7 +81,7 @@ export const GUIDES: Guide[] = [
         </Step>
         <Step image="pengunjung-3-detail" alt="Halaman detail produk">
           Halaman detail menampilkan harga, deskripsi, informasi produk, dan ulasan pembeli. Anda dapat memberi
-          bintang dan ulasan tanpa login, setelah verifikasi singkat <b>&quot;Saya bukan robot&quot;</b>; satu ulasan per produk per hari
+          bintang dan ulasan tanpa login, setelah verifikasi singkat <b>&quot;Saya bukan robot&quot;</b>; ulasan minimal 3 kata, satu ulasan per produk per hari
           dari perangkat dan jaringan yang sama. Tombol <b>Hubungi &amp; Kunjungi Toko</b> (WhatsApp, Shopee, Instagram, Google Bisnis, Facebook,
           Lokasi) hanya muncul untuk tautan yang diisi penjual; tombol <b>WhatsApp</b> membuka chat dengan pesan tentang produk itu
           (nama dan tautannya) yang siap dikirim. Klik nama toko untuk membuka halaman UMKM: profil, alamat, jam buka,
