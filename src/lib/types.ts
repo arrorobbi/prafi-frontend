@@ -116,10 +116,10 @@ export interface TenantProfile {
   address: string;
   area: string;
   operationalHours: string;
-  fbLink: string;
-  whatsappLink: string;
-  gmapsLink: string;
-  /** Optional links: null when the tenant didn't add one */
+  /** Every link is optional: null when the tenant didn't add one */
+  fbLink: string | null;
+  whatsappLink: string | null;
+  gmapsLink: string | null;
   instagramLink: string | null;
   googleBusinessLink: string | null;
   shopeeLink: string | null;

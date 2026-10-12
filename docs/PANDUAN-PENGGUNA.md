@@ -14,7 +14,7 @@ halaman `/panduan`.
 
   ![Mencari produk](../public/panduan/pengunjung-2-cari.jpg)
 
-- Menu **Produk** menampilkan semua produk; menu **UMKM** menampilkan daftar toko beserta produknya.
+- Menu **Produk** menampilkan semua produk, diurutkan dari **rating tertinggi** (rata-rata bintang terbesar di atas; produk tanpa ulasan di bawah). Pilih **Terbaru** di atas daftar untuk melihat produk yang baru tayang lebih dulu. Menu **UMKM** menampilkan daftar toko beserta produknya.
 - Klik produk untuk melihat detail: harga, deskripsi, informasi produk, ulasan pembeli, dan toko penjualnya. Siapa pun dapat memberi bintang dan ulasan tanpa login, setelah verifikasi singkat **"Saya bukan robot"**. Ulasan minimal **3 kata**, dan satu ulasan per produk per hari dari perangkat dan jaringan yang sama.
 - Di halaman produk, tombol **Hubungi & Kunjungi Toko** (WhatsApp, Shopee, Instagram, Google Bisnis, Facebook, Lokasi) hanya muncul untuk tautan yang diisi penjual. Tombol **WhatsApp** membuka chat dengan pesan siap kirim: *"Halo kak saya ingin menanyakan tentang produk <nama produk> apakah masih ada? <tautan produk>"*.
 - Klik nama toko atau **Lihat UMKM** untuk membuka halaman UMKM: profil, alamat, jam buka, tombol WhatsApp/Instagram/Shopee/Google Bisnis, jumlah produk, rata-rata bintang, dan semua produknya. Tombol WhatsApp di sini membuka chat dengan pesan *"Hi kak, saya mau bertanya tentang produk di toko <nama toko>"*.
@@ -61,8 +61,8 @@ halaman `/panduan`.
 
 2. Pilih logo/foto toko (JPG, PNG, WEBP, atau GIF, maks. 5 MB). Foto langsung terunggah, tetapi baru tersimpan setelah Anda klik **SIMPAN PROFIL**.
 3. Isi nama toko, **wilayah** (SP 1 – SP 4 atau *Lainnya*), deskripsi, dan alamat. (Kategori kini dipilih per produk, bukan di profil toko.)
-4. Isi jam operasional (hari, jam buka, jam tutup) dan nomor WhatsApp.
-5. **Tautan Facebook / Toko Online wajib diisi** (diawali `https://`). Tautan Google Maps, Instagram, Google Bisnis, dan Shopee boleh dikosongkan. Profil tanpa tautan Facebook dianggap belum lengkap, sehingga belum bisa menambah produk.
+4. Isi jam operasional (hari, jam buka, jam tutup).
+5. **Nomor WhatsApp dan semua tautan boleh dikosongkan** (Google Maps, Instagram, Google Bisnis, Shopee, Facebook / Toko Online). Isi yang Anda miliki agar pembeli mudah menghubungi toko; tautan diawali `https://`. Tombol kontak di halaman produk dan UMKM hanya muncul untuk yang diisi.
 
    ![Formulir profil toko](../public/panduan/profil-2-form.jpg)
 

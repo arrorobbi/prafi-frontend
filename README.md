@@ -47,7 +47,7 @@ in the **backend** `.env` to this site's URL.
 | path | who | what |
 | --- | --- | --- |
 | `/` | public | Landing: featured carousel, recommended products, "why Transniaga" |
-| `/produk`, `/produk?q=` | public | All approved products + search |
+| `/produk`, `/produk?q=`, `?kategori=`, `?urut=terbaru` | public | All approved products, best average rating first (products without reviews last; `?urut=terbaru` = newest first) + search + one category |
 | `/produk/[id]` | public | Product detail: price, rating, public reviews (read + write without login) |
 | `/umkm`, `/umkm/[id]` | public | UMKM directory and page: profile, contact links, product count, rating, products (`/api/landing/tenants`) |
 | `/panduan` | public | User guide |

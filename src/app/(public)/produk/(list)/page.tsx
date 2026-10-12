@@ -6,10 +6,18 @@ import { ProductRow } from "@/components/site/ProductRow";
 import { SearchForm } from "@/components/site/SearchForm";
 import { imageSrc, sellerName } from "@/lib/format";
 import { abs, breadcrumbLd, JsonLd, pageMeta } from "@/lib/seo";
+import styles from "./list.module.css";
 import { getAllLandingProducts, getLandingCategories, getLandingTenants } from "@/lib/server-api";
 import { matches } from "@/lib/sellers";
+import type { Product } from "@/lib/types";
 
-type Props = { searchParams: Promise<{ q?: string; kategori?: string }> };
+type Props = { searchParams: Promise<{ q?: string; kategori?: string; urut?: string }> };
+
+/** Best average stars first; among equals the one with more reviews; products without reviews last (newest first). */
+function byRating(a: Product, b: Product) {
+  if (a.ratingAverage == null || b.ratingAverage == null) return (a.ratingAverage == null ? 1 : 0) - (b.ratingAverage == null ? 1 : 0);
+  return b.ratingAverage - a.ratingAverage || b.reviewCount - a.reviewCount;
+}
 
 /**
  * /produk and each category (?kategori=) are pages of their own for search engines; search results (?q=) are not
@@ -31,21 +39,32 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   });
 }
 
-/** Every approved product; ?q= searches, ?kategori=<id> shows one category (the home page carousel links here). */
+/**
+ * Every approved product, best rated first (?urut=terbaru: newest first); ?q= searches, ?kategori=<id> shows one
+ * category (the home page carousel links here).
+ */
 export default async function ProductsPage({ searchParams }: Props) {
-  const { q = "", kategori } = await searchParams;
+  const { q = "", kategori, urut } = await searchParams;
   const query = q.trim();
+  const newest = urut === "terbaru";
   const [{ products, failed }, { tenants }, { categories }] = await Promise.all([
     getAllLandingProducts(),
     getLandingTenants(),
     getLandingCategories(),
   ]);
   const category = kategori ? categories.find((c) => String(c.id) === kategori) : undefined;
-  const list = products.filter(
+  const found = products.filter(
     (p) =>
       (!category || p.categoryId === category.id) &&
       (!query || matches(p.name, query) || matches(p.description, query) || matches(sellerName(p), query)),
   );
+  // The API answers newest first; sort() is stable, so equal ratings keep that order
+  const list = newest ? found : [...found].sort(byRating);
+  /** This list with another order (the search and the category are kept) */
+  const sortHref = (value?: string) => {
+    const params = new URLSearchParams({ ...(query && { q: query }), ...(category && { kategori: String(category.id) }), ...(value && { urut: value }) });
+    return `/produk${params.size ? `?${params}` : ""}`;
+  };
 
   // The list itself for search engines (not for search results, which aren't indexed)
   const listLd = !query && list.length > 0 && {
@@ -75,7 +94,7 @@ export default async function ProductsPage({ searchParams }: Props) {
           action="/produk"
           defaultValue={query}
           placeholder={category ? `Cari di ${category.name}...` : "Cari produk..."}
-          hidden={category ? { kategori: String(category.id) } : undefined}
+          hidden={{ ...(category && { kategori: String(category.id) }), ...(newest && { urut: "terbaru" }) }}
         />
       }
     >
@@ -92,6 +111,17 @@ export default async function ProductsPage({ searchParams }: Props) {
             </>
           )}
         </p>
+      )}
+      {list.length > 1 && (
+        <nav className={styles.sort} aria-label="Urutkan produk">
+          <span>Urutkan:</span>
+          <Link href={sortHref()} aria-current={newest ? undefined : "true"} rel="nofollow">
+            Rating tertinggi
+          </Link>
+          <Link href={sortHref("terbaru")} aria-current={newest ? "true" : undefined} rel="nofollow">
+            Terbaru
+          </Link>
+        </nav>
       )}
       {failed ? (
         <EmptyState title="Produk belum dapat dimuat">Silakan muat ulang halaman beberapa saat lagi.</EmptyState>

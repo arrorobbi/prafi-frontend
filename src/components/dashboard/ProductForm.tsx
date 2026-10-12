@@ -37,9 +37,6 @@ export const PROFILE_FIELD_LABEL: Record<string, string> = {
   address: "Alamat",
   area: "Wilayah",
   operationalHours: "Jam Operasional",
-  whatsappLink: "Nomor WhatsApp",
-  fbLink: "Tautan Facebook / Toko Online",
-  gmapsLink: "Tautan Google Maps",
   logoId: "Logo Toko",
   faceImageId: "Foto Profil Akun",
 };

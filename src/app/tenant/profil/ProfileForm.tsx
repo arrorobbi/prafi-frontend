@@ -33,7 +33,7 @@ function parseHours(value?: string) {
 }
 
 /** "https://wa.me/62812..." → "0812..." for editing */
-function phoneFromWhatsapp(link?: string) {
+function phoneFromWhatsapp(link?: string | null) {
   const digits = link?.match(/wa\.me\/(\d+)/)?.[1];
   return digits ? `0${digits.replace(/^62/, "")}` : "";
 }
@@ -62,10 +62,10 @@ export function ProfileForm({
   const [days, setDays] = useState(hours.days);
   const [open, setOpen] = useState(hours.open);
   const [close, setClose] = useState(hours.close);
+  // Every link is optional: left empty = no link (null)
   const [whatsapp, setWhatsapp] = useState(phoneFromWhatsapp(profile?.whatsappLink) || user?.phoneNumber || "");
   const [fbLink, setFbLink] = useState(profile?.fbLink && profile.fbLink !== EMPTY_LINK ? profile.fbLink : "");
   const [gmapsLink, setGmapsLink] = useState(profile?.gmapsLink && profile.gmapsLink !== EMPTY_LINK ? profile.gmapsLink : "");
-  // Optional links: left empty = no link (null)
   const [instagramLink, setInstagramLink] = useState(profile?.instagramLink ?? "");
   const [googleBusinessLink, setGoogleBusinessLink] = useState(profile?.googleBusinessLink ?? "");
   const [shopeeLink, setShopeeLink] = useState(profile?.shopeeLink ?? "");
@@ -82,11 +82,9 @@ export function ProfileForm({
     if (!description.trim()) e.description = "Deskripsi wajib diisi";
     if (!address.trim()) e.address = "Alamat wajib diisi";
     if (!open || !close) e.operationalHours = "Isi jam buka dan tutup";
-    if (whatsapp.replace(/\D/g, "").length < 9) e.whatsappLink = "Nomor WhatsApp tidak valid";
-    if (!fbLink.trim()) e.fbLink = "Tautan Facebook / toko online wajib diisi";
-    else if (!/^https?:\/\/\S+$/i.test(fbLink.trim())) e.fbLink = "Tautan harus diawali https://";
-    if (gmapsLink && !/^https?:\/\//i.test(gmapsLink)) e.gmapsLink = "Tautan harus diawali https://";
-    const optionalLinks = { instagramLink, googleBusinessLink, shopeeLink };
+    // Every link is optional; a filled one must be valid
+    if (whatsapp.trim() && whatsapp.replace(/\D/g, "").length < 9) e.whatsappLink = "Nomor WhatsApp tidak valid (atau kosongkan)";
+    const optionalLinks = { gmapsLink, fbLink, instagramLink, googleBusinessLink, shopeeLink };
     for (const [key, value] of Object.entries(optionalLinks)) {
       if (value.trim() && !/^https?:\/\/\S+$/i.test(value.trim())) e[key] = "Tautan harus diawali https:// (atau kosongkan)";
       else if (value.trim().length > (key === "googleBusinessLink" ? 2048 : 255)) {
@@ -109,9 +107,9 @@ export function ProfileForm({
       description: description.trim(),
       address: address.trim(),
       operationalHours: `${days.trim() ? `${days.trim()}, ` : ""}${open} - ${close} WIT`,
-      whatsappLink: whatsappUrl(whatsapp),
-      fbLink: fbLink.trim(),
-      gmapsLink: gmapsLink.trim() || EMPTY_LINK,
+      whatsappLink: whatsapp.trim() ? whatsappUrl(whatsapp) : null,
+      fbLink: fbLink.trim() || null,
+      gmapsLink: gmapsLink.trim() || null,
       instagramLink: instagramLink.trim() || null,
       googleBusinessLink: googleBusinessLink.trim() || null,
       shopeeLink: shopeeLink.trim() || null,
@@ -221,7 +219,7 @@ export function ProfileForm({
           onFile={(f) => void logo.pick(f, `Logo ${name.trim() || "toko"}`)}
         />
         <label className="field">
-          <span className="label">Nomor WhatsApp (wajib diisi)</span>
+          <span className="label">Nomor WhatsApp (opsional)</span>
           <Input inputMode="tel" placeholder="0812-8899-0067" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
           {errors.whatsappLink && <span className="field-error">{errors.whatsappLink}</span>}
         </label>
@@ -246,7 +244,7 @@ export function ProfileForm({
           {errors.shopeeLink && <span className="field-error">{errors.shopeeLink}</span>}
         </label>
         <label className="field">
-          <span className="label">Tautan Facebook / Toko Online (wajib diisi)</span>
+          <span className="label">Tautan Facebook / Toko Online (opsional)</span>
           <Input placeholder="https://facebook.com/..." value={fbLink} onChange={(e) => setFbLink(e.target.value)} />
           {errors.fbLink && <span className="field-error">{errors.fbLink}</span>}
         </label>

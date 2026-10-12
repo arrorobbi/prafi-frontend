@@ -223,10 +223,10 @@ export type TenantInput = {
   address: string;
   area: string;
   operationalHours: string;
-  fbLink: string;
-  whatsappLink: string;
-  gmapsLink: string;
-  /** Optional: null (or empty) = no link */
+  /** Every link is optional: null (or empty) = no link */
+  fbLink?: string | null;
+  whatsappLink?: string | null;
+  gmapsLink?: string | null;
   instagramLink?: string | null;
   googleBusinessLink?: string | null;
   shopeeLink?: string | null;

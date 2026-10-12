@@ -15,7 +15,7 @@ import local from "./profil.module.css";
 import { Button, buttonVariants } from "@/components/shadcn/button";
 import { Alert } from "@/components/shadcn/alert";
 
-const isLink = (v?: string | null) => !!v && v !== "-";
+const isLink = (v?: string | null): v is string => !!v && v !== "-";
 
 export default function ShopProfilePage() {
   const toast = useToast();

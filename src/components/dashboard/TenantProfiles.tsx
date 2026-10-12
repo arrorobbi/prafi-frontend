@@ -15,7 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Alert } from "@/components/shadcn/alert";
 
 const LIMIT = 10;
-const isLink = (v?: string) => !!v && v !== "-";
+const isLink = (v?: string | null): v is string => !!v && v !== "-";
 
 /** Every shop profile, read-only (GET /api/tenants — superadmin, disnakertrans, admin). */
 export function TenantProfiles() {

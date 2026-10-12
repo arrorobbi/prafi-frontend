@@ -1,0 +1,25 @@
+/* "Urutkan: Rating tertinggi | Terbaru" above the product list */
+.sort {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.sort a {
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  border: 1px solid var(--gray-300, #d1d5db);
+  color: var(--navy);
+}
+
+.sort a[aria-current="true"] {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--white);
+}

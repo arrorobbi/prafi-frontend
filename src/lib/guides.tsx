@@ -74,6 +74,7 @@ export const GUIDES: Guide[] = [
           Gunakan menu <b>Beranda</b>, <b>Produk</b>, dan <b>UMKM</b> di bagian atas untuk menjelajah produk dan toko. Di
           Beranda, carousel menampilkan gambar setiap <b>kategori produk</b>, dan di sebelahnya produk dari kategori yang sedang
           tampil. Produk berikon jempol adalah <b>rekomendasi</b>: memiliki minimal 3 ulasan dengan rata-rata 4,8 bintang atau lebih.
+          Menu <b>Produk</b> mengurutkan produk dari <b>rating tertinggi</b>; pilih <b>Terbaru</b> untuk melihat produk yang baru tayang lebih dulu.
         </Step>
         <Step image="pengunjung-2-cari" alt="Kotak pencarian">
           Klik ikon <b>kaca pembesar</b>, ketik nama produk atau toko. Pilih salah satu saran, atau tekan <b>Enter</b>{" "}
@@ -136,9 +137,9 @@ export const GUIDES: Guide[] = [
         <Step image="profil-2-form" alt="Formulir profil toko">
           Pilih logo atau foto toko (JPG/PNG/WEBP, maksimal 5 MB): foto langsung terunggah, tetapi baru tersimpan
           setelah Anda klik <b>SIMPAN PROFIL</b>. Isi nama toko, wilayah (SP 1 – SP 4 atau lainnya),
-          deskripsi, alamat lengkap, jam operasional (hari, jam buka, jam tutup), nomor WhatsApp, dan{" "}
-          <b>tautan Facebook / toko online</b> (wajib, diawali https://). Tautan Google Maps, Instagram, Google Bisnis,
-          dan Shopee boleh dikosongkan.
+          deskripsi, alamat lengkap, dan jam operasional (hari, jam buka, jam tutup). Nomor WhatsApp dan semua tautan
+          (Google Maps, Instagram, Google Bisnis, Shopee, Facebook / toko online) <b>boleh dikosongkan</b>; isi yang Anda
+          miliki agar pembeli mudah menghubungi toko. Tautan diawali https://.
         </Step>
         <Step image="profil-3-simpan" alt="Tombol simpan profil">
           Klik <b>SIMPAN PROFIL</b>. Profil dapat diubah kapan saja lewat tombol <b>Ubah Profil</b>. Agar dapat
