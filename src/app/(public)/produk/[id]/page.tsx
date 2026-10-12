@@ -8,6 +8,7 @@ import { RatingSummary } from "@/components/Stars";
 import { EmptyState, PageHeader, Thumb } from "@/components/ui";
 import { formatDate, formatRupiah, imageSrc, productWhatsappText, sellerName, whatsappWithText } from "@/lib/format";
 import type { Product } from "@/lib/types";
+import { abs, breadcrumbLd, JsonLd, pageMeta, summarize } from "@/lib/seo";
 import { getLandingProduct, getLandingProducts } from "@/lib/server-api";
 import styles from "./detail.module.css";
 import { buttonVariants } from "@/components/shadcn/button";
@@ -21,7 +22,45 @@ const isLink = (v?: string | null): v is string => !!v && /^https?:\/\//i.test(v
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { product } = await getLandingProduct((await params).id);
-  return product ? { title: product.name, description: product.description } : { title: "Produk" };
+  if (!product) return { title: "Produk", robots: { index: false } };
+  const seller = sellerName(product);
+  return pageMeta({
+    title: `${product.name} - ${seller}`,
+    description: `${product.name} dari ${seller}, ${formatRupiah(product.price)}. ${product.description}`,
+    path: `/produk/${product.id}`,
+    image: product.image ? { url: imageSrc(product.image), alt: product.image.altText || product.name } : null,
+  });
+}
+
+/** Product structured data: what lets Google show the price and the review stars in search results */
+function productLd(product: Product) {
+  const shop = product.tenant?.tenant;
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": abs(`/produk/${product.id}#product`),
+    name: product.name,
+    description: summarize(`${product.description} ${product.details}`, 500),
+    url: abs(`/produk/${product.id}`),
+    sku: product.id,
+    ...(product.image && { image: [abs(imageSrc(product.image))] }),
+    ...(product.category && { category: product.category.name }),
+    brand: { "@type": "Brand", name: sellerName(product) },
+    offers: {
+      "@type": "Offer",
+      url: abs(`/produk/${product.id}`),
+      price: product.price,
+      priceCurrency: "IDR",
+      availability: "https://schema.org/InStock",
+      itemCondition: "https://schema.org/NewCondition",
+      seller: { "@type": "Organization", name: sellerName(product), ...(shop && { url: abs(`/umkm/${shop.id}`) }) },
+    },
+    // Only with real reviews: Google rejects ratings without any
+    ...(product.reviewCount > 0 &&
+      product.ratingAverage != null && {
+        aggregateRating: { "@type": "AggregateRating", ratingValue: product.ratingAverage, reviewCount: product.reviewCount, bestRating: 5, worstRating: 1 },
+      }),
+  };
 }
 
 export default async function ProductDetailPage({ params }: Props) {
@@ -46,6 +85,15 @@ export default async function ProductDetailPage({ params }: Props) {
 
   return (
     <div className={styles.page}>
+      <JsonLd data={productLd(product)} />
+      <JsonLd
+        data={breadcrumbLd([
+          { name: "Beranda", path: "/" },
+          { name: "Produk", path: "/produk" },
+          ...(product.category ? [{ name: product.category.name, path: `/produk?kategori=${product.category.id}` }] : []),
+          { name: product.name, path: `/produk/${product.id}` },
+        ])}
+      />
       <PageHeader title="INFORMASI PRODUK" backHref="/produk" />
 
       <div className={styles.layout}>

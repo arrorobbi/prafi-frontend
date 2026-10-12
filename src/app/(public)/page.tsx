@@ -4,6 +4,7 @@ import { MapArt } from "@/components/site/MapArt";
 import { HomeHero, type CategorySlide } from "@/components/site/HomeHero";
 import { ProductStrip } from "@/components/site/ProductStrip";
 import { imageSrc } from "@/lib/format";
+import { abs, JsonLd, ORGANIZATION_LD, pageMeta, SITE_DESCRIPTION, SITE_NAME } from "@/lib/seo";
 import { getLandingCategories, getLandingProducts } from "@/lib/server-api";
 import type { ProductCategory } from "@/lib/types";
 import styles from "./home.module.css";
@@ -12,6 +13,30 @@ import { Alert } from "@/components/shadcn/alert";
 import { Card } from "@/components/shadcn/card";
 
 export const revalidate = 60;
+
+export const metadata = pageMeta({ path: "/", description: SITE_DESCRIPTION });
+
+/** Who runs the site, and its search box (Google can show a site search under the result) */
+const HOME_LD = {
+  "@context": "https://schema.org",
+  "@graph": [
+    ORGANIZATION_LD,
+    {
+      "@type": "WebSite",
+      "@id": abs("/#website"),
+      url: abs("/"),
+      name: SITE_NAME,
+      description: SITE_DESCRIPTION,
+      inLanguage: "id-ID",
+      publisher: { "@id": abs("/#organization") },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: { "@type": "EntryPoint", urlTemplate: `${abs("/produk")}?q={search_term_string}` },
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ],
+};
 
 const REASONS = [
   {
@@ -76,6 +101,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd data={HOME_LD} />
       <HomeHero
         slides={slides}
         fallback={fallback}

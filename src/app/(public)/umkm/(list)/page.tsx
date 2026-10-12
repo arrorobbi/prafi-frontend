@@ -6,13 +6,26 @@ import { SearchForm } from "@/components/site/SearchForm";
 import { RatingSummary } from "@/components/Stars";
 import { EmptyState, Thumb } from "@/components/ui";
 import { imageSrc } from "@/lib/format";
+import { breadcrumbLd, JsonLd, pageMeta } from "@/lib/seo";
 import { getLandingTenants } from "@/lib/server-api";
 import styles from "../umkm.module.css";
 
-export const metadata: Metadata = { title: "UMKM" };
+type Props = { searchParams: Promise<{ q?: string }> };
+
+/** Search results (?q=) are not indexed and count as /umkm */
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const { q = "" } = await searchParams;
+  return pageMeta({
+    title: "Daftar UMKM",
+    description:
+      "Daftar UMKM Kawasan Transmigrasi Prafi, Manokwari: profil toko, alamat, jam buka, kontak WhatsApp, jumlah produk, dan rating pembeli di Trans Niaga.",
+    path: "/umkm",
+    index: !q.trim(),
+  });
+}
 
 /** Public UMKM directory (GET /api/landing/tenants): profile summary, product count and rating per UMKM. */
-export default async function SellersPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+export default async function SellersPage({ searchParams }: Props) {
   const { q = "" } = await searchParams;
   const query = q.trim();
   const [all, found] = await Promise.all([getLandingTenants(), query ? getLandingTenants({ q: query }) : null]);
@@ -20,6 +33,8 @@ export default async function SellersPage({ searchParams }: { searchParams: Prom
   const failed = all.failed || !!found?.failed;
 
   return (
+    <>
+    <JsonLd data={breadcrumbLd([{ name: "Beranda", path: "/" }, { name: "UMKM", path: "/umkm" }])} />
     <ListShell
       sideTitle="UMKM"
       sideLinks={all.tenants.map((t) => ({ href: `/umkm/${t.id}`, label: t.name }))}
@@ -55,5 +70,6 @@ export default async function SellersPage({ searchParams }: { searchParams: Prom
         </div>
       )}
     </ListShell>
+    </>
   );
 }

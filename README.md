@@ -24,6 +24,7 @@ npm run build && npm start   # production (port 80, see deploy/)
 | `API_URL` | Backend base URL (default `https://api.transniaga.manokwarikab.go.id`). Read at **build time**. |
 | `SITE_URL` | This site's public address (default `https://transniaga.manokwarikab.go.id`), used for the product link in the WhatsApp message. Read at **build time**. |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key for the review form's "not a robot" check (the secret key is in the backend `.env`). Read at **build time**. |
+| `GOOGLE_SITE_VERIFICATION` | Google Search Console verification code (optional), see [SEO](#seo). Read at **build time**. |
 | `NEXT_PUBLIC_ADMIN_WHATSAPP`, `NEXT_PUBLIC_ADMIN_EMAIL` | Contact shown under *Hubungi Administrator* (optional). |
 | `REVALIDATE_SECRET` | Shared with the backend `.env`: lets it refresh the cached landing pages right after a change (see *Landing page cache*). Read at runtime. |
 
@@ -173,6 +174,29 @@ this site's own `/socket.io/` proxy (`next.config.ts`), authenticated with the l
   (`GET /api/notifications/unread-count` is still polled every 60 s and on tab focus as a fallback)
 - `log:new` adds new rows to the superadmin's *Log API* page live (a "● Live" badge shows the connection)
 - `session:ended` logs the tab out (expired, logged out elsewhere, deactivated, password reset)
+
+## SEO
+
+What search engines and link previews (WhatsApp, Facebook, X) get. Helpers are in `src/lib/seo.tsx`.
+
+| Part | Where | What it does |
+| --- | --- | --- |
+| Titles, descriptions, canonical address, Open Graph / Twitter | `pageMeta()` in each public page (`generateMetadata` for product, UMKM and category pages) | One canonical address per page (`SITE_URL` + path), so `http://`, `?page=2` and similar copies count as one page. Product and UMKM pages preview with their own photo. |
+| Default sharing picture | `src/app/opengraph-image.tsx` | 1200×630 PNG with the logo, served at `/opengraph-image`. |
+| Structured data (JSON-LD) | `<JsonLd>` in the pages | Beranda: `Organization` + `WebSite` (site search box). Product: `Product` + `Offer` (IDR) + `AggregateRating` when it has reviews. UMKM: `Store` (address, phone, rating). Lists: `ItemList`. All: `BreadcrumbList`. |
+| `/robots.txt` | `src/app/robots.ts` | Everything allowed except `/api/`, `/internal/`, `/socket.io/`; points to the sitemap. |
+| `/sitemap.xml` | `src/app/sitemap.ts` | Fixed pages, categories that have products, every approved product and every UMKM. Rebuilt at most once an hour. |
+| `/manifest.webmanifest` | `src/app/manifest.ts` | Name, colours and icons for "Add to home screen". |
+| Pages kept out of search | `headers()` in `next.config.ts` | `X-Robots-Tag: noindex, nofollow` on the dashboards (`/admin`, `/superadmin`, `/disnakertrans`, `/tenant`, `/akun`), `/login`, `/lupa-password`, `/reset-password`, `/verifikasi`, `/register/admin`, `/internal`. Search results (`/produk?q=…`) are `noindex, follow`. Indexed: Beranda, Produk, UMKM, Panduan and `/register`. |
+| `http://` → `https://` | `src/middleware.ts` | Next.js holds port 80, so plain-http requests for the site's own host name are answered with a 308 to `https://`. Requests that came through nginx (`X-Forwarded-Proto: https`) and other hosts (`localhost`, `127.0.0.1`: the backend's revalidate call) pass untouched. |
+
+**Google Search Console**: open <https://search.google.com/search-console>, add the property
+`https://transniaga.manokwarikab.go.id` (type *URL prefix*), choose the *HTML tag* method and copy only the code inside
+`content="…"`. Put it in `.env` as `GOOGLE_SITE_VERIFICATION=<code>`, rebuild and restart the frontend, then press
+*Verify*. Afterwards, under *Sitemaps*, submit `sitemap.xml`.
+
+To check a page: <https://search.google.com/test/rich-results> (structured data) and
+<https://developers.facebook.com/tools/debug/> (link preview).
 
 ## Known API gaps (frontend works around them)
 

@@ -17,6 +17,27 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_API_URL: API_URL,
     NEXT_PUBLIC_SITE_URL: SITE_URL,
   },
+  /**
+   * Pages that must never appear in search results: dashboards, login, password and verification pages, the admin
+   * sign-up. A header (not robots.txt): crawlers must be able to open a page to see that it says "noindex".
+   */
+  async headers() {
+    const noindex = [{ key: "X-Robots-Tag", value: "noindex, nofollow" }];
+    return [
+      "/admin/:path*",
+      "/superadmin/:path*",
+      "/disnakertrans/:path*",
+      "/tenant/:path*",
+      "/akun/:path*",
+      "/login",
+      "/lupa-password",
+      "/reset-password",
+      "/verifikasi",
+      "/register/admin",
+      "/maintenance",
+      "/internal/:path*",
+    ].map((source) => ({ source, headers: noindex }));
+  },
   async rewrites() {
     return [
       { source: "/api/:path*", destination: `${API_URL}/api/:path*` },
