@@ -244,6 +244,12 @@ export const GUIDES: Guide[] = [
           atau tetap menampilkannya; ulasan yang disembunyikan tidak dihitung dalam rating. Setiap ulasan hanya dapat
           dilaporkan satu kali.
         </Step>
+        <Step>
+          Menu <b>Kalkulator Profit &amp; Iklan</b> membantu menghitung apakah iklan masih menguntungkan. Isi harga jual,
+          modal produk (termasuk kemasan), biaya iklan per penjualan, dan target penjualan per bulan; kalkulator
+          menampilkan margin kotor, batas maksimal biaya iklan per unit (<b>Batas Max CPA</b>), <b>Break-Even ROAS</b>,
+          serta perkiraan profit bersih per unit dan per bulan. Angka merah berarti rugi. Angka yang diisi tidak disimpan.
+        </Step>
       </Steps>
     ),
   },
@@ -349,8 +355,10 @@ export const GUIDES: Guide[] = [
         <Steps>
           <Step image="superadmin-1-tambah" alt="Form tambah akun Disnakertrans">
             <b>Superadmin</b> membuat akun Disnakertrans di menu <b>Akun Disnakertrans → TAMBAH AKUN</b>, lalu klik{" "}
-            <b>Buat Akun</b>. Pemilik akun menerima tautan aktivasi di email (berlaku 24 jam); password diberikan
-            langsung oleh superadmin. Tautan kedaluwarsa? Klik <b>Kirim Ulang Verifikasi</b>.
+            <b>Buat Akun</b>. Superadmin tidak mengisi password: pemilik akun menerima email berisi{" "}
+            <b>kata sandi sementara</b> dan tombol aktivasi (berlaku 24 jam). Ia menekan tombol itu, memasukkan kata sandi
+            sementara, lalu membuat password sendiri; setelah itu akun bisa dipakai masuk. Email tidak sampai atau
+            kedaluwarsa? Klik <b>Kirim Ulang Verifikasi</b> (kata sandi sementara yang lama tidak berlaku lagi).
           </Step>
           <Step image="disnakertrans-1-aktivasi" alt="Halaman aktivasi admin">
             <b>Disnakertrans</b> mengaktifkan akun admin baru di menu <b>Aktivasi Admin</b> dengan tombol{" "}

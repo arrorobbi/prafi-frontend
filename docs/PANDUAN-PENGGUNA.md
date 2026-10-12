@@ -127,6 +127,26 @@ halaman `/panduan`.
 - Administrator atau Disnakertrans memeriksa laporan lalu **menyembunyikan** ulasan (tidak tampil dan tidak dihitung dalam rating) atau **tetap menampilkannya**. Anda menerima notifikasi *Keputusan Laporan Ulasan* beserta catatannya.
 - Setiap ulasan hanya dapat dilaporkan satu kali.
 
+### 2.5a Kalkulator Profit & Iklan
+
+Menu **Kalkulator Profit & Iklan** membantu menghitung apakah iklan masih menguntungkan. Angka yang diisi hanya dihitung di perangkat Anda dan tidak disimpan.
+
+| Isian | Arti |
+| --- | --- |
+| Harga Jual Produk per Unit | harga yang dibayar pembeli |
+| Modal Produk (COGS + Packing) | biaya membuat / membeli satu produk, termasuk kemasan |
+| Realisasi Biaya Iklan per Sales (CPA Target) | biaya iklan yang keluar untuk mendapatkan satu penjualan |
+| Estimasi Target Penjualan (Unit/Bulan) | perkiraan jumlah terjual dalam sebulan |
+
+| Hasil | Rumus | Cara membaca |
+| --- | --- | --- |
+| Margin Kotor / Unit | harga jual − modal | keuntungan sebelum biaya iklan |
+| Batas Max CPA (BEP) | sama dengan margin kotor | biaya iklan per unit maksimal sebelum rugi |
+| Break-Even ROAS | harga jual ÷ margin kotor | ROAS minimal agar iklan tidak rugi |
+| ROAS Realisasi | harga jual ÷ biaya iklan per penjualan | aman bila lebih besar dari Break-Even ROAS |
+| Profit Bersih / Unit | margin kotor − biaya iklan per penjualan | hijau = untung, merah = rugi |
+| Total Profit Bersih (Bulanan) | profit bersih per unit × target penjualan | perkiraan keuntungan sebulan |
+
 ### 2.6 Ketentuan foto & deskripsi
 
 - Foto jelas, terang, tidak buram, dan menampilkan produk yang sebenarnya.
@@ -218,8 +238,11 @@ Penjual menerima notifikasi untuk setiap perubahan pada produknya:
 
 ## 5. Disnakertrans
 
-Akun Disnakertrans dibuat oleh superadmin. Buka tautan aktivasi di email (berlaku 24 jam), lalu login dengan password
-yang diberikan superadmin.
+Akun Disnakertrans dibuat oleh superadmin. Anda menerima email berisi **kata sandi sementara** (mis. `Mangga47`) dan
+tombol **Aktifkan Akun & Buat Kata Sandi** (berlaku 24 jam). Tekan tombol itu, masukkan kata sandi sementara, lalu buat
+password Anda sendiri (minimal 8 karakter). Setelah itu login dengan password baru tersebut. Kata sandi sementara tidak
+bisa dipakai untuk login; jika salah memasukkannya 5 kali atau email kedaluwarsa, minta email aktivasi baru lewat
+tautan di halaman aktivasi atau kepada superadmin.
 
 | Menu | Fungsi |
 | --- | --- |
@@ -243,7 +266,7 @@ Akun superadmin dibuat oleh pengelola server. Superadmin **hanya membaca** data,
 | Menu | Fungsi |
 | --- | --- |
 | Dashboard | Ringkasan akun per role, produk, dan akun terbaru, serta grafik **Statistik** (aktivitas, status produk, produk per kategori, akun per role) |
-| Akun Disnakertrans | **TAMBAH AKUN**: isi nama, telepon, email, dan password. Sistem mengirim tautan aktivasi ke email; berikan password secara langsung. Bila tautan kedaluwarsa, klik **Kirim Ulang Verifikasi** |
+| Akun Disnakertrans | **TAMBAH AKUN**: isi nama, telepon, dan email (tanpa password). Sistem mengirim kata sandi sementara dan tautan aktivasi ke email itu; pemilik akun membuat password sendiri saat aktivasi. Bila email tidak sampai atau kedaluwarsa, klik **Kirim Ulang Verifikasi** (mengirim tautan dan kata sandi sementara baru) |
 | Semua Pengguna | Semua akun, disaring per role |
 | Data Produk / Data UMKM / Kategori Produk | Melihat data (hanya baca) |
 | Log API | Catatan setiap penambahan, perubahan, dan penghapusan data **oleh pengguna yang login**, serta **semua aktivitas akun** (login, password/email salah, daftar, OTP, lupa/reset password, logout) termasuk dari tamu beserta **email yang dicoba**, baik yang berhasil maupun yang gagal. Permintaan baca dan permintaan tamu lainnya (ulasan, bot) tidak dicatat. Isi: siapa, kapan, field yang dikirim, dan ringkasan hasil atau error-nya. Filter **Hasil** (Berhasil / Gagal), method, status, path, email (pengguna atau email yang dicoba), dan tanggal. Log baru muncul otomatis (tanda **● Live**). **Grafik Log**: permintaan per hari (berhasil / gagal), per method, endpoint terbanyak, error terbanyak |

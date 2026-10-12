@@ -89,6 +89,9 @@ export function ProfileForm({
     const optionalLinks = { instagramLink, googleBusinessLink, shopeeLink };
     for (const [key, value] of Object.entries(optionalLinks)) {
       if (value.trim() && !/^https?:\/\/\S+$/i.test(value.trim())) e[key] = "Tautan harus diawali https:// (atau kosongkan)";
+      else if (value.trim().length > (key === "googleBusinessLink" ? 2048 : 255)) {
+        e[key] = `Tautan terlalu panjang (maksimal ${key === "googleBusinessLink" ? "2.048" : "255"} karakter)`;
+      }
     }
     if (!profile && !logo.pending) e.logoId = "Logo/foto toko wajib diunggah";
     return e;

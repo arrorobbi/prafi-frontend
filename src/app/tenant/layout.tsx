@@ -1,7 +1,7 @@
 "use client";
 
 import { DashboardShell, type NavItem } from "@/components/dashboard/DashboardShell";
-import { IconBell, IconBox, IconHelp, IconHome, IconMessage, IconPlus, IconSettings, IconUser, IconXCircle } from "@/components/Icons";
+import { IconBell, IconBox, IconCalculator, IconHelp, IconHome, IconMessage, IconPlus, IconSettings, IconUser, IconXCircle } from "@/components/Icons";
 import { useAuth } from "@/lib/auth";
 import { imageSrc } from "@/lib/format";
 import { TenantProfileProvider, useTenantProfile } from "@/lib/tenantProfile";
@@ -13,6 +13,7 @@ const NAV: NavItem[] = [
   { href: "/tenant/produk/tambah", label: "Tambah Produk", icon: IconPlus },
   { href: "/tenant/ditolak", label: "Produk Ditolak", icon: IconXCircle },
   { href: "/tenant/ulasan", label: "Ulasan Produk", icon: IconMessage },
+  { href: "/tenant/kalkulator", label: "Kalkulator Profit & Iklan", icon: IconCalculator },
   { href: "/tenant/profil", label: "Profil UMKM", icon: IconUser },
   { href: "/tenant/notifikasi", label: "Notifikasi", icon: IconBell, badge: true },
   { href: "/tenant/bantuan", label: "Bantuan & Ketentuan", icon: IconHelp },

@@ -7,7 +7,7 @@ import { UserAccounts } from "@/components/dashboard/UserAccounts";
 import { IconPlus } from "@/components/Icons";
 import { Modal } from "@/components/Modal";
 import { useToast } from "@/components/Toast";
-import { PageHeader, PasswordInput } from "@/components/ui";
+import { PageHeader } from "@/components/ui";
 import { api, ApiError, errorMessage } from "@/lib/api";
 import { formatDate, formatTime, splitName } from "@/lib/format";
 import type { Verification } from "@/lib/types";
@@ -15,9 +15,12 @@ import { Button } from "@/components/shadcn/button";
 import { Input } from "@/components/shadcn/input";
 import { Alert } from "@/components/shadcn/alert";
 
-const EMPTY = { fullName: "", phone: "", email: "", password: "", confirm: "" };
+const EMPTY = { fullName: "", phone: "", email: "" };
 
-/** Disnakertrans accounts: only the superadmin creates them (POST /api/auth/register/disnakertrans). */
+/**
+ * Disnakertrans accounts: only the superadmin creates them (POST /api/auth/register/disnakertrans). No password is
+ * typed here: the backend emails a temporary one, which the owner replaces when activating the account.
+ */
 export default function DisnakertransAccountsPage() {
   const toast = useToast();
   const [open, setOpen] = useState(false);
@@ -42,8 +45,6 @@ export default function DisnakertransAccountsPage() {
     if (form.fullName.trim().length < 3) found.fullName = "Nama lengkap wajib diisi";
     if (normalizePhone(form.phone).length < 11) found.phone = "Nomor telepon tidak valid";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) found.email = "Email tidak valid";
-    if (form.password.length < 8) found.password = "Password minimal 8 karakter";
-    if (form.confirm !== form.password) found.confirm = "Konfirmasi password tidak sama";
     setErrors(found);
     if (Object.keys(found).length) return;
 
@@ -53,7 +54,6 @@ export default function DisnakertransAccountsPage() {
         ...splitName(form.fullName),
         phoneNumber: normalizePhone(form.phone),
         email: form.email.trim(),
-        password: form.password,
       });
       setCreated({ email: data.email, verification: meta?.verification });
       setReloadKey((k) => k + 1);
@@ -61,7 +61,7 @@ export default function DisnakertransAccountsPage() {
     } catch (err) {
       if (err instanceof ApiError) {
         const f = err.fieldErrors;
-        setErrors({ email: f.email, phone: f.phoneNumber, password: f.password, fullName: f.firstName || f.lastName });
+        setErrors({ email: f.email, phone: f.phoneNumber, fullName: f.firstName || f.lastName });
       }
       toast.error("Gagal membuat akun", errorMessage(err));
     } finally {
@@ -74,8 +74,8 @@ export default function DisnakertransAccountsPage() {
       <PageHeader title="AKUN DISNAKERTRANS" />
       <div className={styles.toolbar}>
         <p className="muted" style={{ flex: "1 1 320px" }}>
-          Disnakertrans memeriksa dan mengaktifkan akun admin. Akun yang dibuat di sini langsung aktif, tetapi pemiliknya
-          harus membuka tautan aktivasi di email (berlaku 24 jam) sebelum bisa login.
+          Disnakertrans memeriksa dan mengaktifkan akun admin. Pemilik akun menerima email berisi kata sandi sementara
+          dan tautan aktivasi (berlaku 24 jam): ia harus mengganti kata sandi sementara itu sebelum bisa login.
         </p>
         <Button type="button" variant="navy" onClick={() => setOpen(true)}>
           <IconPlus /> TAMBAH AKUN
@@ -93,20 +93,23 @@ export default function DisnakertransAccountsPage() {
             {created.verification && (
               <p>
                 {created.verification.emailSent
-                  ? `Tautan aktivasi telah dikirim ke ${created.verification.sentTo}`
-                  : "Email aktivasi belum terkirim (server email belum diatur)"}
+                  ? `Email berisi kata sandi sementara dan tautan aktivasi telah dikirim ke ${created.verification.sentTo}`
+                  : "Email aktivasi belum terkirim (server email belum diatur atau gagal mengirim)"}
                 , berlaku sampai {formatDate(created.verification.expiresAt)} {formatTime(created.verification.expiresAt)}.
               </p>
             )}
             {created.verification?.devLink && (
               <p className="hint">
-                Mode pengembangan — tautan aktivasi:{" "}
+                Mode pengembangan — kata sandi sementara: <strong>{created.verification.devTemporaryPassword}</strong>, tautan aktivasi:{" "}
                 <a href={created.verification.devLink} target="_blank" rel="noreferrer">
                   {created.verification.devLink}
                 </a>
               </p>
             )}
-            <p>Berikan password akun secara langsung kepada pemiliknya. Password tidak dikirim lewat email.</p>
+            <p>
+              Anda tidak perlu memberikan password: pemilik akun membuat password sendiri saat aktivasi. Jika emailnya
+              tidak sampai, gunakan tombol <strong>Kirim Ulang Verifikasi</strong> pada daftar akun.
+            </p>
             <div className={styles.formActions}>
               <Button type="button" variant="light" onClick={() => setCreated(null)}>
                 Tambah Lagi
@@ -133,16 +136,10 @@ export default function DisnakertransAccountsPage() {
               <Input type="email" value={form.email} onChange={set("email")} placeholder="Email aktif petugas" />
               {errors.email && <span className="field-error">{errors.email}</span>}
             </label>
-            <label className="field">
-              <span className="label">Password</span>
-              <PasswordInput value={form.password} onChange={set("password")} placeholder="Min. 8 karakter" autoComplete="new-password" />
-              {errors.password && <span className="field-error">{errors.password}</span>}
-            </label>
-            <label className="field">
-              <span className="label">Konfirmasi Password</span>
-              <PasswordInput value={form.confirm} onChange={set("confirm")} placeholder="Ulangi password" autoComplete="new-password" />
-              {errors.confirm && <span className="field-error">{errors.confirm}</span>}
-            </label>
+            <p className={`hint ${styles.full}`}>
+              Password tidak perlu diisi: kata sandi sementara dibuat otomatis dan dikirim ke email di atas bersama tautan
+              aktivasi.
+            </p>
             <div className={`${styles.formActions} ${styles.full}`}>
               <Button type="button" variant="light" onClick={close} disabled={busy}>
                 Batal

@@ -217,6 +217,8 @@ export interface Verification {
   emailSent: boolean;
   devCode?: string;
   devLink?: string;
+  /** Development only (disnakertrans): the temporary password from the email */
+  devTemporaryPassword?: string;
 }
 
 export interface LoginResult {

@@ -50,6 +50,7 @@ function LoginForm() {
     }
     if (params.get("verified")) setNotice("Email berhasil diverifikasi, silakan login.");
     if (params.get("reset")) setNotice("Kata sandi berhasil diubah, silakan login dengan kata sandi baru.");
+    if (params.get("aktif")) setNotice("Akun berhasil diaktifkan, silakan login dengan password baru Anda.");
   }, [params]);
 
   // Already logged in: go to the dashboard
@@ -76,7 +77,7 @@ function LoginForm() {
           return;
         }
         if (d?.userId) setResendUserId(d.userId);
-        setError("Email belum diaktifkan. Buka tautan aktivasi yang dikirim ke email Anda.");
+        setError("Akun belum diaktifkan. Buka tautan pada email aktivasi, lalu ganti kata sandi sementara dengan password Anda sendiri.");
         return;
       }
       if (err instanceof ApiError && err.code === "USER_NOT_ACTIVATED") {

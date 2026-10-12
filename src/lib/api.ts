@@ -246,14 +246,23 @@ export const api = {
   auth: {
     login: (email: string, password: string) => post<LoginResult>("/auth/login", { email, password }, true),
     logout: () => post<{ message: string }>("/auth/logout"),
-    /** superadmin only: the account is active right away; its email is activated with a link (24 h). */
-    registerDisnakertrans: (input: RegisterInput) => post<User>("/auth/register/disnakertrans", input),
+    /**
+     * superadmin only, no password: the backend emails a temporary one with an activation link (24 h), and the
+     * owner replaces it on /aktivasi.
+     */
+    registerDisnakertrans: (input: Omit<RegisterInput, "password" | "tenantName">) => post<User>("/auth/register/disnakertrans", input),
     registerAdmin: (input: RegisterInput) => post<User>("/auth/register/admin", input, true),
     registerTenant: (input: RegisterInput) => post<User>("/auth/register/tenant", input, true),
     verifyOtp: (userId: string, otp: string) =>
       post<{ message: string; user: User }>(`/auth/verify-otp/${userId}`, { otp }, true),
     resendVerification: (userId: string) =>
       post<{ message: string }>(`/auth/resend-verification/${userId}`, undefined, true),
+    /** Disnakertrans activation link (/aktivasi): is it still usable? */
+    checkActivation: (userId: string, token: string) =>
+      post<{ valid: boolean; email: string; expiresAt: string }>("/auth/activate/check", { userId, token }, true),
+    /** Replaces the emailed temporary password with the person's own; the account can log in afterwards. */
+    activate: (userId: string, token: string, temporaryPassword: string, password: string) =>
+      post<{ message: string; user: User }>("/auth/activate", { userId, token, temporaryPassword, password }, true),
     forgotPassword: (email: string) => post<{ message: string }>("/auth/forgot-password", { email }, true),
     checkResetLink: (userId: string, token: string) =>
       post<{ valid: boolean; email: string; expiresAt: string }>("/auth/reset-password/check", { userId, token }, true),

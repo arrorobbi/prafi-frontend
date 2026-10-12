@@ -57,9 +57,10 @@ in the **backend** `.env` to this site's URL.
 | `/register/admin` | public | Admin sign-up (needs Disnakertrans activation afterwards) |
 | `/verifikasi?userId=&email=` | public | Email OTP for accounts that tried to log in unverified |
 | `/lupa-password`, `/reset-password` | public | Forgot / reset password |
+| `/aktivasi?userId=&token=` | public | Disnakertrans account activation, opened from the email: temporary password → own password (the path is fixed by the backend) |
 | `/admin/*` | admin | Dashboard, Konfirmasi Produk, Manajemen Produk, Kategori Produk (with carousel image), Manajemen UMKM, Notifikasi, Pengaturan |
-| `/tenant/*` | tenant | Dashboard, Produk Saya, Tambah/Ubah Produk, Produk Ditolak, Profil UMKM, Notifikasi, Bantuan, Pengaturan |
-| `/superadmin/*` | superadmin | Dashboard, Akun Disnakertrans (create + resend activation), Semua Pengguna, Data Produk, Data UMKM, Kategori Produk (read-only), Panduan Server (sidebar link to the backend's `/api/docs/server`, opens in a new tab with the same login), Log API (signed-in users' create/update/delete requests and every auth action incl. guests' failed logins with the email tried, successful and failed, with result summary), Notifikasi, Pengaturan |
+| `/tenant/*` | tenant | Dashboard, Produk Saya, Tambah/Ubah Produk, Produk Ditolak, Ulasan Produk, Kalkulator Profit & Iklan (`lib/adCalculator.ts`, nothing is saved), Profil UMKM, Notifikasi, Bantuan, Pengaturan |
+| `/superadmin/*` | superadmin | Dashboard, Akun Disnakertrans (create without a password + resend the activation email), Semua Pengguna, Data Produk, Data UMKM, Kategori Produk (read-only), Panduan Server (sidebar link to the backend's `/api/docs/server`, opens in a new tab with the same login), Log API (signed-in users' create/update/delete requests and every auth action incl. guests' failed logins with the email tried, successful and failed, with result summary), Notifikasi, Pengaturan |
 | `/disnakertrans/*` | disnakertrans | Dashboard, Aktivasi Admin (activate/deactivate admins), Konfirmasi Produk (approve/reject/deactivate, like admin), Data Produk, Kategori Produk (manage, like admin), Data UMKM, Notifikasi, Pengaturan |
 
 ## UI components (shadcn/ui + Tailwind)
@@ -187,7 +188,7 @@ What search engines and link previews (WhatsApp, Facebook, X) get. Helpers are i
 | `/robots.txt` | `src/app/robots.ts` | Everything allowed except `/api/`, `/internal/`, `/socket.io/`; points to the sitemap. |
 | `/sitemap.xml` | `src/app/sitemap.ts` | Fixed pages, categories that have products, every approved product and every UMKM. Rebuilt at most once an hour. |
 | `/manifest.webmanifest` | `src/app/manifest.ts` | Name, colours and icons for "Add to home screen". |
-| Pages kept out of search | `headers()` in `next.config.ts` | `X-Robots-Tag: noindex, nofollow` on the dashboards (`/admin`, `/superadmin`, `/disnakertrans`, `/tenant`, `/akun`), `/login`, `/lupa-password`, `/reset-password`, `/verifikasi`, `/register/admin`, `/internal`. Search results (`/produk?q=…`) are `noindex, follow`. Indexed: Beranda, Produk, UMKM, Panduan and `/register`. |
+| Pages kept out of search | `headers()` in `next.config.ts` | `X-Robots-Tag: noindex, nofollow` on the dashboards (`/admin`, `/superadmin`, `/disnakertrans`, `/tenant`, `/akun`), `/login`, `/lupa-password`, `/reset-password`, `/verifikasi`, `/aktivasi`, `/register/admin`, `/internal`. Search results (`/produk?q=…`) are `noindex, follow`. Indexed: Beranda, Produk, UMKM, Panduan and `/register`. |
 | `http://` → `https://` | `src/middleware.ts` | Next.js holds port 80, so plain-http requests for the site's own host name are answered with a 308 to `https://`. Requests that came through nginx (`X-Forwarded-Proto: https`) and other hosts (`localhost`, `127.0.0.1`: the backend's revalidate call) pass untouched. |
 
 **Google Search Console**: open <https://search.google.com/search-console>, add the property

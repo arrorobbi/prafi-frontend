@@ -33,6 +33,7 @@ const nextConfig: NextConfig = {
       "/lupa-password",
       "/reset-password",
       "/verifikasi",
+      "/aktivasi",
       "/register/admin",
       "/maintenance",
       "/internal/:path*",

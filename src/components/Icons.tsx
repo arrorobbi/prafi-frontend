@@ -84,6 +84,13 @@ export const IconHelp = (p: P) => (
     <path d="M12 17h.01" />
   </svg>
 );
+export const IconCalculator = (p: P) => (
+  <svg {...base(p)}>
+    <rect x="5" y="3" width="14" height="18" rx="2" />
+    <path d="M8.5 7.5h7" />
+    <path d="M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01" />
+  </svg>
+);
 export const IconSettings = (p: P) => (
   <svg {...base(p)}>
     <circle cx="12" cy="12" r="3" />
