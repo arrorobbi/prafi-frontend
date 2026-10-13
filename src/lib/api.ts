@@ -29,8 +29,10 @@ import type {
  * which next.config.ts proxies to the backend.
  */
 
-const TOKEN_KEY = "prafi_token";
+export const TOKEN_KEY = "prafi_token";
 export const UNAUTHORIZED_EVENT = "prafi:unauthorized";
+/** Fired in this tab when the login was renewed (here or in another tab). detail: the new token */
+export const TOKEN_RENEWED_EVENT = "prafi:token-renewed";
 
 export function getToken(): string | null {
   try {
@@ -247,6 +249,8 @@ export const api = {
   auth: {
     login: (email: string, password: string) => post<LoginResult>("/auth/login", { email, password }, true),
     logout: () => post<{ message: string }>("/auth/logout"),
+    /** Sliding session: swaps the current token for one that lasts another hour (lib/auth.tsx calls it while the user is active) */
+    refresh: () => post<{ accessToken: string; tokenType: "Bearer"; sessionEndsAt: string }>("/auth/refresh"),
     /**
      * superadmin only, no password: the backend emails a temporary one with an activation link (24 h), and the
      * owner replaces it on /aktivasi.

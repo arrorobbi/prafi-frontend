@@ -101,7 +101,8 @@ src/
   lib/
     api.ts             browser API client — one function per documented endpoint
     server-api.ts      landing data for server components
-    auth.tsx           session (token in localStorage, 1-hour expiry, 401 → logout)
+    auth.tsx           session (token in localStorage; sliding: renewed on activity via POST /api/auth/refresh,
+                       so 1 hour without activity logs out, 12 hours at most; 401 → logout)
     notifications.tsx  unread badge (polling)
     format.ts          dates, names, rupiah, ratings, product status logic
     notificationText.ts  notification titles/messages in Bahasa Indonesia, per type and role

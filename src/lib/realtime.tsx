@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { io, type Socket } from "socket.io-client";
-import { getToken, UNAUTHORIZED_EVENT } from "./api";
+import { getToken, TOKEN_RENEWED_EVENT, UNAUTHORIZED_EVENT } from "./api";
 import { useAuth } from "./auth";
 
 /**
@@ -35,7 +35,8 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
     const token = getToken();
     if (status !== "authenticated" || !user || !token) return;
 
-    const socket = io({ path: "/socket.io/", auth: { token }, transports: ["websocket", "polling"] });
+    // The token is read at every (re)connect: the login is renewed while the user is active (lib/auth.tsx)
+    const socket = io({ path: "/socket.io/", auth: (cb) => cb({ token: getToken() ?? token }), transports: ["websocket", "polling"] });
     socketRef.current = socket;
     socket.on("connect", () => setConnected(true));
     socket.on("disconnect", () => setConnected(false));
@@ -49,7 +50,14 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
       handlers.current.get(event)?.forEach((h) => (h as (p: unknown) => void)(payload));
     });
 
+    // The login was renewed: tell the backend, or it closes this connection when the old token runs out
+    const onRenewed = (e: Event) => {
+      if (socket.connected) socket.emit("session:renew", { token: (e as CustomEvent<string>).detail });
+    };
+    window.addEventListener(TOKEN_RENEWED_EVENT, onRenewed);
+
     return () => {
+      window.removeEventListener(TOKEN_RENEWED_EVENT, onRenewed);
       socket.removeAllListeners();
       socket.disconnect();
       socketRef.current = null;

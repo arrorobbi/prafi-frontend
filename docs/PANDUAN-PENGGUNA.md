@@ -190,7 +190,7 @@ Penjual menerima notifikasi untuk setiap perubahan pada produknya:
 
   ![Lupa password](../public/panduan/akun-2-lupa-password.jpg)
 
-- Sesi login berakhir otomatis setelah **1 jam**; silakan login kembali.
+- Sesi login berakhir otomatis setelah **1 jam tanpa aktivitas**: selama Anda masih memakai situs, sesi diperpanjang sendiri. Paling lama 12 jam sejak login; setelah itu silakan login kembali.
 
 ---
 

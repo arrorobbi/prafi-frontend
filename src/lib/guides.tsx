@@ -302,7 +302,10 @@ export const GUIDES: Guide[] = [
           <b>Tinggalkan halaman ini?</b>: pilih <b>Lanjut Suntingan</b> untuk kembali menyunting, atau <b>Setuju</b>{" "}
           untuk keluar (foto tersebut dihapus dan tidak ada data yang berubah).
         </p>
-        <p>Demi keamanan, sesi login berakhir otomatis setelah 1 jam; silakan login kembali.</p>
+        <p>
+          Demi keamanan, sesi login berakhir otomatis setelah <b>1 jam tanpa aktivitas</b> (selama Anda masih memakai
+          situs, sesi diperpanjang sendiri), dan paling lama 12 jam sejak login; setelah itu silakan login kembali.
+        </p>
       </>
     ),
   },

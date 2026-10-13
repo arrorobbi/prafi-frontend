@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { api, ApiError, getToken, setToken, UNAUTHORIZED_EVENT } from "./api";
+import { api, ApiError, getToken, setToken, TOKEN_KEY, TOKEN_RENEWED_EVENT, UNAUTHORIZED_EVENT } from "./api";
 import type { Role, User } from "./types";
 
 type Status = "loading" | "authenticated" | "guest";
@@ -48,15 +48,33 @@ function cachedUser(): User | null {
   }
 }
 
-/** Milliseconds until the JWT expires (null if it can't be read). */
-function msUntilExpiry(token: string) {
+function claims(token: string): { exp?: unknown; iat?: unknown } | null {
   try {
-    const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
-    return typeof payload.exp === "number" ? payload.exp * 1000 - Date.now() : null;
+    return JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
   } catch {
     return null;
   }
 }
+
+/** Milliseconds until the JWT expires (null if it can't be read). */
+function msUntilExpiry(token: string) {
+  const exp = claims(token)?.exp;
+  return typeof exp === "number" ? exp * 1000 - Date.now() : null;
+}
+
+/** Milliseconds since the JWT was issued (null if it can't be read). */
+function tokenAge(token: string) {
+  const iat = claims(token)?.iat;
+  return typeof iat === "number" ? Date.now() - iat * 1000 : null;
+}
+
+/**
+ * Sliding session: a login lasts 1 hour, counted from the last time it was renewed. While the user is using the
+ * site (clicks, typing, touches) the token is swapped for a fresh one, at most once per this interval, so only an
+ * hour without activity logs them out. The backend stops renewing 12 hours after the login.
+ */
+const RENEW_AFTER_MS = 60_000;
+const ACTIVITY_EVENTS = ["pointerdown", "keydown", "touchstart"] as const;
 
 function rememberMessage(message?: string) {
   try {
@@ -85,7 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setStatus("guest");
   }, []);
 
-  /** Ends the session locally when the 1-hour token expires. */
+  /** Ends the session locally when the token runs out (1 hour after the last renewal). */
   const scheduleExpiry = useCallback(
     (token: string) => {
       if (expiryTimer.current) clearTimeout(expiryTimer.current);
@@ -137,6 +155,55 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       });
   }, [clearSession, scheduleExpiry, setUser]);
+
+  // Sliding session: renew the token while the user is active
+  useEffect(() => {
+    if (status !== "authenticated") return;
+    let renewing = false;
+    /** The session reached its maximum length: the current token just runs out */
+    let stopped = false;
+    const onActivity = () => {
+      const token = getToken();
+      if (!token || renewing || stopped) return;
+      const age = tokenAge(token);
+      if (age === null || age < RENEW_AFTER_MS) return;
+      renewing = true;
+      api.auth
+        .refresh()
+        .then(({ data }) => {
+          // Logged out (or logged in as someone else) while the request was on its way: leave that alone
+          if (getToken() !== token) return;
+          setToken(data.accessToken);
+          scheduleExpiry(data.accessToken);
+          window.dispatchEvent(new CustomEvent(TOKEN_RENEWED_EVENT, { detail: data.accessToken }));
+        })
+        .catch((err) => {
+          // 403 = maximum session length. Anything else (offline, a hiccup): try again at the next activity
+          if (err instanceof ApiError && err.status === 403) stopped = true;
+        })
+        .finally(() => {
+          renewing = false;
+        });
+    };
+    ACTIVITY_EVENTS.forEach((e) => window.addEventListener(e, onActivity, { passive: true }));
+    return () => ACTIVITY_EVENTS.forEach((e) => window.removeEventListener(e, onActivity));
+  }, [status, scheduleExpiry]);
+
+  // Another tab of this browser renewed the login or logged out: follow it
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== TOKEN_KEY || e.newValue === e.oldValue) return;
+      if (e.newValue) {
+        scheduleExpiry(e.newValue);
+        window.dispatchEvent(new CustomEvent(TOKEN_RENEWED_EVENT, { detail: e.newValue }));
+      } else if (e.oldValue) {
+        clearSession();
+        router.replace("/login");
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [clearSession, router, scheduleExpiry]);
 
   // Any request answered 401 (expired, logged out elsewhere, password reset) ends the session
   useEffect(() => {
