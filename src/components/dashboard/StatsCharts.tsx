@@ -56,11 +56,10 @@ function Section({ title, picker, children }: { title: string; picker: React.Rea
   );
 }
 
-// ---------- dashboards: products, UMKM, users ----------
+// ---------- dashboards: products, users ----------
 
 const activityConfig = {
   products: { label: "Produk baru", color: "var(--chart-2)" },
-  tenants: { label: "UMKM baru", color: "var(--chart-1)" },
   users: { label: "Akun baru", color: "var(--chart-3)" },
 } satisfies ChartConfig;
 
@@ -97,8 +96,8 @@ export function DashboardStats() {
       ) : (
         s && (
           <div className="grid gap-4 lg:grid-cols-2">
-            <ChartCard title="Aktivitas" description={`Produk, UMKM, dan akun baru per hari (${days} hari terakhir)`} className="lg:col-span-2">
-              {s.perDay.some((d) => d.products || d.tenants || d.users) ? (
+            <ChartCard title="Aktivitas" description={`Produk dan akun baru per hari (${days} hari terakhir)`} className="lg:col-span-2">
+              {s.perDay.some((d) => d.products || d.users) ? (
                 <ChartContainer config={activityConfig} className="aspect-auto h-[260px] w-full">
                   <AreaChart data={s.perDay} margin={{ left: 0, right: 8 }}>
                     <CartesianGrid vertical={false} />
@@ -106,7 +105,7 @@ export function DashboardStats() {
                     <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={40} />
                     <ChartTooltip content={<ChartTooltipContent labelFormatter={(v) => shortDate(String(v))} />} />
                     <ChartLegend content={<ChartLegendContent />} />
-                    {(["products", "tenants", "users"] as const).map((key) => (
+                    {(["products", "users"] as const).map((key) => (
                       <Area
                         key={key}
                         dataKey={key}
