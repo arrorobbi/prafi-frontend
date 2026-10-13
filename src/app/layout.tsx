@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import { Suspense } from "react";
+import { LightboxProvider } from "@/components/Lightbox";
 import { ToastProvider } from "@/components/Toast";
 import { AuthProvider } from "@/lib/auth";
 import { NavHistoryTracker } from "@/lib/navHistory";
@@ -21,6 +22,7 @@ const poppins = Poppins({
  * The default sharing picture is app/opengraph-image.tsx. GOOGLE_SITE_VERIFICATION (.env, read at build time) is the
  * code Google Search Console gives to prove ownership of the site.
  */
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -56,7 +58,10 @@ export default function RootLayout({
         <AuthProvider>
           <ToastProvider>
             {/* A link click shows feedback at once (progress bar, public placeholders) until the page arrives */}
-            <NavPendingProvider>{children}</NavPendingProvider>
+            <NavPendingProvider>
+              {/* Pictures open larger in a popup instead of a new tab */}
+              <LightboxProvider>{children}</LightboxProvider>
+            </NavPendingProvider>
           </ToastProvider>
         </AuthProvider>
       </body>

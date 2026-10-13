@@ -7,6 +7,7 @@ import { STATUS_BADGE, STATUS_LABEL, type ProductStatus } from "@/lib/format";
 import { IconBack, IconChevronLeft, IconChevronRight, IconEye, IconEyeOff, IconImagePlus } from "./Icons";
 import { canGoBack } from "@/lib/navHistory";
 import { useLeaveGuard } from "./LeaveGuard";
+import { useLightbox } from "./Lightbox";
 import styles from "./ui.module.css";
 import { Input } from "./shadcn/input";
 import { cn } from "@/lib/utils";
@@ -240,16 +241,43 @@ export function ImagePicker({
   );
 }
 
-/** Product / logo thumbnail with a fallback when the file is missing. */
-export function Thumb({ src, alt, className }: { src: string; alt: string; className?: string }) {
+/**
+ * Product / logo / guide picture with a fallback when the file is missing.
+ * `zoom`: a click (or Enter / Space) opens the picture larger in the popup (Lightbox). Leave it off for pictures
+ * inside a link or a clickable card: there the click belongs to the link.
+ */
+export function Thumb({
+  src,
+  alt,
+  className,
+  zoom,
+  ...rest
+}: { src: string; alt: string; className?: string; zoom?: boolean } & Pick<React.ImgHTMLAttributes<HTMLImageElement>, "width" | "height">) {
   const [broken, setBroken] = useState(false);
+  const openLightbox = useLightbox();
+  const shown = broken ? "/logo.png" : src;
+  const open = (e: React.SyntheticEvent) => {
+    // Not also the row or card around it
+    e.stopPropagation();
+    e.preventDefault();
+    openLightbox(shown, alt);
+  };
   return (
     <img
-      src={broken ? "/logo.png" : src}
+      src={shown}
       alt={alt}
-      className={className}
+      className={cn(className, zoom && "cursor-zoom-in")}
       loading="lazy"
       onError={() => setBroken(true)}
+      {...rest}
+      {...(zoom && {
+        role: "button",
+        tabIndex: 0,
+        title: "Klik untuk memperbesar",
+        "aria-label": `Perbesar gambar${alt ? `: ${alt}` : ""}`,
+        onClick: open,
+        onKeyDown: (e: React.KeyboardEvent) => (e.key === "Enter" || e.key === " ") && open(e),
+      })}
     />
   );
 }

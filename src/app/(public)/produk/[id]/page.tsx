@@ -98,7 +98,7 @@ export default async function ProductDetailPage({ params }: Props) {
 
       <div className={styles.layout}>
         <div className={styles.photo}>
-          <Thumb src={imageSrc(product.image)} alt={product.image?.altText || product.name} />
+          <Thumb zoom src={imageSrc(product.image)} alt={product.image?.altText || product.name} />
         </div>
 
         <div className={styles.info}>

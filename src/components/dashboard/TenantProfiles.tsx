@@ -48,7 +48,7 @@ export function TenantProfiles() {
                 {data!.data.map((t) => (
                   <TableRow key={t.id}>
                     <TableCell data-label="">
-                      <Thumb src={imageSrc(t.logo)} alt={t.name} className="thumb" />
+                      <Thumb zoom src={imageSrc(t.logo)} alt={t.name} className="thumb" />
                     </TableCell>
                     <TableCell data-label="Nama Toko">{t.name}</TableCell>
                     <TableCell data-label="Wilayah">{t.area}</TableCell>
@@ -77,7 +77,7 @@ export function TenantProfiles() {
       <Modal open={!!detail} title={detail?.name ?? ""} onClose={() => setDetail(null)} wide>
         {detail && (
           <div className={local.detail}>
-            <Thumb src={imageSrc(detail.logo)} alt={detail.name} className={local.logo} />
+            <Thumb zoom src={imageSrc(detail.logo)} alt={detail.name} className={local.logo} />
             <dl>
               <dt>Wilayah</dt>
               <dd>{detail.area}</dd>

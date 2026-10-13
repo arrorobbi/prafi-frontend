@@ -80,7 +80,7 @@ export default function ShopProfilePage() {
       )}
       <div className={styles.splitCard}>
         <div className={styles.logoCard}>
-          <Thumb src={imageSrc(profile.logo)} alt={`Logo ${profile.name}`} />
+          <Thumb zoom src={imageSrc(profile.logo)} alt={`Logo ${profile.name}`} />
           <Button type="button" variant="navy" onClick={() => setEditing(true)}>
             <IconPencil /> Ubah Profil
           </Button>

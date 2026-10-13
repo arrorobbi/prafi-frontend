@@ -83,7 +83,7 @@ export default async function SellerPage({ params }: Props) {
     <JsonLd data={breadcrumbLd([{ name: "Beranda", path: "/" }, { name: "UMKM", path: "/umkm" }, { name: tenant.name, path: `/umkm/${tenant.id}` }])} />
     <ListShell sideTitle="UMKM" sideLinks={sideLinks} title={tenant.name} backHref="/umkm">
       <section className={styles.profile}>
-        <Thumb src={imageSrc(tenant.logo)} alt={`Logo ${tenant.name}`} className={styles.profileLogo} />
+        <Thumb zoom src={imageSrc(tenant.logo)} alt={`Logo ${tenant.name}`} className={styles.profileLogo} />
         <div className={styles.profileBody}>
           <p className={styles.profileDesc}>{tenant.description}</p>
           <ul className={styles.facts}>

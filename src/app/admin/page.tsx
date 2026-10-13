@@ -81,7 +81,7 @@ export default function AdminDashboardPage() {
                     {pending.map((p) => (
                       <TableRow key={p.id}>
                         <TableCell data-label="">
-                          <Thumb src={imageSrc(p.image)} alt={p.name} className="thumb" />
+                          <Thumb zoom src={imageSrc(p.image)} alt={p.name} className="thumb" />
                         </TableCell>
                         <TableCell data-label="Nama Produk">{p.name}</TableCell>
                         <TableCell data-label="Nama Penjual">{sellerName(p)}</TableCell>

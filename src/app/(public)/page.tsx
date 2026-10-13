@@ -109,7 +109,7 @@ export default async function HomePage() {
           <>
             <h1 className="sr-only">Trans Niaga: produk pilihan UMKM Kawasan Transmigrasi Prafi</h1>
             {bumdes ? (
-              <Card className={`${styles.mapCard} ${styles.bumdesCard}`}>
+              <Card className={`${styles.mapCard} ${styles.bumdesCard} card-link`}>
                 <Link href={`/produk?kategori=${bumdes.id}`} className={styles.bumdesPhoto} tabIndex={-1} aria-hidden>
                   <img src={imageSrc(bumdes.image)} alt="" />
                 </Link>
@@ -119,17 +119,17 @@ export default async function HomePage() {
                   <p className={styles.bumdesText}>
                     Produk hasil desa, dikelola bersama warga kampung transmigrasi. Penasaran apa saja yang mereka tawarkan?
                   </p>
-                  <Link href={`/produk?kategori=${bumdes.id}`} className={buttonVariants({ variant: "orange", size: "sm" })}>
+                  <Link href={`/produk?kategori=${bumdes.id}`} className={`${buttonVariants({ variant: "orange", size: "sm" })} card-link-main`}>
                     Intip Produk BUMDES <IconChevronRight />
                   </Link>
                 </div>
               </Card>
             ) : (
-              <Card className={styles.mapCard}>
+              <Card className={`${styles.mapCard} card-link`}>
                 <MapArt className={styles.map} />
                 <div className={styles.mapText}>
                   <h2>CARI PRODUK REKOMENDASI DAN PILIHAN ANDA DISINI</h2>
-                  <Link href="/umkm" className={buttonVariants({ variant: "navy", size: "sm" })}>
+                  <Link href="/umkm" className={`${buttonVariants({ variant: "navy", size: "sm" })} card-link-main`}>
                     <IconMapPin /> Cek UMKM Disini!
                   </Link>
                 </div>

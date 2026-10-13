@@ -102,7 +102,7 @@ export function ConfirmProductDetail({ base }: { base: string }) {
 
       <div className={local.layout}>
         <div className={local.photo}>
-          <Thumb src={imageSrc(product.image)} alt={product.name} />
+          <Thumb zoom src={imageSrc(product.image)} alt={product.name} />
           <StatusBadge status={status} />
         </div>
 

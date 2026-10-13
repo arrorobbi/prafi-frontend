@@ -351,3 +351,57 @@ button:disabled {
     animation: none;
   }
 }
+
+/*
+ * A whole card as one link: put `card-link` on the card and `card-link-main` on the link it should follow. That
+ * link's click area is stretched over the card; other links and buttons inside it stay on top and keep their own
+ * target (e.g. "Lihat UMKM" in a product row).
+ */
+.card-link {
+  position: relative;
+}
+
+.card-link .card-link-main::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  /* No rounded corners here: on a pill-shaped button they would cut the card's corners out of the click area */
+  border-radius: 0;
+}
+
+.card-link :is(a, button, [role="button"]):not(.card-link-main) {
+  position: relative;
+  z-index: 2;
+}
+
+/*
+ * The stretched area is measured from the card only while the link itself has no filter or transform (either would
+ * make the link its own frame and shrink the area back to the link, e.g. a button that brightens on hover).
+ * The hover effect moves to the card instead.
+ */
+.card-link .card-link-main,
+.card-link .card-link-main:hover,
+.card-link .card-link-main:active {
+  filter: none;
+  transform: none;
+  /* Tailwind moves and scales with these separate properties (e.g. a button pressed down by 1px) */
+  translate: none;
+  scale: none;
+  rotate: none;
+}
+
+.card-link:has(.card-link-main:hover) {
+  box-shadow: var(--shadow-lg);
+}
+
+/* The focus ring goes around the card, not just the text of its link */
+.card-link .card-link-main:focus-visible {
+  outline: none;
+}
+
+.card-link:has(.card-link-main:focus-visible) {
+  outline: 3px solid var(--orange);
+  outline-offset: 2px;
+}
+

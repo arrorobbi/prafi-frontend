@@ -7,7 +7,7 @@ import { fullName, imageSrc, splitName } from "@/lib/format";
 import { IconLock, IconUser } from "../Icons";
 import { Modal, useConfirm } from "../Modal";
 import { useToast } from "../Toast";
-import { PageHeader, PasswordInput, validateImage } from "../ui";
+import { PageHeader, PasswordInput, validateImage, Thumb } from "../ui";
 import { useLeaveGuard } from "../LeaveGuard";
 import { usePendingImage } from "../UploadDialog";
 import styles from "./dashboard.module.css";
@@ -100,7 +100,7 @@ export function AccountSettings({ title }: { title: string }) {
       <div className={styles.splitCard}>
         <div className={styles.logoCard}>
           {photo.previewUrl || user.faceImage ? (
-            <img src={photo.previewUrl ?? imageSrc(user.faceImage)} alt="Foto profil" />
+            <Thumb zoom src={photo.previewUrl ?? imageSrc(user.faceImage)} alt="Foto profil" />
           ) : (
             <span className={local.placeholder}>
               <IconUser />

@@ -132,7 +132,7 @@ export function ProductBrowser({ detailHref }: { detailHref?: (p: Product) => st
                   {shown.map((p) => (
                     <TableRow key={p.id}>
                       <TableCell data-label="">
-                        <Thumb src={imageSrc(p.image)} alt={p.name} className="thumb" />
+                        <Thumb zoom src={imageSrc(p.image)} alt={p.name} className="thumb" />
                       </TableCell>
                       <TableCell data-label="Nama Produk">{p.name}</TableCell>
                       <TableCell data-label="Nama Penjual">{sellerName(p)}</TableCell>
@@ -179,7 +179,7 @@ function ProductDetail({ product }: { product: Product }) {
   const reason = approvalReason(product);
   return (
     <div className={styles.detailGrid}>
-      <Thumb src={imageSrc(product.image)} alt={product.name} className={styles.detailImg} />
+      <Thumb zoom src={imageSrc(product.image)} alt={product.name} className={styles.detailImg} />
       <dl className={styles.detailList}>
         <div>
           <dt className="label">Status</dt>

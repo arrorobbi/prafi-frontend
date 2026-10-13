@@ -97,6 +97,9 @@ src/
     UploadDialog.tsx   photo upload with progress popup; a photo is "pending" until the form's Simpan attaches it
     LeaveGuard.tsx     "Tinggalkan halaman ini?" when leaving with an unsaved photo (Setuju deletes it)
     Stars.tsx          star rating display
+    Lightbox.tsx       picture popup: `<Thumb zoom />` opens a picture larger instead of in a new tab
+                       (not for pictures inside a link or card; whole cards are links with the
+                       `card-link` / `card-link-main` classes in globals.css)
     Icons.tsx, Modal.tsx, Toast.tsx, GuideList.tsx
   lib/
     api.ts             browser API client — one function per documented endpoint

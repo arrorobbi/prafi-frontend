@@ -158,7 +158,7 @@ export function CategoryManager() {
                       <TableCell className={styles.colNo}>{i + 1}</TableCell>
                       <TableCell>
                         {c.image ? (
-                          <Thumb src={imageSrc(c.image)} alt={c.image.altText || c.name} className={styles.thumb} />
+                          <Thumb zoom src={imageSrc(c.image)} alt={c.image.altText || c.name} className={styles.thumb} />
                         ) : (
                           <span className={styles.missing}>Belum ada (wajib)</span>
                         )}

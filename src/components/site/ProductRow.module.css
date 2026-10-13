@@ -8,6 +8,15 @@
   background: var(--white);
 }
 
+/* The whole row opens the product */
+.row:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.row:hover h3 {
+  text-decoration: underline;
+}
+
 .row + .row {
   margin-top: 8px;
 }
