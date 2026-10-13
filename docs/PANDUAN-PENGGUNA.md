@@ -184,6 +184,7 @@ Penjual menerima notifikasi untuk setiap perubahan pada produknya:
 
   ![Pengaturan akun](../public/panduan/akun-1-pengaturan.jpg)
 
+- **Foto profil harus menampilkan wajah Anda.** Saat mengganti foto di Pengaturan Akun, sistem memeriksa bahwa foto tersebut berisi wajah; logo, foto produk, atau pemandangan ditolak dengan pesan *Wajah tidak terlihat pada foto*. Gunakan foto yang menghadap kamera dengan cahaya yang cukup.
 - **Batas percobaan login:** setelah **5 kali salah memasukkan password**, Anda harus menunggu 15 menit sebelum mencoba lagi dari jaringan yang sama. Jika lupa, gunakan **Lupa Password** daripada menebak.
 - **Lupa Password:** di halaman Login klik **Lupa Password**, masukkan email, lalu buka tautan di email (berlaku
   30 menit, sekali pakai). Setelah password diganti, semua sesi login lain berakhir.

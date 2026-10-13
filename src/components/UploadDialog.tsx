@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useRef, useState } from "react";
-import { api, errorMessage } from "@/lib/api";
+import { api, ApiError, errorMessage } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { discardUpload, forgetUpload, rememberUpload } from "@/lib/pendingUploads";
 import type { ImageFile } from "@/lib/types";
@@ -67,7 +67,8 @@ export function usePendingImage() {
     return register(key, { onLeave: discard, pendingIds: () => (pendingRef.current ? [pendingRef.current.id] : []) });
   }, [pending, key, register, discard]);
 
-  const pick = async (file: File, altText?: string): Promise<ImageFile | null> => {
+  /** `purpose` "face": an account photo, which must show a face (the backend checks it during the upload) */
+  const pick = async (file: File, altText?: string, purpose?: "face"): Promise<ImageFile | null> => {
     const previous = pendingRef.current;
     const previousUrl = objectUrl.current;
     const local = URL.createObjectURL(file);
@@ -75,7 +76,7 @@ export function usePendingImage() {
     setPreviewUrl(local);
     show({ kind: "upload", percent: 0 });
     try {
-      const { data: image } = await api.images.upload(file, altText, (percent) => setPhase({ kind: "upload", percent }));
+      const { data: image } = await api.images.upload(file, altText, (percent) => setPhase({ kind: "upload", percent }), purpose);
       if (user) rememberUpload(image.id, user.id);
       setPending(image);
       if (previousUrl) URL.revokeObjectURL(previousUrl);
@@ -88,7 +89,8 @@ export function usePendingImage() {
       URL.revokeObjectURL(local);
       objectUrl.current = previousUrl;
       setPreviewUrl(previousUrl);
-      show({ kind: "error", title: "Foto gagal diunggah", message: errorMessage(err) });
+      const noFace = err instanceof ApiError && err.code === "FACE_NOT_FOUND";
+      show({ kind: "error", title: noFace ? "Wajah tidak terlihat pada foto" : "Foto gagal diunggah", message: errorMessage(err) });
       return null;
     }
   };

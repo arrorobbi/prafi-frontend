@@ -82,7 +82,8 @@ export function AccountSettings({ title }: { title: string }) {
   const changePhoto = (file: File) => {
     const problem = validateImage(file);
     if (problem) return photo.showError("Foto tidak dapat dipakai", problem);
-    void photo.pick(file, `Foto ${fullName(user)}`);
+    // An account photo must show the person's face: the backend checks it while uploading
+    void photo.pick(file, `Foto ${fullName(user)}`, "face");
   };
 
   /** Batalkan Perubahan: an unsaved photo is deleted, so ask first */
@@ -106,6 +107,7 @@ export function AccountSettings({ title }: { title: string }) {
             </span>
           )}
           {photo.pending && <span className={local.pendingNote}>Foto baru belum disimpan. Klik Simpan Perubahan.</span>}
+          <span className="hint">Gunakan foto yang menampilkan wajah Anda dengan jelas.</span>
           {isTenant && !user.faceImageId && !photo.pending && (
             <span className={local.pendingNote}>Unggah foto profil agar Anda dapat menambahkan produk.</span>
           )}

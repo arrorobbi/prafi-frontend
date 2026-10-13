@@ -153,14 +153,20 @@ function httpErrorMessage(status: number) {
  * Errors are ApiErrors with the API's own message (Bahasa Indonesia), or a clear one when the request
  * never reached the API (connection lost, file too large for the server).
  */
-function uploadImage(file: File, altText: string | undefined, onProgress?: (percent: number) => void): Promise<Envelope<ImageFile>> {
+/** `purpose` "face": an account photo; the backend refuses a picture without a face (FACE_NOT_FOUND). */
+function uploadImage(
+  file: File,
+  altText: string | undefined,
+  onProgress?: (percent: number) => void,
+  purpose?: "face",
+): Promise<Envelope<ImageFile>> {
   return new Promise((resolve, reject) => {
     const form = new FormData();
     form.append("image", file);
     if (altText) form.append("altText", altText);
 
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", buildUrl("/images"));
+    xhr.open("POST", buildUrl("/images", { purpose }));
     xhr.setRequestHeader("Accept", "application/json");
     const token = getToken();
     if (token) xhr.setRequestHeader("Authorization", `Bearer ${token}`);
@@ -281,7 +287,8 @@ export const api = {
   },
 
   images: {
-    upload: (file: File, altText?: string, onProgress?: (percent: number) => void) => uploadImage(file, altText, onProgress),
+    upload: (file: File, altText?: string, onProgress?: (percent: number) => void, purpose?: "face") =>
+      uploadImage(file, altText, onProgress, purpose),
     remove: (id: number) => del<null>(`/images/${id}`),
   },
 

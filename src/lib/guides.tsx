@@ -286,7 +286,8 @@ export const GUIDES: Guide[] = [
             Menu <b>Pengaturan Akun</b>: ubah nama, email, nomor telepon, atau foto profil, lalu klik{" "}
             <b>SIMPAN PERUBAHAN</b>. Foto baru langsung terunggah saat dipilih, tetapi baru terpasang setelah Anda
             klik <b>SIMPAN PERUBAHAN</b>. Untuk mengganti password, klik <b>Ubah Password</b>, masukkan password saat
-            ini dan password baru (minimal 8 karakter).
+            ini dan password baru (minimal 8 karakter). Foto profil harus menampilkan <b>wajah Anda</b> dengan
+            jelas: logo, foto produk, atau pemandangan akan ditolak.
           </Step>
           <Step image="akun-2-lupa-password" alt="Halaman lupa password">
             Lupa password? Di halaman Login klik <b>Lupa Password</b>, masukkan email, lalu buka tautan di email

@@ -14,7 +14,8 @@ export interface CategorySlide extends HeroSlide {
 
 /**
  * The home page hero: the carousel shows one slide per product category (its image), and the cards on the right
- * show the current category's products; changing the slide changes them. `side` is the map card above them.
+ * show the current category's products; changing the slide changes them. `side` is the BUMDES / map card above
+ * them (on phones it comes after them, so the products stay right under the carousel they belong to).
  * Without category slides, `fallback` (the newest / recommended products) is shown instead.
  */
 export function HomeHero({ slides, fallback, side }: { slides: CategorySlide[]; fallback: Product[]; side: React.ReactNode }) {
@@ -27,7 +28,8 @@ export function HomeHero({ slides, fallback, side }: { slides: CategorySlide[]; 
       <HeroCarousel slides={slides} index={index} onIndexChange={setIndex} />
 
       <div className={styles.heroRight}>
-        {side}
+        {/* Beside the carousel on wide screens; below the category's products when everything is stacked (phones) */}
+        <div className={styles.heroSide}>{side}</div>
 
         {current && (
           <div className={styles.picksHead}>

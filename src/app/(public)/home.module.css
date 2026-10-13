@@ -238,6 +238,11 @@
     padding: 20px 16px 40px;
   }
 
+  /* Stacked: carousel, then its category's products, then the BUMDES / map card */
+  .heroSide {
+    order: 1;
+  }
+
   .reasons {
     grid-template-columns: minmax(0, 1fr);
   }
