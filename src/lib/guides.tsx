@@ -292,6 +292,10 @@ export const GUIDES: Guide[] = [
             Lupa password? Di halaman Login klik <b>Lupa Password</b>, masukkan email, lalu buka tautan di email
             (berlaku 30 menit, sekali pakai) untuk membuat password baru. Semua sesi login lain akan berakhir.
           </Step>
+          <Step>
+            Demi keamanan, setelah <b>5 kali salah memasukkan password</b> Anda harus menunggu 15 menit sebelum mencoba
+            lagi dari jaringan yang sama. Jika lupa, gunakan <b>Lupa Password</b> daripada menebak.
+          </Step>
         </Steps>
         <p>
           Jika Anda meninggalkan halaman sebelum menyimpan foto yang baru diunggah, akan muncul konfirmasi{" "}

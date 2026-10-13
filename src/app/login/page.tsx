@@ -84,7 +84,15 @@ function LoginForm() {
         setError("Akun Anda belum diaktifkan. Akun admin diaktifkan oleh Disnakertrans; akun penjual oleh administrator.");
         return;
       }
-      setError(errorMessage(err));
+      // The backend allows 5 wrong passwords per 15 minutes: warn before the last ones
+      const left = err instanceof ApiError && err.status === 401 ? (err.details as { attemptsLeft?: number } | undefined)?.attemptsLeft : undefined;
+      setError(
+        left === 0
+          ? `${errorMessage(err)}. Percobaan berikutnya harus menunggu 15 menit.`
+          : left !== undefined && left <= 2
+            ? `${errorMessage(err)}. Sisa ${left} percobaan sebelum harus menunggu 15 menit.`
+            : errorMessage(err),
+      );
     }
   };
 
