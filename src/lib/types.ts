@@ -299,3 +299,25 @@ export interface LogStats {
   topEndpoints: { endpoint: string; count: number; failed: number }[];
   topErrors: { errorCode: string; count: number }[];
 }
+
+export type ServiceState = "active" | "inactive" | "failed" | "activating" | "unknown";
+
+/** GET /api/server/metrics and the live `server:metrics` event: one reading of the server (superadmin) */
+export interface ServerMetrics {
+  at: string;
+  host: { hostname: string; os: string; uptimeSeconds: number; cores: number; loadAverage: number[] };
+  /** Busy share of all cores since the previous reading */
+  cpu: { percent: number };
+  memory: { totalBytes: number; usedBytes: number; percent: number; swapTotalBytes: number; swapUsedBytes: number };
+  /** alertPercent: an email is sent at this level (0 = no alert) */
+  disk: { path: string; totalBytes: number; usedBytes: number; freeBytes: number; percent: number; alertPercent: number };
+  app: { nodeVersion: string; environment: string; backendUptimeSeconds: number; backendMemoryBytes: number };
+  services: { name: string; label: string; state: ServiceState }[];
+  storage: {
+    databaseBytes: number | null;
+    imagesBytes: number;
+    imagesCount: number;
+    backupsBytes: number;
+    lastBackup: { file: string; at: string; bytes: number } | null;
+  };
+}

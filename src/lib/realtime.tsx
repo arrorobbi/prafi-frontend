@@ -10,6 +10,7 @@ import { useAuth } from "./auth";
  * CORS. The backend pushes:
  *   notification:new / notification:unread-count — your notifications (all roles)
  *   log:new — a new API log row (superadmins only)
+ *   server:metrics — a reading of the server, while a superadmin has Monitor Server open (asked for with emit)
  *   session:ended — your session ended (expired, logged out, deactivated, password reset)
  * Pages listen with useRealtime(event, handler). Without a connection everything still works by polling/reloading.
  */
@@ -18,9 +19,11 @@ type Handler = (payload: never) => void;
 interface RealtimeValue {
   connected: boolean;
   subscribe: (event: string, handler: Handler) => () => void;
+  /** Sends an event to the backend (dropped while the connection is down) */
+  emit: (event: string, payload?: unknown) => void;
 }
 
-const Ctx = createContext<RealtimeValue>({ connected: false, subscribe: () => () => {} });
+const Ctx = createContext<RealtimeValue>({ connected: false, subscribe: () => () => {}, emit: () => {} });
 
 export function RealtimeProvider({ children }: { children: React.ReactNode }) {
   const { status, user } = useAuth();
@@ -64,11 +67,21 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  return <Ctx.Provider value={{ connected, subscribe }}>{children}</Ctx.Provider>;
+  const emit = useCallback((event: string, payload?: unknown) => {
+    const socket = socketRef.current;
+    if (!socket?.connected) return;
+    if (payload === undefined) socket.emit(event);
+    else socket.emit(event, payload);
+  }, []);
+
+  return <Ctx.Provider value={{ connected, subscribe, emit }}>{children}</Ctx.Provider>;
 }
 
 /** Whether the live connection is up (e.g. for a "Live" badge). */
 export const useRealtimeStatus = () => useContext(Ctx).connected;
+
+/** Sends an event to the backend, e.g. "monitor:watch" (the function stays the same between renders). */
+export const useRealtimeEmit = () => useContext(Ctx).emit;
 
 /** Runs `handler` for every `event` pushed by the server while the component is mounted. */
 export function useRealtime<T>(event: string, handler: (payload: T) => void) {

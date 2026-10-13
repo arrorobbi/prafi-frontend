@@ -7,6 +7,7 @@ import type {
   ImageFile,
   LoginResult,
   LogStats,
+  ServerMetrics,
   LogLevel,
   PageMeta,
   Product,
@@ -360,6 +361,11 @@ export const api = {
   },
 
   /** superadmin only: request and error logs, newest first. status: an exact code ("404") or a class ("4xx"). */
+  /** superadmin: the server monitor's first reading (later ones arrive live as `server:metrics`) */
+  server: {
+    metrics: () => get<ServerMetrics>("/server/metrics"),
+  },
+
   logs: {
     list: (
       q: Paged & {

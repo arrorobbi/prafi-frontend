@@ -383,7 +383,9 @@ export const GUIDES: Guide[] = [
           berhasil maupun yang gagal. Permintaan baca dan permintaan tamu lainnya tidak dicatat. Gunakan filter{" "}
           <b>Hasil</b> untuk melihat yang gagal dan filter <b>Email</b> untuk mencari satu akun. Log baru muncul otomatis
           di halaman ini (tanda <b>● Live</b>) tanpa perlu memuat ulang. Di bagian atas ada <b>Grafik Log</b>: permintaan
-          per hari (berhasil / gagal), per method, endpoint terbanyak, dan error terbanyak.
+          per hari (berhasil / gagal), per method, endpoint terbanyak, dan error terbanyak. Menu <b>Monitor Server</b> menampilkan pemakaian CPU, RAM, dan
+          penyimpanan server secara langsung, status layanan, dan besar data; bila penyimpanan hampir penuh (90%),
+          sistem mengirim email peringatan.
         </p>
       </>
     ),

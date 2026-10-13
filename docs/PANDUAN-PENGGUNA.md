@@ -271,6 +271,7 @@ Akun superadmin dibuat oleh pengelola server. Superadmin **hanya membaca** data,
 | Semua Pengguna | Semua akun, disaring per role |
 | Data Produk / Data UMKM / Kategori Produk | Melihat data (hanya baca) |
 | Log API | Catatan setiap penambahan, perubahan, dan penghapusan data **oleh pengguna yang login**, serta **semua aktivitas akun** (login, password/email salah, daftar, OTP, lupa/reset password, logout) termasuk dari tamu beserta **email yang dicoba**, baik yang berhasil maupun yang gagal. Permintaan baca dan permintaan tamu lainnya (ulasan, bot) tidak dicatat. Isi: siapa, kapan, field yang dikirim, dan ringkasan hasil atau error-nya. Filter **Hasil** (Berhasil / Gagal), method, status, path, email (pengguna atau email yang dicoba), dan tanggal. Log baru muncul otomatis (tanda **● Live**). **Grafik Log**: permintaan per hari (berhasil / gagal), per method, endpoint terbanyak, error terbanyak |
+| Monitor Server | Keadaan server secara langsung: pemakaian **CPU, RAM, dan penyimpanan (disk)** yang diperbarui setiap 3 detik beserta grafik 5 menit terakhir, status layanan (backend, website, database, nginx), dan besar database, foto, serta cadangan. Bila disk terisi 90% atau lebih, sistem juga mengirim **email peringatan** ke email situs |
 | Notifikasi | Akun baru, produk baru, serta akun yang dinonaktifkan dan produk tayang yang diturunkan |
 
 ![Tambah akun Disnakertrans](../public/panduan/superadmin-1-tambah.jpg)

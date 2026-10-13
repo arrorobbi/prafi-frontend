@@ -210,6 +210,12 @@ export const IconServer = (p: P) => (
   </svg>
 );
 
+export const IconActivity = (p: P) => (
+  <svg {...base(p)}>
+    <path d="M3 12h4l3-8 4 16 3-8h4" />
+  </svg>
+);
+
 export const IconMessage = (p: P) => (
   <svg {...base(p)}>
     <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z" />
