@@ -94,7 +94,8 @@ export function OtpForm({
   return (
     <form onSubmit={submit} className={styles.center}>
       <p>
-        Kami telah mengirim kode 6 digit ke <strong>{email || "email Anda"}</strong>. Kode berlaku 15 menit.
+        Kami telah mengirim kode 6 digit ke <strong>{email || "email Anda"}</strong>. Kode berlaku 15 menit. Tidak ada di
+        kotak masuk? Periksa folder <strong>Spam</strong> atau <strong>Promosi</strong>, lalu tandai &ldquo;Bukan spam&rdquo;.
       </p>
       <div className={styles.otp}>
         {digits.map((d, i) => (

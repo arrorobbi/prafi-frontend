@@ -107,8 +107,8 @@ export default function DisnakertransAccountsPage() {
               </p>
             )}
             <p>
-              Anda tidak perlu memberikan password: pemilik akun membuat password sendiri saat aktivasi. Jika emailnya
-              tidak sampai, gunakan tombol <strong>Kirim Ulang Verifikasi</strong> pada daftar akun.
+              Anda tidak perlu memberikan password: pemilik akun membuat password sendiri saat aktivasi. Minta ia memeriksa
+              folder Spam bila email tidak terlihat di kotak masuk; jika memang tidak sampai, gunakan tombol <strong>Kirim Ulang Verifikasi</strong> pada daftar akun.
             </p>
             <div className={styles.formActions}>
               <Button type="button" variant="light" onClick={() => setCreated(null)}>
