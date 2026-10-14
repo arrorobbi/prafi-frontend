@@ -135,7 +135,7 @@ export const GUIDES: Guide[] = [
           langsung terbuka.
         </Step>
         <Step image="profil-2-form" alt="Formulir profil toko">
-          Pilih logo atau foto toko (JPG/PNG/WEBP, maksimal 5 MB): foto langsung terunggah, tetapi baru tersimpan
+          Pilih logo atau foto toko (JPG/PNG/WEBP; foto di atas 3 MB dikompres otomatis), lalu atur potongannya (persegi). Foto langsung terunggah, tetapi baru tersimpan
           setelah Anda klik <b>SIMPAN PROFIL</b>. Isi nama toko, wilayah (SP 1 – SP 4 atau lainnya),
           deskripsi, alamat lengkap, dan jam operasional (hari, jam buka, jam tutup). Nomor WhatsApp dan semua tautan
           (Google Maps, Instagram, Google Bisnis, Shopee, Facebook / toko online) <b>boleh dikosongkan</b>; isi yang Anda
@@ -263,7 +263,8 @@ export const GUIDES: Guide[] = [
     audience: ["public", "tenant"],
     body: (
       <ul>
-        <li>Format JPG, PNG, WEBP, atau GIF dengan ukuran maksimal 5 MB.</li>
+        <li>Format JPG, PNG, WEBP, atau GIF. Foto lebih dari 3 MB dikompres otomatis sebelum diunggah.</li>
+        <li>Setelah memilih foto, atur potongannya: foto produk dan logo berbentuk persegi (1:1, disarankan 1000 × 1000 px untuk produk).</li>
         <li>Foto jelas, terang, tidak buram, dan menampilkan produk yang sebenarnya dijual.</li>
         <li>Tidak memuat nomor telepon, tautan, atau watermark toko lain.</li>
         <li>Nama produk singkat dan sesuai isi; deskripsi jujur dan tidak menyesatkan.</li>

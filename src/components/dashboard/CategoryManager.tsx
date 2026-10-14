@@ -7,7 +7,7 @@ import { useToast } from "@/components/Toast";
 import { EmptyState, ImagePicker, Loading, PageHeader, Thumb } from "@/components/ui";
 import { usePendingImage } from "@/components/UploadDialog";
 import { api, ApiError, errorMessage, fetchAll, type CategoryInput } from "@/lib/api";
-import { imageSrc } from "@/lib/format";
+import { imageSrc, isBumdesName } from "@/lib/format";
 import type { ProductCategory } from "@/lib/types";
 import { useAsync } from "@/lib/useAsync";
 import styles from "./CategoryManager.module.css";
@@ -16,6 +16,7 @@ import { Input } from "@/components/shadcn/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table";
 import { Alert } from "@/components/shadcn/alert";
 import { Card } from "@/components/shadcn/card";
+import { CROP } from "@/lib/imageTools";
 
 /**
  * Product categories: GET/POST/PATCH/DELETE /api/product-categories. Each must have an image (uploaded first via
@@ -193,6 +194,8 @@ export function CategoryManager() {
             <span className={styles.formLabel}>Gambar Carousel Beranda</span>
             <ImagePicker
               title="UNGGAH GAMBAR KATEGORI"
+              // BUMDES has its own card on Beranda (16:10); every other category is a carousel slide (2:3)
+              crop={isBumdesName(name) ? CROP.bumdes : CROP.category}
               previewUrl={previewUrl}
               pending={!!photo.pending}
               onFile={(f) => void photo.pick(f, name.trim() || "Gambar kategori")}

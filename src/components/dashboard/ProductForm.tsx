@@ -19,6 +19,7 @@ import { Input } from "@/components/shadcn/input";
 import { Textarea } from "@/components/shadcn/textarea";
 import { Alert } from "@/components/shadcn/alert";
 import { NativeSelect } from "@/components/shadcn/native-select";
+import { CROP } from "@/lib/imageTools";
 
 interface Values {
   name: string;
@@ -207,6 +208,7 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
       <div className={styles.picker}>
         <ImagePicker
           title="UNGGAH FOTO PRODUK"
+          crop={CROP.product}
           previewUrl={photo.previewUrl ?? (product ? imageSrc(product.image) : null)}
           error={errors.imageId}
           pending={!!photo.pending}

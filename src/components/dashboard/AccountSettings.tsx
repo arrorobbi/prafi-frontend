@@ -4,18 +4,18 @@ import { useEffect, useState } from "react";
 import { api, ApiError, errorMessage } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { fullName, imageSrc, splitName } from "@/lib/format";
-import { IconLock, IconUser } from "../Icons";
+import { IconLock, IconUser, IconCamera } from "../Icons";
 import { Modal, useConfirm } from "../Modal";
 import { useToast } from "../Toast";
-import { PageHeader, PasswordInput, validateImage, Thumb } from "../ui";
+import { PageHeader, PasswordInput, Thumb } from "../ui";
 import { useLeaveGuard } from "../LeaveGuard";
 import { usePendingImage } from "../UploadDialog";
 import styles from "./dashboard.module.css";
 import local from "./AccountSettings.module.css";
-import { Button, buttonVariants } from "@/components/shadcn/button";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/shadcn/button";
 import { Input } from "@/components/shadcn/input";
 import { Alert } from "@/components/shadcn/alert";
+import { CameraCapture } from "../CameraCapture";
 
 /** PATCH /api/auth/me — name, email, phone, photo (faceImageId), tenantName and password. */
 export function AccountSettings({ title }: { title: string }) {
@@ -30,6 +30,8 @@ export function AccountSettings({ title }: { title: string }) {
   const [saving, setSaving] = useState(false);
   const [pwOpen, setPwOpen] = useState(false);
   const photo = usePendingImage();
+  // The account photo is taken with the camera only (no file can be chosen); the upload then checks it for a face
+  const [camera, setCamera] = useState(false);
   const { confirmLeave } = useLeaveGuard();
 
   const reset = () => {
@@ -79,10 +81,9 @@ export function AccountSettings({ title }: { title: string }) {
     }
   };
 
+  // The account photo is taken with the camera only (no file can be chosen); the upload then checks it for a face
   const changePhoto = (file: File) => {
-    const problem = validateImage(file);
-    if (problem) return photo.showError("Foto tidak dapat dipakai", problem);
-    // An account photo must show the person's face: the backend checks it while uploading
+    setCamera(false);
     void photo.pick(file, `Foto ${fullName(user)}`, "face");
   };
 
@@ -107,24 +108,14 @@ export function AccountSettings({ title }: { title: string }) {
             </span>
           )}
           {photo.pending && <span className={local.pendingNote}>Foto baru belum disimpan. Klik Simpan Perubahan.</span>}
-          <span className="hint">Gunakan foto yang menampilkan wajah Anda dengan jelas.</span>
+          <span className="hint">Foto profil diambil langsung dengan kamera dan harus menampilkan wajah Anda dengan jelas.</span>
           {isTenant && !user.faceImageId && !photo.pending && (
             <span className={local.pendingNote}>Unggah foto profil agar Anda dapat menambahkan produk.</span>
           )}
-          <label className={cn(buttonVariants({ variant: "navy", size: "lg" }), "cursor-pointer", photo.uploading && local.disabled)}>
-            {photo.uploading ? "Mengunggah..." : "Ubah Foto"}
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              className="sr-only"
-              disabled={photo.uploading}
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                e.target.value = "";
-                if (f) changePhoto(f);
-              }}
-            />
-          </label>
+          <Button type="button" variant="navy" size="lg" onClick={() => setCamera(true)} disabled={photo.uploading}>
+            <IconCamera /> {photo.uploading ? "Mengunggah..." : "Ambil Foto dengan Kamera"}
+          </Button>
+          <CameraCapture open={camera} onClose={() => setCamera(false)} onCapture={changePhoto} />
         </div>
 
         <form className="stack" onSubmit={save}>

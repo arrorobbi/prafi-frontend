@@ -16,6 +16,7 @@ import { Button } from "@/components/shadcn/button";
 import { Input } from "@/components/shadcn/input";
 import { Textarea } from "@/components/shadcn/textarea";
 import { NativeSelect } from "@/components/shadcn/native-select";
+import { CROP } from "@/lib/imageTools";
 
 /** Areas of the Prafi transmigration zone (from the design); anything else goes in "Lainnya". */
 const AREAS = ["Wilayah SP 1", "Wilayah SP 2", "Wilayah SP 3", "Wilayah SP 4"];
@@ -212,6 +213,7 @@ export function ProfileForm({
       <div className={local.right}>
         <ImagePicker
           title="UNGGAH FOTO ATAU LOGO"
+          crop={CROP.logo}
           previewUrl={logo.previewUrl ?? (profile?.logo ? imageSrc(profile.logo) : null)}
           round
           error={errors.logoId}

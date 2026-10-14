@@ -97,6 +97,9 @@ src/
     UploadDialog.tsx   photo upload with progress popup; a photo is "pending" until the form's Simpan attaches it
     LeaveGuard.tsx     "Tinggalkan halaman ini?" when leaving with an unsaved photo (Setuju deletes it)
     Stars.tsx          star rating display
+    ImageCropDialog.tsx  crop before upload, in the shape of where the picture is shown (CROP in lib/imageTools.ts:
+                       product 1:1, logo 1:1, carousel category 2:3, BUMDES 16:10); pictures are compressed to 3 MB
+    CameraCapture.tsx  account photo: camera only (getUserMedia), square, then the backend's face check
     Lightbox.tsx       picture popup: `<Thumb zoom />` opens a picture larger instead of in a new tab
                        (not for pictures inside a link or card; whole cards are links with the
                        `card-link` / `card-link-main` classes in globals.css)

@@ -3,7 +3,7 @@ import { IconChevronRight, IconDocs, IconHeart, IconMapPin, IconThumb } from "@/
 import { MapArt } from "@/components/site/MapArt";
 import { HomeHero, type CategorySlide } from "@/components/site/HomeHero";
 import { ProductStrip } from "@/components/site/ProductStrip";
-import { imageSrc, categoryPath } from "@/lib/format";
+import { imageSrc, categoryPath, isBumdesName } from "@/lib/format";
 import { abs, JsonLd, ORGANIZATION_LD, pageMeta, SITE_DESCRIPTION, SITE_NAME } from "@/lib/seo";
 import { getLandingCategories, getLandingProducts } from "@/lib/server-api";
 import type { ProductCategory } from "@/lib/types";
@@ -60,7 +60,7 @@ const REASONS = [
 ] as const;
 
 /** The BUMDES category (village-owned enterprises) has its own feature card instead of a carousel slide */
-const isBumdes = (c: ProductCategory) => /\bbumdes\b/i.test(c.name);
+const isBumdes = (c: ProductCategory) => isBumdesName(c.name);
 
 /**
  * The carousel: one slide per category that has approved products (except BUMDES), showing the category's image

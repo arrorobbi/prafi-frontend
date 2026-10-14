@@ -60,7 +60,7 @@ halaman `/panduan`.
 
    ![Profil UMKM](../public/panduan/profil-1-lihat.jpg)
 
-2. Pilih logo/foto toko (JPG, PNG, WEBP, atau GIF, maks. 5 MB). Foto langsung terunggah, tetapi baru tersimpan setelah Anda klik **SIMPAN PROFIL**.
+2. Pilih logo/foto toko (JPG, PNG, WEBP, atau GIF; foto di atas 3 MB dikompres otomatis), lalu atur potongannya (persegi, 1:1). Foto langsung terunggah, tetapi baru tersimpan setelah Anda klik **SIMPAN PROFIL**.
 3. Isi nama toko, **wilayah** (SP 1 – SP 4 atau *Lainnya*), deskripsi, dan alamat. (Kategori kini dipilih per produk, bukan di profil toko.)
 4. Isi jam operasional (hari, jam buka, jam tutup).
 5. **Nomor WhatsApp dan semua tautan boleh dikosongkan** (Google Maps, Instagram, Google Bisnis, Shopee, Facebook / Toko Online). Isi yang Anda miliki agar pembeli mudah menghubungi toko; tautan diawali `https://`. Tombol kontak di halaman produk dan UMKM hanya muncul untuk yang diisi.
@@ -185,6 +185,7 @@ Penjual menerima notifikasi untuk setiap perubahan pada produknya:
 
   ![Pengaturan akun](../public/panduan/akun-1-pengaturan.jpg)
 
+- **Foto profil diambil langsung dengan kamera.** Di Pengaturan Akun klik **Ambil Foto dengan Kamera**, izinkan akses kamera bila browser bertanya, posisikan wajah di dalam lingkaran, lalu **Ambil Foto** → **Gunakan Foto** (atau **Ulangi**). Foto tidak dapat dipilih dari file; perangkat harus memiliki kamera.
 - **Foto profil harus menampilkan wajah Anda.** Saat mengganti foto di Pengaturan Akun, sistem memeriksa bahwa foto tersebut berisi wajah; logo, foto produk, atau pemandangan ditolak dengan pesan *Wajah tidak terlihat pada foto*. Gunakan foto yang menghadap kamera dengan cahaya yang cukup.
 - **Batas percobaan login:** setelah **5 kali salah memasukkan password**, Anda harus menunggu 15 menit sebelum mencoba lagi dari jaringan yang sama. Jika lupa, gunakan **Lupa Password** daripada menebak.
 - **Lupa Password:** di halaman Login klik **Lupa Password**, masukkan email, lalu buka tautan di email (berlaku

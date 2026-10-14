@@ -72,6 +72,9 @@ export function whatsappWithText(link: string, text: string) {
   return `${url.origin}${url.pathname}?${rest ? `${rest}&` : ""}text=${encodeURIComponent(text)}`;
 }
 
+/** The BUMDES category (village-owned enterprises) has its own card on Beranda instead of a carousel slide */
+export const isBumdesName = (name: string) => /\bbumdes\b/i.test(name);
+
 // ---------- page addresses ----------
 // By slug (/produk/brownis-prafi); by id only for a row that has no slug yet (saved before slugs existed).
 

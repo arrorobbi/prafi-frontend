@@ -8,6 +8,8 @@ import { IconBack, IconChevronLeft, IconChevronRight, IconEye, IconEyeOff, IconI
 import { canGoBack } from "@/lib/navHistory";
 import { useLeaveGuard } from "./LeaveGuard";
 import { useLightbox } from "./Lightbox";
+import { ImageCropDialog } from "./ImageCropDialog";
+import { compressImage, cropHint, MAX_PICK_BYTES, type CropSpec } from "@/lib/imageTools";
 import styles from "./ui.module.css";
 import { Input } from "./shadcn/input";
 import { cn } from "@/lib/utils";
@@ -167,17 +169,23 @@ export function PasswordInput({ className, ...props }: React.InputHTMLAttributes
   );
 }
 
-export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
-/** Checks a picked file against the API's rules (jpg/png/webp/gif, max 5 MB). Returns an error message or null. */
+/**
+ * Checks a picked file before it is prepared for upload (jpg/png/webp/gif, up to 25 MB: anything over 3 MB is
+ * compressed in the browser, lib/imageTools.ts). Returns an error message or null.
+ */
 export function validateImage(file: File) {
   if (!IMAGE_TYPES.includes(file.type)) return "Format gambar harus JPG, PNG, WEBP, atau GIF";
-  if (file.size > MAX_IMAGE_BYTES) return "Ukuran gambar maksimal 5 MB";
+  if (file.size > MAX_PICK_BYTES) return "Ukuran gambar maksimal 25 MB";
   return null;
 }
 
-/** The grey "UNGGAH FOTO ..." box with a preview. The file is uploaded by the form on submit. */
+/**
+ * The grey "UNGGAH FOTO ..." box with a preview. The file is uploaded by the form on submit.
+ * `crop`: the picture is first cut to that shape (ImageCropDialog); without it, it is only compressed to 3 MB.
+ * The box says which shape and size suit the place, and the accepted formats.
+ */
 export function ImagePicker({
   title,
   previewUrl,
@@ -185,6 +193,7 @@ export function ImagePicker({
   error,
   round,
   pending,
+  crop,
 }: {
   title: string;
   previewUrl?: string | null;
@@ -193,28 +202,49 @@ export function ImagePicker({
   round?: boolean;
   /** The shown photo is uploaded but not saved yet */
   pending?: boolean;
+  crop?: CropSpec;
 }) {
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [preparing, setPreparing] = useState(false);
+  const [toCrop, setToCrop] = useState<{ blob: Blob; url: string; name: string } | null>(null);
   const objectUrl = useRef<string | null>(null);
 
   useEffect(() => () => {
     if (objectUrl.current) URL.revokeObjectURL(objectUrl.current);
   }, []);
 
+  /** Hands a ready file to the form, with a preview address that lives as long as this box */
+  const deliver = (file: File) => {
+    if (objectUrl.current) URL.revokeObjectURL(objectUrl.current);
+    objectUrl.current = URL.createObjectURL(file);
+    onFile(file, objectUrl.current);
+  };
+
+  const closeCrop = () => {
+    if (toCrop) URL.revokeObjectURL(toCrop.url);
+    setToCrop(null);
+  };
+
   return (
     <div className={styles.picker}>
       <label htmlFor={inputId} className={`${styles.pickerBox} ${previewUrl ? styles.hasPreview : ""}`}>
         {previewUrl ? (
-          <img src={previewUrl} alt="Pratinjau" className={round ? styles.round : ""} />
+          <img
+            src={previewUrl}
+            alt="Pratinjau"
+            className={round ? styles.round : ""}
+            style={crop && !round ? { aspectRatio: String(crop.aspect), objectFit: "cover" } : undefined}
+          />
         ) : (
           <IconImagePlus className={styles.pickerIcon} />
         )}
         <span className={styles.pickerText}>
           <strong>{previewUrl ? "GANTI FOTO" : title}</strong>
-          <small>Format: JPG, PNG, WEBP (maks. 5MB)</small>
-          <span className={styles.pickerBtn}>PILIH FILE</span>
+          {crop && <small>{cropHint(crop)}</small>}
+          <small>Format: JPG, PNG, WEBP · maks. 3 MB (lebih besar dikompres otomatis)</small>
+          <span className={styles.pickerBtn}>{preparing ? "MEMPROSES..." : "PILIH FILE"}</span>
         </span>
       </label>
       <input
@@ -223,20 +253,41 @@ export function ImagePicker({
         type="file"
         accept={IMAGE_TYPES.join(",")}
         className="sr-only"
-        onChange={(e) => {
+        disabled={preparing}
+        onChange={async (e) => {
           const file = e.target.files?.[0];
           e.target.value = "";
           if (!file) return;
           const problem = validateImage(file);
           setLocalError(problem);
           if (problem) return;
-          if (objectUrl.current) URL.revokeObjectURL(objectUrl.current);
-          objectUrl.current = URL.createObjectURL(file);
-          onFile(file, objectUrl.current);
+          if (crop) {
+            setToCrop({ blob: file, url: URL.createObjectURL(file), name: file.name });
+            return;
+          }
+          setPreparing(true);
+          try {
+            deliver(await compressImage(file));
+          } catch (err) {
+            setLocalError(err instanceof Error ? err.message : "Gambar gagal diproses");
+          } finally {
+            setPreparing(false);
+          }
         }}
       />
       {pending && <span className={styles.pickerPending}>Foto baru belum disimpan. Klik Simpan untuk menyimpannya.</span>}
       {(localError || error) && <span className="field-error">{localError || error}</span>}
+      {crop && (
+        <ImageCropDialog
+          file={toCrop}
+          spec={crop}
+          onCancel={closeCrop}
+          onDone={(cropped) => {
+            closeCrop();
+            deliver(cropped);
+          }}
+        />
+      )}
     </div>
   );
 }
