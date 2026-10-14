@@ -140,7 +140,7 @@ the change shows at once. Without the secret (or if the call fails) the pages st
   `components/dashboard/CategoryManager.tsx`) belong to products (`categoryId`,
   required in the product form); UMKM profiles no longer have one. Each category must have an image (required on create, can be replaced but not removed): the home page
   (`components/site/HomeHero.tsx`) shows one carousel slide per category with approved products (its image; older categories without one use
-  their best product's photo until an image is added), and the cards beside it show that category's 3 best rated products.
+  their best product's photo until an image is added), and the cards beside it show 3 of that category's products, drawn at random each time the slide is shown.
 - **Recommended** (`isRecommended`) is set by the backend: at least 3 visible reviews averaging 4.8 stars or more.
   Tenants can't set it.
 - **Reviews are guarded**: the form has a Cloudflare Turnstile "not a robot" check (`components/site/Turnstile.tsx`,
