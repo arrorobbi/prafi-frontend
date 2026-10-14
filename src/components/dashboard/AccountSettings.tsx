@@ -32,6 +32,14 @@ export function AccountSettings({ title }: { title: string }) {
   const photo = usePendingImage();
   // The account photo is taken with the camera only (no file can be chosen); the upload then checks it for a face
   const [camera, setCamera] = useState(false);
+  // No camera at all on this device (a desktop without a webcam): say so before the person tries
+  const [noCamera, setNoCamera] = useState(false);
+  useEffect(() => {
+    navigator.mediaDevices
+      ?.enumerateDevices()
+      .then((devices) => setNoCamera(!devices.some((d) => d.kind === "videoinput")))
+      .catch(() => {});
+  }, []);
   const { confirmLeave } = useLeaveGuard();
 
   const reset = () => {
@@ -108,13 +116,34 @@ export function AccountSettings({ title }: { title: string }) {
             </span>
           )}
           {photo.pending && <span className={local.pendingNote}>Foto baru belum disimpan. Klik Simpan Perubahan.</span>}
-          <span className="hint">Foto profil diambil langsung dengan kamera dan harus menampilkan wajah Anda dengan jelas.</span>
+          <span className="hint">Foto profil harus menampilkan wajah Anda dengan jelas.</span>
           {isTenant && !user.faceImageId && !photo.pending && (
             <span className={local.pendingNote}>Unggah foto profil agar Anda dapat menambahkan produk.</span>
           )}
-          <Button type="button" variant="navy" size="lg" onClick={() => setCamera(true)} disabled={photo.uploading}>
+          <Button
+            type="button"
+            variant="navy"
+            // Wraps instead of running past a narrow card
+            className="h-auto min-h-[46px] w-full px-5 text-[0.95rem] whitespace-normal text-center"
+            onClick={() => setCamera(true)}
+            disabled={photo.uploading}
+          >
             <IconCamera /> {photo.uploading ? "Mengunggah..." : "Ambil Foto dengan Kamera"}
           </Button>
+          <Alert variant={noCamera ? "warning" : "info"} className="w-full text-left text-[0.85rem]">
+            {/* One block of text: the alert lays out separate children side by side */}
+            {noCamera ? (
+              <span>
+                <strong>Kamera tidak terdeteksi di perangkat ini.</strong> Foto profil hanya dapat diambil dengan kamera: mohon
+                buka halaman ini melalui HP.
+              </span>
+            ) : (
+              <span>
+                Foto profil hanya dapat diambil dengan kamera. Bila laptop atau komputer Anda tidak memiliki kamera, mohon
+                gunakan HP.
+              </span>
+            )}
+          </Alert>
           <CameraCapture open={camera} onClose={() => setCamera(false)} onCapture={changePhoto} />
         </div>
 

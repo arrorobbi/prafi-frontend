@@ -203,8 +203,14 @@ export function ProfileForm({
           <span className="label">Jam Operasional (wajib diisi)</span>
           <div className={local.hours}>
             <Input placeholder="Hari (mis. Senin - Jumat)" value={days} onChange={(e) => setDays(e.target.value)} aria-label="Hari operasional" />
-            <Input type="time" value={open} onChange={(e) => setOpen(e.target.value)} aria-label="Jam buka" />
-            <Input type="time" value={close} onChange={(e) => setClose(e.target.value)} aria-label="Jam tutup" />
+            <label className={local.time}>
+              <span>Buka</span>
+              <Input type="time" value={open} onChange={(e) => setOpen(e.target.value)} aria-label="Jam buka" />
+            </label>
+            <label className={local.time}>
+              <span>Tutup</span>
+              <Input type="time" value={close} onChange={(e) => setClose(e.target.value)} aria-label="Jam tutup" />
+            </label>
           </div>
           {errors.operationalHours && <span className="field-error">{errors.operationalHours}</span>}
         </div>

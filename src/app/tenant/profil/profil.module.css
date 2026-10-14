@@ -19,7 +19,29 @@
 .hours {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr);
+  align-items: end;
   gap: 10px;
+}
+
+/* "Buka" / "Tutup" above each time box */
+.time {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.time span {
+  padding-left: 14px;
+  color: var(--gray-700);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+/* Time boxes have a built-in minimum width in some browsers: let them shrink with the column */
+.hours input {
+  width: 100%;
+  min-width: 0;
 }
 
 .address {
@@ -39,13 +61,21 @@
   }
 }
 
-@media (max-width: 520px) {
+/* Not enough room for three boxes in a row: the days on their own row, the two times below */
+@media (max-width: 1180px) and (min-width: 961px), (max-width: 560px) {
   .hours {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 
-  .hours input:first-child {
+  .hours > input:first-child {
     grid-column: 1 / -1;
+  }
+}
+
+/* Very narrow phones: every box on its own row */
+@media (max-width: 340px) {
+  .hours {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
