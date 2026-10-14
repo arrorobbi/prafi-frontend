@@ -15,6 +15,9 @@ export interface HeroSlide {
   href: string;
 }
 
+/** Time each slide stays before the next one (the progress line under the dots shows it running) */
+const AUTOPLAY_MS = 6000;
+
 /**
  * Big centre slide with the neighbours peeking on each side, as in the landing design. Controlled: the parent
  * keeps `index` (the home page shows the current slide's products next to it).
@@ -22,11 +25,14 @@ export interface HeroSlide {
 export function HeroCarousel({
   slides,
   index,
+  direction = 1,
   onIndexChange,
   label = "Kategori produk",
 }: {
   slides: HeroSlide[];
   index: number;
+  /** 1 = the slide came from the right (next), -1 = from the left: decides which way the motion goes */
+  direction?: 1 | -1;
   onIndexChange: (index: number) => void;
   label?: string;
 }) {
@@ -37,7 +43,7 @@ export function HeroCarousel({
 
   useEffect(() => {
     if (count < 2 || paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t = setTimeout(() => go(1), 6000);
+    const t = setTimeout(() => go(1), AUTOPLAY_MS);
     return () => clearTimeout(t);
   }, [count, paused, go]);
 
@@ -66,18 +72,20 @@ export function HeroCarousel({
       aria-roledescription="carousel"
       aria-label={label}
     >
-      <div className={styles.stage}>
+      {/* --dir: which side the new slide comes from (the keyframes in HeroCarousel.module.css use it) */}
+      <div className={styles.stage} style={{ "--dir": direction } as React.CSSProperties}>
         {count > 1 && (
-          <div className={`${styles.side} ${styles.left}`} aria-hidden>
+          <div key={`l-${at(-1).key}`} className={`${styles.side} ${styles.left}`} aria-hidden>
             <Thumb src={at(-1).image} alt="" />
           </div>
         )}
-        <Link href={current.href} className={styles.main} aria-live="polite">
-          <Thumb key={current.key} src={current.image} alt={current.alt} />
+        <Link key={current.key} href={current.href} className={styles.main} aria-live="polite">
+          <Thumb src={current.image} alt={current.alt} />
+          <span className={styles.shine} aria-hidden />
           <span className={styles.caption}>{current.caption}</span>
         </Link>
         {count > 1 && (
-          <div className={`${styles.side} ${styles.right}`} aria-hidden>
+          <div key={`r-${at(1).key}`} className={`${styles.side} ${styles.right}`} aria-hidden>
             <Thumb src={at(1).image} alt="" />
           </div>
         )}
@@ -92,6 +100,10 @@ export function HeroCarousel({
           </>
         )}
       </div>
+      {count > 1 && (
+        // Restarts with each slide; stands still while the visitor points at or focuses the carousel
+        <span key={`p-${current.key}`} className={`${styles.progress} ${paused ? styles.progressPaused : ""}`} style={{ animationDuration: `${AUTOPLAY_MS}ms` }} aria-hidden />
+      )}
       {count > 1 && (
         <div className={styles.dots}>
           {slides.map((s, i) => (

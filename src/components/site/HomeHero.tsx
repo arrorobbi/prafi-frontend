@@ -20,12 +20,20 @@ export interface CategorySlide extends HeroSlide {
  */
 export function HomeHero({ slides, fallback, side }: { slides: CategorySlide[]; fallback: Product[]; side: React.ReactNode }) {
   const [index, setIndex] = useState(0);
+  /** 1 = moved forward (next, autoplay), -1 = back: the slide and the cards come in from that side */
+  const [direction, setDirection] = useState<1 | -1>(1);
   const current = slides[index] as CategorySlide | undefined;
+  const changeSlide = (next: number) => {
+    const count = slides.length;
+    // The shorter way round decides the side (a dot far ahead counts as forward)
+    setDirection((next - index + count) % count <= count / 2 ? 1 : -1);
+    setIndex(next);
+  };
   const picks = current ? current.products : fallback;
 
   return (
     <section className={styles.hero}>
-      <HeroCarousel slides={slides} index={index} onIndexChange={setIndex} />
+      <HeroCarousel slides={slides} index={index} direction={direction} onIndexChange={changeSlide} />
 
       <div className={styles.heroRight}>
         {/* Beside the carousel on wide screens; below the category's products when everything is stacked (phones) */}
@@ -34,13 +42,19 @@ export function HomeHero({ slides, fallback, side }: { slides: CategorySlide[]; 
         {current && (
           <div className={styles.picksHead}>
             <h2>
-              Kategori <span>{current.caption}</span>
+              Kategori <span key={current.key}>{current.caption}</span>
             </h2>
             <Link href={current.href}>Lihat semua</Link>
           </div>
         )}
         {picks.length > 0 && (
-          <div className={styles.picks} aria-live="polite">
+          // New key per slide: the cards are drawn again and slide in one after another (home.module.css)
+          <div
+            key={current?.key ?? "fallback"}
+            className={styles.picks}
+            aria-live="polite"
+            style={{ "--dir": direction } as React.CSSProperties}
+          >
             {picks.map((p) => (
               <ProductCard key={p.id} product={p} recommended={!current} />
             ))}
