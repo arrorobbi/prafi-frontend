@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatRupiah, imageSrc, sellerName } from "@/lib/format";
+import { formatRupiah, imageSrc, sellerName, productPath, tenantPath } from "@/lib/format";
 import type { Product } from "@/lib/types";
 import { IconBox, IconStore } from "../Icons";
 import { RatingSummary } from "../Stars";
@@ -14,11 +14,11 @@ import { buttonVariants } from "@/components/shadcn/button";
 export function ProductRow({ product }: { product: Product }) {
   return (
     <article className={`${styles.row} card-link`}>
-      <Link href={`/produk/${product.id}`} className={styles.media} tabIndex={-1} aria-hidden>
+      <Link href={productPath(product)} className={styles.media} tabIndex={-1} aria-hidden>
         <Thumb src={imageSrc(product.image)} alt={product.image?.altText || product.name} />
       </Link>
       <div className={styles.info}>
-        <Link href={`/produk/${product.id}`} className="card-link-main">
+        <Link href={productPath(product)} className="card-link-main">
           <h3>{product.name}</h3>
         </Link>
         <p className={styles.seller}>{sellerName(product)}</p>
@@ -26,11 +26,11 @@ export function ProductRow({ product }: { product: Product }) {
         <RatingSummary average={product.ratingAverage} count={product.reviewCount} />
       </div>
       <div className={styles.actions}>
-        <Link href={`/produk/${product.id}`} className={buttonVariants({ variant: "green", shape: "square", size: "sm" })}>
+        <Link href={productPath(product)} className={buttonVariants({ variant: "green", shape: "square", size: "sm" })}>
           <IconBox /> Lihat Produk
         </Link>
         {product.tenant?.tenant && (
-          <Link href={`/umkm/${product.tenant.tenant.id}`} className={buttonVariants({ variant: "navy", shape: "square", size: "sm" })}>
+          <Link href={tenantPath(product.tenant.tenant)} className={buttonVariants({ variant: "navy", shape: "square", size: "sm" })}>
             <IconStore /> Lihat UMKM
           </Link>
         )}

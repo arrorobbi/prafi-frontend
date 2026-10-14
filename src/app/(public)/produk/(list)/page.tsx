@@ -1,17 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { permanentRedirect } from "next/navigation";
 import { EmptyState } from "@/components/ui";
 import { ListShell } from "@/components/site/ListShell";
 import { ProductRow } from "@/components/site/ProductRow";
 import { SearchForm } from "@/components/site/SearchForm";
-import { imageSrc, sellerName } from "@/lib/format";
+import { imageSrc, sellerName, categoryPath, productPath, tenantPath } from "@/lib/format";
 import { abs, breadcrumbLd, JsonLd, pageMeta } from "@/lib/seo";
 import styles from "./list.module.css";
 import { getAllLandingProducts, getLandingCategories, getLandingTenants } from "@/lib/server-api";
 import { matches } from "@/lib/sellers";
-import type { Product } from "@/lib/types";
+import type { Product, ProductCategory } from "@/lib/types";
 
 type Props = { searchParams: Promise<{ q?: string; kategori?: string; urut?: string }> };
+
+/** ?kategori= is the category's slug; its id still works for links made before slugs */
+const findCategory = (categories: ProductCategory[], value: string) => categories.find((c) => c.slug === value) ?? categories.find((c) => String(c.id) === value);
+/** What goes in the address for a category */
+const categoryParam = (c: ProductCategory) => c.slug || String(c.id);
 
 /** Best average stars first; among equals the one with more reviews; products without reviews last (newest first). */
 function byRating(a: Product, b: Product) {
@@ -26,8 +32,8 @@ function byRating(a: Product, b: Product) {
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const { q = "", kategori } = await searchParams;
   const { categories } = kategori ? await getLandingCategories() : { categories: [] };
-  const category = kategori ? categories.find((c) => String(c.id) === kategori) : undefined;
-  const path = category ? `/produk?kategori=${category.id}` : "/produk";
+  const category = kategori ? findCategory(categories, kategori) : undefined;
+  const path = category ? categoryPath(category) : "/produk";
   return pageMeta({
     title: category ? `Produk ${category.name}` : "Semua Produk UMKM",
     description: category
@@ -40,7 +46,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 /**
- * Every approved product, best rated first (?urut=terbaru: newest first); ?q= searches, ?kategori=<id> shows one
+ * Every approved product, best rated first (?urut=terbaru: newest first); ?q= searches, ?kategori=<slug> shows one
  * category (the home page carousel links here).
  */
 export default async function ProductsPage({ searchParams }: Props) {
@@ -52,7 +58,12 @@ export default async function ProductsPage({ searchParams }: Props) {
     getLandingTenants(),
     getLandingCategories(),
   ]);
-  const category = kategori ? categories.find((c) => String(c.id) === kategori) : undefined;
+  const category = kategori ? findCategory(categories, kategori) : undefined;
+  // An address with the category's id (from before slugs): on to the one with its slug, keeping search and order
+  if (category?.slug && kategori !== category.slug) {
+    const params = new URLSearchParams({ ...(query && { q: query }), kategori: category.slug, ...(urut && { urut }) });
+    permanentRedirect(`/produk?${params}`);
+  }
   const found = products.filter(
     (p) =>
       (!category || p.categoryId === category.id) &&
@@ -62,7 +73,7 @@ export default async function ProductsPage({ searchParams }: Props) {
   const list = newest ? found : [...found].sort(byRating);
   /** This list with another order (the search and the category are kept) */
   const sortHref = (value?: string) => {
-    const params = new URLSearchParams({ ...(query && { q: query }), ...(category && { kategori: String(category.id) }), ...(value && { urut: value }) });
+    const params = new URLSearchParams({ ...(query && { q: query }), ...(category && { kategori: categoryParam(category) }), ...(value && { urut: value }) });
     return `/produk${params.size ? `?${params}` : ""}`;
   };
 
@@ -72,7 +83,7 @@ export default async function ProductsPage({ searchParams }: Props) {
     "@type": "ItemList",
     name: category ? `Produk ${category.name}` : "Semua Produk UMKM",
     numberOfItems: list.length,
-    itemListElement: list.slice(0, 50).map((p, i) => ({ "@type": "ListItem", position: i + 1, name: p.name, url: abs(`/produk/${p.id}`) })),
+    itemListElement: list.slice(0, 50).map((p, i) => ({ "@type": "ListItem", position: i + 1, name: p.name, url: abs(productPath(p)) })),
   };
 
   return (
@@ -82,19 +93,19 @@ export default async function ProductsPage({ searchParams }: Props) {
       data={breadcrumbLd([
         { name: "Beranda", path: "/" },
         { name: "Produk", path: "/produk" },
-        ...(category ? [{ name: category.name, path: `/produk?kategori=${category.id}` }] : []),
+        ...(category ? [{ name: category.name, path: categoryPath(category) }] : []),
       ])}
     />
     <ListShell
       sideTitle="UMKM"
-      sideLinks={tenants.map((t) => ({ href: `/umkm/${t.id}`, label: t.name }))}
+      sideLinks={tenants.map((t) => ({ href: tenantPath(t), label: t.name }))}
       title={query ? `HASIL PENCARIAN` : category ? `KATEGORI ${category.name.toUpperCase()}` : "SEMUA PRODUK"}
       toolbar={
         <SearchForm
           action="/produk"
           defaultValue={query}
           placeholder={category ? `Cari di ${category.name}...` : "Cari produk..."}
-          hidden={{ ...(category && { kategori: String(category.id) }), ...(newest && { urut: "terbaru" }) }}
+          hidden={{ ...(category && { kategori: categoryParam(category) }), ...(newest && { urut: "terbaru" }) }}
         />
       }
     >

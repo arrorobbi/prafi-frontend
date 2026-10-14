@@ -5,7 +5,7 @@ import { ListShell } from "@/components/site/ListShell";
 import { SearchForm } from "@/components/site/SearchForm";
 import { RatingSummary } from "@/components/Stars";
 import { EmptyState, Thumb } from "@/components/ui";
-import { imageSrc } from "@/lib/format";
+import { imageSrc, tenantPath } from "@/lib/format";
 import { breadcrumbLd, JsonLd, pageMeta } from "@/lib/seo";
 import { getLandingTenants } from "@/lib/server-api";
 import styles from "../umkm.module.css";
@@ -37,7 +37,7 @@ export default async function SellersPage({ searchParams }: Props) {
     <JsonLd data={breadcrumbLd([{ name: "Beranda", path: "/" }, { name: "UMKM", path: "/umkm" }])} />
     <ListShell
       sideTitle="UMKM"
-      sideLinks={all.tenants.map((t) => ({ href: `/umkm/${t.id}`, label: t.name }))}
+      sideLinks={all.tenants.map((t) => ({ href: tenantPath(t), label: t.name }))}
       title={query ? "HASIL PENCARIAN UMKM" : "DAFTAR UMKM"}
       toolbar={<SearchForm action="/umkm" defaultValue={query} placeholder="Cari toko / UMKM..." />}
     >
@@ -50,7 +50,7 @@ export default async function SellersPage({ searchParams }: Props) {
       ) : (
         <div className={styles.grid}>
           {list.map((t) => (
-            <Link key={t.id} href={`/umkm/${t.id}`} className={styles.card}>
+            <Link key={t.id} href={tenantPath(t)} className={styles.card}>
               <Thumb src={imageSrc(t.logo)} alt="" className={styles.logo} />
               <div className={styles.cardBody}>
                 <h3>{t.name}</h3>

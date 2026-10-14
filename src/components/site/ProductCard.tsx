@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatRupiah, imageSrc, sellerName } from "@/lib/format";
+import { formatRupiah, imageSrc, sellerName, productPath } from "@/lib/format";
 import type { Product } from "@/lib/types";
 import { IconThumb } from "../Icons";
 import { RatingSummary } from "../Stars";
@@ -8,7 +8,7 @@ import styles from "./ProductCard.module.css";
 
 export function ProductCard({ product, small, recommended }: { product: Product; small?: boolean; recommended?: boolean }) {
   return (
-    <Link href={`/produk/${product.id}`} className={`${styles.card} ${small ? styles.small : ""}`}>
+    <Link href={productPath(product)} className={`${styles.card} ${small ? styles.small : ""}`}>
       <div className={styles.media}>
         <Thumb src={imageSrc(product.image)} alt={product.image?.altText || product.name} className={styles.img} />
         {(recommended || product.isRecommended) && (

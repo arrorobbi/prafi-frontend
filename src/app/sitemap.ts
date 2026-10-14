@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { abs } from "@/lib/seo";
 import { getAllLandingProducts, getLandingCategories, getLandingTenants } from "@/lib/server-api";
+import { categoryPath, productPath, tenantPath } from "@/lib/format";
 
 /** Rebuilt at most once an hour (and at once when the backend reports a public change, like the other pages) */
 export const revalidate = 3600;
@@ -21,8 +22,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: abs("/register"), changeFrequency: "yearly", priority: 0.3 },
     ...categories
       .filter((c) => c.productCount > 0)
-      .map((c) => ({ url: abs(`/produk?kategori=${c.id}`), changeFrequency: "daily" as const, priority: 0.7 })),
-    ...products.map((p) => ({ url: abs(`/produk/${p.id}`), lastModified: new Date(p.updatedAt), changeFrequency: "weekly" as const, priority: 0.8 })),
-    ...tenants.map((t) => ({ url: abs(`/umkm/${t.id}`), lastModified: new Date(t.updatedAt), changeFrequency: "weekly" as const, priority: 0.6 })),
+      .map((c) => ({ url: abs(categoryPath(c)), changeFrequency: "daily" as const, priority: 0.7 })),
+    ...products.map((p) => ({ url: abs(productPath(p)), lastModified: new Date(p.updatedAt), changeFrequency: "weekly" as const, priority: 0.8 })),
+    ...tenants.map((t) => ({ url: abs(tenantPath(t)), lastModified: new Date(t.updatedAt), changeFrequency: "weekly" as const, priority: 0.6 })),
   ];
 }

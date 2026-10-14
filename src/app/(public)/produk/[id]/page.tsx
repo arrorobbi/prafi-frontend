@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { IconDocs, IconFacebook, IconGoogle, IconHeart, IconInstagram, IconMapPin, IconShopee, IconStore, IconThumb, IconWhatsapp } from "@/components/Icons";
 import { ProductReviews } from "@/components/site/ProductReviews";
 import { ProductStrip } from "@/components/site/ProductStrip";
 import { RatingSummary } from "@/components/Stars";
 import { EmptyState, PageHeader, Thumb } from "@/components/ui";
-import { formatDate, formatRupiah, imageSrc, productWhatsappText, sellerName, whatsappWithText } from "@/lib/format";
+import { formatDate, formatRupiah, imageSrc, productWhatsappText, sellerName, whatsappWithText, categoryPath, productPath, tenantPath } from "@/lib/format";
 import type { Product } from "@/lib/types";
 import { abs, breadcrumbLd, JsonLd, pageMeta, summarize } from "@/lib/seo";
 import { getLandingProduct, getLandingProducts } from "@/lib/server-api";
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return pageMeta({
     title: `${product.name} - ${seller}`,
     description: `${product.name} dari ${seller}, ${formatRupiah(product.price)}. ${product.description}`,
-    path: `/produk/${product.id}`,
+    path: productPath(product),
     image: product.image ? { url: imageSrc(product.image), alt: product.image.altText || product.name } : null,
   });
 }
@@ -38,22 +38,22 @@ function productLd(product: Product) {
   return {
     "@context": "https://schema.org",
     "@type": "Product",
-    "@id": abs(`/produk/${product.id}#product`),
+    "@id": abs(`${productPath(product)}#product`),
     name: product.name,
     description: summarize(`${product.description} ${product.details}`, 500),
-    url: abs(`/produk/${product.id}`),
+    url: abs(productPath(product)),
     sku: product.id,
     ...(product.image && { image: [abs(imageSrc(product.image))] }),
     ...(product.category && { category: product.category.name }),
     brand: { "@type": "Brand", name: sellerName(product) },
     offers: {
       "@type": "Offer",
-      url: abs(`/produk/${product.id}`),
+      url: abs(productPath(product)),
       price: product.price,
       priceCurrency: "IDR",
       availability: "https://schema.org/InStock",
       itemCondition: "https://schema.org/NewCondition",
-      seller: { "@type": "Organization", name: sellerName(product), ...(shop && { url: abs(`/umkm/${shop.id}`) }) },
+      seller: { "@type": "Organization", name: sellerName(product), ...(shop && { url: abs(tenantPath(shop)) }) },
     },
     // Only with real reviews: Google rejects ratings without any
     ...(product.reviewCount > 0 &&
@@ -75,6 +75,8 @@ export default async function ProductDetailPage({ params }: Props) {
     );
   }
   if (!product) notFound();
+  // Opened by id (a link from before slugs) or by a slug the product had before it was renamed: on to its address
+  if (product.slug && id !== product.slug) permanentRedirect(productPath(product));
 
   const [seller, latest] = await Promise.all([
     product.tenant ? getLandingProducts(1, 13, { tenantId: product.tenant.id }) : null,
@@ -90,8 +92,8 @@ export default async function ProductDetailPage({ params }: Props) {
         data={breadcrumbLd([
           { name: "Beranda", path: "/" },
           { name: "Produk", path: "/produk" },
-          ...(product.category ? [{ name: product.category.name, path: `/produk?kategori=${product.category.id}` }] : []),
-          { name: product.name, path: `/produk/${product.id}` },
+          ...(product.category ? [{ name: product.category.name, path: categoryPath(product.category) }] : []),
+          { name: product.name, path: productPath(product) },
         ])}
       />
       <PageHeader title="INFORMASI PRODUK" backHref="/produk" />
@@ -107,7 +109,7 @@ export default async function ProductDetailPage({ params }: Props) {
             {product.category && (
               <>
                 {" · "}
-                <Link href={`/produk?kategori=${product.category.id}`}>{product.category.name}</Link>
+                <Link href={categoryPath(product.category)}>{product.category.name}</Link>
               </>
             )}
           </p>
@@ -140,7 +142,7 @@ export default async function ProductDetailPage({ params }: Props) {
 
           <div className={styles.bottom}>
             {product.tenant?.tenant && (
-              <Link href={`/umkm/${product.tenant.tenant.id}`} className={cn(cardClassName, styles.seller)}>
+              <Link href={tenantPath(product.tenant.tenant)} className={cn(cardClassName, styles.seller)}>
                 <IconStore />
                 <div>
                   <strong>{sellerName(product)}</strong>

@@ -14,6 +14,7 @@ halaman `/panduan`.
 
   ![Mencari produk](../public/panduan/pengunjung-2-cari.jpg)
 
+- Alamat halaman mudah dibaca dan dibagikan: `/produk/nama-produk` untuk produk dan `/umkm/nama-toko` untuk UMKM. Bila dua produk bernama sama, yang berikutnya mendapat angka di belakang (`brownis-prafi-1`). Tautan lama tetap berfungsi setelah nama diubah.
 - Menu **Produk** menampilkan semua produk, diurutkan dari **rating tertinggi** (rata-rata bintang terbesar di atas; produk tanpa ulasan di bawah). Pilih **Terbaru** di atas daftar untuk melihat produk yang baru tayang lebih dulu. Menu **UMKM** menampilkan daftar toko beserta produknya.
 - Klik produk untuk melihat detail: harga, deskripsi, informasi produk, ulasan pembeli, dan toko penjualnya. Siapa pun dapat memberi bintang dan ulasan tanpa login, setelah verifikasi singkat **"Saya bukan robot"**. Ulasan minimal **3 kata**, dan satu ulasan per produk per hari dari perangkat dan jaringan yang sama.
 - Di halaman produk, tombol **Hubungi & Kunjungi Toko** (WhatsApp, Shopee, Instagram, Google Bisnis, Facebook, Lokasi) hanya muncul untuk tautan yang diisi penjual. Tombol **WhatsApp** membuka chat dengan pesan siap kirim: *"Halo kak saya ingin menanyakan tentang produk <nama produk> apakah masih ada? <tautan produk>"*.

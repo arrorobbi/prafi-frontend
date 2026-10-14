@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { api } from "@/lib/api";
 import { roleHome, useAuth } from "@/lib/auth";
-import { sellerName } from "@/lib/format";
+import { sellerName, productPath } from "@/lib/format";
 import type { Product } from "@/lib/types";
 import { IconClose, IconMenu, IconSearch, IconStore } from "../Icons";
 import { Brand } from "../ui";
@@ -144,7 +144,7 @@ export function SiteHeader() {
                     </li>
                     {matches.map((p) => (
                       <li key={p.id}>
-                        <Link href={`/produk/${p.id}`}>
+                        <Link href={productPath(p)}>
                           <span>
                             <Highlight text={p.name} query={q} />
                           </span>

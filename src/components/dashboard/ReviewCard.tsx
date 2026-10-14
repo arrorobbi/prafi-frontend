@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatDate, formatTime, fullName } from "@/lib/format";
+import { formatDate, formatTime, fullName, productPath } from "@/lib/format";
 import type { ModeratedReview, ReportStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Stars } from "../Stars";
@@ -33,7 +33,7 @@ export function ReviewCard({ review, showSeller, actions }: { review: ModeratedR
       <header className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
           {review.product && (
-            <Link href={`/produk/${review.product.id}#ulasan`} target="_blank" className="font-semibold text-brand-navy hover:underline">
+            <Link href={`${productPath(review.product)}#ulasan`} target="_blank" className="font-semibold text-brand-navy hover:underline">
               {review.product.name}
             </Link>
           )}

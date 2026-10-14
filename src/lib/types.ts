@@ -63,6 +63,8 @@ export interface ProductOwner {
   tenant?: {
     id: string;
     name: string;
+    /** For the UMKM's address (tenantPath) */
+    slug?: string | null;
     whatsappLink?: string | null;
     instagramLink?: string | null;
     shopeeLink?: string | null;
@@ -75,6 +77,8 @@ export interface ProductOwner {
 export interface Product {
   id: string;
   name: string;
+  /** The readable part of the product's address, made from the name (productPath); missing on rows from before slugs */
+  slug?: string | null;
   description: string;
   details: string;
   /** Rupiah (IDR) */
@@ -83,7 +87,7 @@ export interface Product {
   isRecommended: boolean;
   /** Null only for older products created before categories moved to products */
   categoryId: number | null;
-  category?: Pick<ProductCategory, "id" | "name"> | null;
+  category?: Pick<ProductCategory, "id" | "name" | "slug"> | null;
   /** Average of its reviews (1 decimal), null without reviews */
   ratingAverage: number | null;
   reviewCount: number;
@@ -101,6 +105,8 @@ export interface Product {
 export interface ProductCategory {
   id: number;
   name: string;
+  /** The readable part of the category's address (categoryPath); never numbered: category names can't repeat */
+  slug?: string | null;
   imageId: number | null;
   image: ImageFile | null;
   /** Dashboard: all its products; landing (GET /api/landing/categories): approved products only */
@@ -112,6 +118,8 @@ export interface ProductCategory {
 export interface TenantProfile {
   id: string;
   name: string;
+  /** The readable part of the UMKM's address, made from the name (tenantPath) */
+  slug?: string | null;
   description: string;
   address: string;
   area: string;
@@ -166,7 +174,7 @@ export interface ModeratedReview extends Omit<Review, "updatedAt"> {
   reportedAt: string | null;
   moderatedAt: string | null;
   moderationNote: string | null;
-  product?: { id: string; name: string; tenantId: string; tenant?: ProductOwner | null };
+  product?: { id: string; name: string; slug?: string | null; tenantId: string; tenant?: ProductOwner | null };
   reporter?: Pick<ProductOwner, "id" | "tenantName" | "firstName" | "lastName"> | null;
   moderator?: { id: string; firstName: string; lastName: string; role: Role } | null;
 }

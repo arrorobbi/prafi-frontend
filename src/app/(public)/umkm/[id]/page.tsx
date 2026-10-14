@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { IconBox, IconClock, IconFacebook, IconGoogle, IconInstagram, IconMapPin, IconShopee, IconStore, IconWhatsapp } from "@/components/Icons";
 import { ListShell } from "@/components/site/ListShell";
 import { ProductRow } from "@/components/site/ProductRow";
 import { RatingSummary } from "@/components/Stars";
 import { EmptyState, Thumb } from "@/components/ui";
-import { formatRating, imageSrc, tenantWhatsappText, whatsappWithText } from "@/lib/format";
+import { formatRating, imageSrc, tenantWhatsappText, whatsappWithText, tenantPath } from "@/lib/format";
 import { abs, breadcrumbLd, JsonLd, pageMeta } from "@/lib/seo";
 import { getLandingProducts, getLandingTenant, getLandingTenants } from "@/lib/server-api";
 import type { PublicTenant } from "@/lib/types";
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${tenant.name} - UMKM ${tenant.area}`,
     description: `${tenant.name}, UMKM di ${tenant.area}, Prafi, Manokwari. ${tenant.description} Alamat: ${tenant.address}.`,
     // One address per UMKM: the page also opens by its owner's id (links from product pages)
-    path: `/umkm/${tenant.id}`,
+    path: tenantPath(tenant),
     image: tenant.logo ? { url: imageSrc(tenant.logo), alt: `Logo ${tenant.name}` } : null,
   });
 }
@@ -39,7 +39,7 @@ function storeLd(tenant: PublicTenant) {
     "@id": abs(`/umkm/${tenant.id}#store`),
     name: tenant.name,
     description: tenant.description,
-    url: abs(`/umkm/${tenant.id}`),
+    url: abs(tenantPath(tenant)),
     ...(tenant.logo && { image: abs(imageSrc(tenant.logo)), logo: abs(imageSrc(tenant.logo)) }),
     address: {
       "@type": "PostalAddress",
@@ -59,13 +59,13 @@ function storeLd(tenant: PublicTenant) {
 }
 
 /**
- * One UMKM (GET /api/landing/tenants/:id; the id may be the profile's or its owner's, so product pages
+ * One UMKM (GET /api/landing/tenants/:id, by slug; the profile's or its owner's id also work, so product pages
  * link here directly): profile, contact links, summary and its approved products.
  */
 export default async function SellerPage({ params }: Props) {
   const { id } = await params;
   const [{ tenant, failed }, all] = await Promise.all([getLandingTenant(id), getLandingTenants()]);
-  const sideLinks = all.tenants.map((t) => ({ href: `/umkm/${t.id}`, label: t.name, active: t.id === tenant?.id }));
+  const sideLinks = all.tenants.map((t) => ({ href: tenantPath(t), label: t.name, active: t.id === tenant?.id }));
 
   if (failed) {
     return (
@@ -75,12 +75,14 @@ export default async function SellerPage({ params }: Props) {
     );
   }
   if (!tenant) notFound();
+  // Opened by id (a link from before slugs, or from a product's owner) or by a slug from before a rename: on to its address
+  if (tenant.slug && id !== tenant.slug) permanentRedirect(tenantPath(tenant));
   const { products } = await getLandingProducts(1, 100, { tenantId: tenant.userId });
 
   return (
     <>
     <JsonLd data={storeLd(tenant)} />
-    <JsonLd data={breadcrumbLd([{ name: "Beranda", path: "/" }, { name: "UMKM", path: "/umkm" }, { name: tenant.name, path: `/umkm/${tenant.id}` }])} />
+    <JsonLd data={breadcrumbLd([{ name: "Beranda", path: "/" }, { name: "UMKM", path: "/umkm" }, { name: tenant.name, path: tenantPath(tenant) }])} />
     <ListShell sideTitle="UMKM" sideLinks={sideLinks} title={tenant.name} backHref="/umkm">
       <section className={styles.profile}>
         <Thumb zoom src={imageSrc(tenant.logo)} alt={`Logo ${tenant.name}`} className={styles.profileLogo} />

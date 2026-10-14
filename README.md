@@ -47,9 +47,9 @@ in the **backend** `.env` to this site's URL.
 | path | who | what |
 | --- | --- | --- |
 | `/` | public | Landing: featured carousel, recommended products, "why Transniaga" |
-| `/produk`, `/produk?q=`, `?kategori=`, `?urut=terbaru` | public | All approved products, best average rating first (products without reviews last; `?urut=terbaru` = newest first) + search + one category |
-| `/produk/[id]` | public | Product detail: price, rating, public reviews (read + write without login) |
-| `/umkm`, `/umkm/[id]` | public | UMKM directory and page: profile, contact links, product count, rating, products (`/api/landing/tenants`) |
+| `/produk`, `/produk?q=`, `?kategori=<slug>`, `?urut=terbaru` | public | All approved products, best average rating first (products without reviews last; `?urut=terbaru` = newest first) + search + one category |
+| `/produk/[id]` | public | Product detail: price, rating, public reviews (read + write without login). The address part is the product's **slug** (`/produk/brownis-prafi`); its id or a slug from before a rename redirects there |
+| `/umkm`, `/umkm/[id]` | public | UMKM directory and page (by slug, `/umkm/dapur-mama`; ids and old slugs redirect): profile, contact links, product count, rating, products (`/api/landing/tenants`) |
 | `/panduan` | public | User guide |
 | `/maintenance` | public | The old "under construction" page |
 | `/login` | public | Login for every role, redirects by role |
@@ -112,6 +112,9 @@ src/
     pendingUploads.ts  unsaved uploads in localStorage, deleted on leave / next visit
     guides.tsx         user-guide content (used by /panduan and /tenant/bantuan)
     types.ts           API response types
+
+Addresses are always built with `productPath`, `tenantPath` and `categoryPath` (`lib/format.ts`), which use the
+slug from the API and fall back to the id for a row that has none.
 ```
 
 ### API coverage
@@ -142,7 +145,7 @@ the change shows at once. Without the secret (or if the call fails) the pages st
   one review per product per day from the same browser on the same IP. Sellers report reviews in **Ulasan Produk**
   (`/tenant/ulasan`); admins and disnakertrans hide / keep them in **Laporan Ulasan** (`components/dashboard/ReviewModeration.tsx`).
 - **WhatsApp buttons** open with a prefilled message (`lib/format.ts → whatsappWithText`): on a product page
-  `Halo kak saya ingin menanyakan tentang produk <name> apakah masih ada? <SITE_URL>/produk/<id>`, on a UMKM page
+  `Halo kak saya ingin menanyakan tentang produk <name> apakah masih ada? <SITE_URL>/produk/<slug>`, on a UMKM page
   `Hi kak, saya mau bertanya tentang produk di toko <name>`.
 
 ### Loading screens

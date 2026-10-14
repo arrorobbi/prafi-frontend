@@ -3,7 +3,7 @@ import { IconChevronRight, IconDocs, IconHeart, IconMapPin, IconThumb } from "@/
 import { MapArt } from "@/components/site/MapArt";
 import { HomeHero, type CategorySlide } from "@/components/site/HomeHero";
 import { ProductStrip } from "@/components/site/ProductStrip";
-import { imageSrc } from "@/lib/format";
+import { imageSrc, categoryPath } from "@/lib/format";
 import { abs, JsonLd, ORGANIZATION_LD, pageMeta, SITE_DESCRIPTION, SITE_NAME } from "@/lib/seo";
 import { getLandingCategories, getLandingProducts } from "@/lib/server-api";
 import type { ProductCategory } from "@/lib/types";
@@ -79,7 +79,7 @@ async function categorySlides(categories: ProductCategory[]): Promise<CategorySl
       image: c.image ? imageSrc(c.image) : imageSrc(products[0].image),
       alt: c.image?.altText || c.name,
       caption: c.name,
-      href: `/produk?kategori=${c.id}`,
+      href: categoryPath(c),
       products,
     }));
 }
@@ -110,7 +110,7 @@ export default async function HomePage() {
             <h1 className="sr-only">Trans Niaga: produk pilihan UMKM Kawasan Transmigrasi Prafi</h1>
             {bumdes ? (
               <Card className={`${styles.mapCard} ${styles.bumdesCard} card-link`}>
-                <Link href={`/produk?kategori=${bumdes.id}`} className={styles.bumdesPhoto} tabIndex={-1} aria-hidden>
+                <Link href={categoryPath(bumdes)} className={styles.bumdesPhoto} tabIndex={-1} aria-hidden>
                   <img src={imageSrc(bumdes.image)} alt="" />
                 </Link>
                 <div className={styles.mapText}>
@@ -119,7 +119,7 @@ export default async function HomePage() {
                   <p className={styles.bumdesText}>
                     Produk hasil desa, dikelola bersama warga kampung transmigrasi. Penasaran apa saja yang mereka tawarkan?
                   </p>
-                  <Link href={`/produk?kategori=${bumdes.id}`} className={`${buttonVariants({ variant: "orange", size: "sm" })} card-link-main`}>
+                  <Link href={categoryPath(bumdes)} className={`${buttonVariants({ variant: "orange", size: "sm" })} card-link-main`}>
                     Intip Produk BUMDES <IconChevronRight />
                   </Link>
                 </div>

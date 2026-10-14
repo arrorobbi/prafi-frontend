@@ -72,9 +72,17 @@ export function whatsappWithText(link: string, text: string) {
   return `${url.origin}${url.pathname}?${rest ? `${rest}&` : ""}text=${encodeURIComponent(text)}`;
 }
 
+// ---------- page addresses ----------
+// By slug (/produk/brownis-prafi); by id only for a row that has no slug yet (saved before slugs existed).
+
+export const productPath = (p: { id: string; slug?: string | null }) => `/produk/${p.slug || p.id}`;
+export const tenantPath = (t: { id: string; slug?: string | null }) => `/umkm/${t.slug || t.id}`;
+/** The product list filtered to one category */
+export const categoryPath = (c: { id: number; slug?: string | null }) => `/produk?kategori=${c.slug || c.id}`;
+
 /** The message a visitor sends from a product page: the product's name and its link. */
-export const productWhatsappText = (product: { id: string; name: string }) =>
-  `Halo kak saya ingin menanyakan tentang produk ${product.name} apakah masih ada? ${SITE_URL}/produk/${product.id}`;
+export const productWhatsappText = (product: { id: string; slug?: string | null; name: string }) =>
+  `Halo kak saya ingin menanyakan tentang produk ${product.name} apakah masih ada? ${SITE_URL}${productPath(product)}`;
 
 /** The message a visitor sends from a UMKM (shop) page. */
 export const tenantWhatsappText = (tenant: { name: string }) => `Hi kak, saya mau bertanya tentang produk di toko ${tenant.name}`;
