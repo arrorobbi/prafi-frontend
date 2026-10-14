@@ -62,7 +62,7 @@ halaman `/panduan`.
 
 2. Pilih logo/foto toko (JPG, PNG, WEBP, atau GIF; foto di atas 3 MB dikompres otomatis), lalu atur potongannya (persegi, 1:1). Foto langsung terunggah, tetapi baru tersimpan setelah Anda klik **SIMPAN PROFIL**.
 3. Isi nama toko, **wilayah** (SP 1 – SP 4 atau *Lainnya*), deskripsi, dan alamat. (Kategori kini dipilih per produk, bukan di profil toko.)
-4. Isi jam operasional (hari, jam buka, jam tutup).
+4. Isi jam operasional (hari, jam buka, jam tutup). Jam memakai zona waktu perangkat Anda (WIB, WITA, atau WIT) dan zonanya ikut tersimpan, mis. *Senin - Sabtu, 08:00 - 17:00 WIT*.
 5. **Nomor WhatsApp dan semua tautan boleh dikosongkan** (Google Maps, Instagram, Google Bisnis, Shopee, Facebook / Toko Online). Isi yang Anda miliki agar pembeli mudah menghubungi toko; tautan diawali `https://`. Tombol kontak di halaman produk dan UMKM hanya muncul untuk yang diisi.
 
    ![Formulir profil toko](../public/panduan/profil-2-form.jpg)

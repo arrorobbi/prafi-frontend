@@ -38,10 +38,24 @@
   font-weight: 600;
 }
 
-/* Time boxes have a built-in minimum width in some browsers: let them shrink with the column */
+/*
+ * Time boxes have a built-in minimum width on phones (iOS Safari, Android Chrome) that ignores the column: drop the
+ * native look so they shrink with it, and keep the text on the left like the other boxes.
+ */
 .hours input {
   width: 100%;
   min-width: 0;
+}
+
+.hours input[type="time"] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  text-align: left;
+}
+
+.hours input[type="time"]::-webkit-date-and-time-value {
+  text-align: left;
 }
 
 .address {
@@ -62,7 +76,7 @@
 }
 
 /* Not enough room for three boxes in a row: the days on their own row, the two times below */
-@media (max-width: 1180px) and (min-width: 961px), (max-width: 560px) {
+@media (max-width: 1180px) and (min-width: 961px) {
   .hours {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
@@ -72,8 +86,8 @@
   }
 }
 
-/* Very narrow phones: every box on its own row */
-@media (max-width: 340px) {
+/* Phones: every box on its own row, so a phone's own time picker never runs into the next box */
+@media (max-width: 560px) {
   .hours {
     grid-template-columns: minmax(0, 1fr);
   }

@@ -75,6 +75,31 @@ export function whatsappWithText(link: string, text: string) {
 /** The BUMDES category (village-owned enterprises) has its own card on Beranda instead of a carousel slide */
 export const isBumdesName = (name: string) => /\bbumdes\b/i.test(name);
 
+// ---------- time zone of the visitor's device ----------
+
+/** Indonesia's zones by the names the browser reports */
+const INDONESIAN_ZONES: Record<string, string> = {
+  "Asia/Jakarta": "WIB",
+  "Asia/Pontianak": "WIB",
+  "Asia/Makassar": "WITA",
+  "Asia/Ujung_Pandang": "WITA",
+  "Asia/Jayapura": "WIT",
+};
+
+/**
+ * The time zone of this device, the same one the dashboards use to show times (Log API and others): its IANA name
+ * (e.g. "Asia/Jayapura") and a short label: WIB / WITA / WIT in Indonesia, otherwise the offset (e.g. "GMT+8").
+ */
+export function deviceTimeZone() {
+  const name = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Jayapura";
+  let label = INDONESIAN_ZONES[name];
+  if (!label) {
+    const part = new Intl.DateTimeFormat("en-US", { timeZone: name, timeZoneName: "shortOffset" }).formatToParts(new Date()).find((p) => p.type === "timeZoneName");
+    label = part?.value || name;
+  }
+  return { name, label };
+}
+
 // ---------- page addresses ----------
 // By slug (/produk/brownis-prafi); by id only for a row that has no slug yet (saved before slugs existed).
 

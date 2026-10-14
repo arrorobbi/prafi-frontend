@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "@/components/dashboard/dashboard.module.css";
 import { useConfirm } from "@/components/Modal";
 import { useToast } from "@/components/Toast";
@@ -9,7 +9,7 @@ import { useLeaveGuard } from "@/components/LeaveGuard";
 import { usePendingImage } from "@/components/UploadDialog";
 import { api, ApiError, errorMessage, type TenantInput } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
-import { imageSrc, whatsappUrl } from "@/lib/format";
+import { imageSrc, whatsappUrl, deviceTimeZone } from "@/lib/format";
 import type { TenantProfile } from "@/lib/types";
 import local from "./profil.module.css";
 import { Button } from "@/components/shadcn/button";
@@ -63,6 +63,9 @@ export function ProfileForm({
   const [days, setDays] = useState(hours.days);
   const [open, setOpen] = useState(hours.open);
   const [close, setClose] = useState(hours.close);
+  // The device's time zone, read in the browser (not during server rendering, which runs in another zone)
+  const [zone, setZone] = useState({ name: "Asia/Jayapura", label: "WIT" });
+  useEffect(() => setZone(deviceTimeZone()), []);
   // Every link is optional: left empty = no link (null)
   const [whatsapp, setWhatsapp] = useState(phoneFromWhatsapp(profile?.whatsappLink) || user?.phoneNumber || "");
   const [fbLink, setFbLink] = useState(profile?.fbLink && profile.fbLink !== EMPTY_LINK ? profile.fbLink : "");
@@ -107,7 +110,8 @@ export function ProfileForm({
       area: area === OTHER ? otherArea.trim() : area,
       description: description.trim(),
       address: address.trim(),
-      operationalHours: `${days.trim() ? `${days.trim()}, ` : ""}${open} - ${close} WIT`,
+      // Saved with the zone of the seller's device (WIB / WITA / WIT), as the hours were typed in it
+      operationalHours: `${days.trim() ? `${days.trim()}, ` : ""}${open} - ${close} ${zone.label}`,
       whatsappLink: whatsapp.trim() ? whatsappUrl(whatsapp) : null,
       fbLink: fbLink.trim() || null,
       gmapsLink: gmapsLink.trim() || null,
@@ -204,14 +208,17 @@ export function ProfileForm({
           <div className={local.hours}>
             <Input placeholder="Hari (mis. Senin - Jumat)" value={days} onChange={(e) => setDays(e.target.value)} aria-label="Hari operasional" />
             <label className={local.time}>
-              <span>Buka</span>
+              <span>Buka ({zone.label})</span>
               <Input type="time" value={open} onChange={(e) => setOpen(e.target.value)} aria-label="Jam buka" />
             </label>
             <label className={local.time}>
-              <span>Tutup</span>
+              <span>Tutup ({zone.label})</span>
               <Input type="time" value={close} onChange={(e) => setClose(e.target.value)} aria-label="Jam tutup" />
             </label>
           </div>
+          <span className="hint">
+            Jam mengikuti zona waktu perangkat Anda: {zone.label} ({zone.name.replace("_", " ")}).
+          </span>
           {errors.operationalHours && <span className="field-error">{errors.operationalHours}</span>}
         </div>
       </div>
