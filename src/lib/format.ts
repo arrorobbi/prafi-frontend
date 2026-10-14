@@ -75,6 +75,18 @@ export function whatsappWithText(link: string, text: string) {
 /** The BUMDES category (village-owned enterprises) has its own card on Beranda instead of a carousel slide */
 export const isBumdesName = (name: string) => /\bbumdes\b/i.test(name);
 
+// ---------- lists ----------
+
+/** A shuffled copy (Fisher-Yates): every order equally likely */
+export function shuffled<T>(items: readonly T[]): T[] {
+  const out = [...items];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
 // ---------- time zone of the visitor's device ----------
 
 /** Indonesia's zones by the names the browser reports */

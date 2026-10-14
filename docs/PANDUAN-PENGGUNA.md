@@ -9,6 +9,7 @@ halaman `/panduan`.
 ## 1. Pengunjung
 
 - **Beranda**: carousel menampilkan gambar setiap **kategori produk**; di sebelahnya tampil produk dari kategori yang sedang tampil (berganti mengikuti carousel, rating tertinggi lebih dulu). Klik gambar atau **Lihat semua** untuk membuka semua produk kategori itu. Di bawahnya ada produk rekomendasi lainnya.
+- Di Beranda, setiap kali carousel berganti kategori, tiga produk dari kategori tersebut dipilih secara acak. Bagian **Produk Rekomendasi Lainnya** menampilkan 10 produk dengan rata-rata bintang tertinggi (minimal 3,0); bila belum cukup, sisanya diisi produk yang belum memiliki ulasan secara acak. Produk dengan rata-rata di bawah 3,0 tidak tampil di bagian ini.
 - Produk berlabel **rekomendasi** (ikon jempol) adalah produk dengan **minimal 3 ulasan** dan rata-rata **4,8 bintang atau lebih**.
 - Klik ikon **kaca pembesar** di kanan atas untuk mencari produk atau toko. Tekan *Enter* untuk melihat semua hasil.
 

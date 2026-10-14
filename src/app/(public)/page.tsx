@@ -3,10 +3,10 @@ import { IconChevronRight, IconDocs, IconHeart, IconMapPin, IconThumb } from "@/
 import { MapArt } from "@/components/site/MapArt";
 import { HomeHero, type CategorySlide } from "@/components/site/HomeHero";
 import { ProductStrip } from "@/components/site/ProductStrip";
-import { imageSrc, categoryPath, isBumdesName } from "@/lib/format";
+import { imageSrc, categoryPath, isBumdesName, shuffled } from "@/lib/format";
 import { abs, JsonLd, ORGANIZATION_LD, pageMeta, SITE_DESCRIPTION, SITE_NAME } from "@/lib/seo";
-import { getLandingCategories, getLandingProducts } from "@/lib/server-api";
-import type { ProductCategory } from "@/lib/types";
+import { getAllLandingProducts, getLandingCategories, getLandingProducts } from "@/lib/server-api";
+import type { Product, ProductCategory } from "@/lib/types";
 import styles from "./home.module.css";
 import { buttonVariants } from "@/components/shadcn/button";
 import { Alert } from "@/components/shadcn/alert";
@@ -62,42 +62,59 @@ const REASONS = [
 /** The BUMDES category (village-owned enterprises) has its own feature card instead of a carousel slide */
 const isBumdes = (c: ProductCategory) => isBumdesName(c.name);
 
+/** How many products of a category travel with its slide: the cards beside the carousel are drawn from them */
+const SLIDE_POOL = 24;
+/** "Produk Rekomendasi Lainnya" */
+const MORE_COUNT = 10;
+/** Products whose reviews average less than this are never shown there */
+const MORE_MIN_RATING = 3;
+
+/** Best average first; among equals the one with more reviews */
+const byRating = (a: Product, b: Product) => (b.ratingAverage ?? 0) - (a.ratingAverage ?? 0) || b.reviewCount - a.reviewCount;
+
 /**
  * The carousel: one slide per category that has approved products (except BUMDES), showing the category's image
- * (or, without one, its best product's photo). Next to it, that category's 3 best rated products.
+ * (or, without one, its best product's photo). Each slide carries up to SLIDE_POOL of its products in random order:
+ * the first 3 are shown next to it, and every time the slide comes back the visitor's browser draws 3 again.
  */
-async function categorySlides(categories: ProductCategory[]): Promise<CategorySlide[]> {
-  const withProducts = categories.filter((c) => c.productCount > 0 && !isBumdes(c));
-  const lists = await Promise.all(withProducts.map((c) => getLandingProducts(1, 3, { categoryId: c.id, sort: "rating" })));
-  return withProducts
-    .map((c, i) => ({ category: c, products: lists[i].products }))
+function categorySlides(categories: ProductCategory[], all: Product[]): CategorySlide[] {
+  return categories
+    .filter((c) => !isBumdes(c))
+    .map((c) => ({ category: c, products: all.filter((p) => p.categoryId === c.id) }))
     .filter(({ products }) => products.length > 0)
     // Categories with their own image first, so the carousel opens on one
     .sort((a, b) => Number(!!b.category.image) - Number(!!a.category.image))
     .map(({ category: c, products }) => ({
       key: c.id,
-      image: c.image ? imageSrc(c.image) : imageSrc(products[0].image),
+      image: c.image ? imageSrc(c.image) : imageSrc([...products].sort(byRating)[0].image),
       alt: c.image?.altText || c.name,
       caption: c.name,
       href: categoryPath(c),
-      products,
+      products: shuffled(products).slice(0, SLIDE_POOL),
     }));
+}
+
+/**
+ * "Produk Rekomendasi Lainnya": the MORE_COUNT best rated products (average MORE_MIN_RATING or more, best first).
+ * When fewer have such reviews, the rest are random products without any review yet. Products rated below
+ * MORE_MIN_RATING never appear here. The random part changes whenever the page is rebuilt (at most a minute).
+ */
+function moreProducts(all: Product[]) {
+  const best = all.filter((p) => p.ratingAverage != null && p.ratingAverage >= MORE_MIN_RATING).sort(byRating).slice(0, MORE_COUNT);
+  const unreviewed = shuffled(all.filter((p) => !p.reviewCount));
+  return [...best, ...unreviewed].slice(0, MORE_COUNT);
 }
 
 export default async function HomePage() {
   const { categories } = await getLandingCategories();
-  const [{ products, failed }, recommended, slides] = await Promise.all([
-    getLandingProducts(1, 20),
-    getLandingProducts(1, 12, { recommended: true }),
-    categorySlides(categories),
-  ]);
+  // Every approved product, newest first: the carousel's cards and "Produk Rekomendasi Lainnya" come from it
+  const [{ products, failed }, recommended] = await Promise.all([getAllLandingProducts(), getLandingProducts(1, 12, { recommended: true })]);
+  const slides = categorySlides(categories, products);
   // The card beside the carousel features BUMDES (when its category has an image); otherwise the map card
   const bumdes = categories.find((c) => isBumdes(c) && c.image);
   // Without category slides, the hero shows recommended products (reviews average 4.8+), or the newest ones
   const fallback = recommended.products.length ? recommended.products.slice(0, 3) : products.slice(0, 3);
-  // "Produk rekomendasi lainnya": recommended first, then the newest
-  const recIds = new Set(recommended.products.map((p) => p.id));
-  const others = [...recommended.products, ...products.filter((p) => !recIds.has(p.id))];
+  const others = moreProducts(products);
 
   return (
     <>

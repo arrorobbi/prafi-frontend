@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { shuffled } from "@/lib/format";
 import type { Product } from "@/lib/types";
 import styles from "@/app/(public)/home.module.css";
 import { HeroCarousel, type HeroSlide } from "./HeroCarousel";
 import { ProductCard } from "./ProductCard";
 
 export interface CategorySlide extends HeroSlide {
-  /** Up to 3 approved products of this category, best rated first */
+  /** Approved products of this category, in random order: 3 of them are shown beside the slide */
   products: Product[];
 }
 
@@ -18,18 +19,26 @@ export interface CategorySlide extends HeroSlide {
  * them (on phones it comes after them, so the products stay right under the carousel they belong to).
  * Without category slides, `fallback` (the newest / recommended products) is shown instead.
  */
+/** Cards shown beside the carousel */
+const PICKS = 3;
+
 export function HomeHero({ slides, fallback, side }: { slides: CategorySlide[]; fallback: Product[]; side: React.ReactNode }) {
   const [index, setIndex] = useState(0);
   /** 1 = moved forward (next, autoplay), -1 = back: the slide and the cards come in from that side */
   const [direction, setDirection] = useState<1 | -1>(1);
   const current = slides[index] as CategorySlide | undefined;
+  /** The 3 cards beside the slide. First the server's draw (so the page arrives complete); then a new draw each time */
+  const [picks, setPicks] = useState<Product[]>(() => (current ? current.products : fallback).slice(0, PICKS));
+  /** Counts the draws, so the cards slide in again even when the same slide comes back */
+  const [draw, setDraw] = useState(0);
   const changeSlide = (next: number) => {
     const count = slides.length;
     // The shorter way round decides the side (a dot far ahead counts as forward)
     setDirection((next - index + count) % count <= count / 2 ? 1 : -1);
     setIndex(next);
+    setPicks(shuffled(slides[next].products).slice(0, PICKS));
+    setDraw((d) => d + 1);
   };
-  const picks = current ? current.products : fallback;
 
   return (
     <section className={styles.hero}>
@@ -50,7 +59,7 @@ export function HomeHero({ slides, fallback, side }: { slides: CategorySlide[]; 
         {picks.length > 0 && (
           // New key per slide: the cards are drawn again and slide in one after another (home.module.css)
           <div
-            key={current?.key ?? "fallback"}
+            key={`${current?.key ?? "fallback"}-${draw}`}
             className={styles.picks}
             aria-live="polite"
             style={{ "--dir": direction } as React.CSSProperties}
