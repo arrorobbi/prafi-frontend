@@ -6,9 +6,10 @@ Prafi transmigration area (Manokwari). It talks to the Prafi API — docs at
 
 No UI or data libraries are used beyond Next/React: icons are inline SVG, styling is CSS Modules + `src/app/globals.css`.
 
-- User guide (Bahasa Indonesia): [`docs/PANDUAN-PENGGUNA.md`](docs/PANDUAN-PENGGUNA.md) — also shown in the app at `/panduan`.
-  Its step screenshots are in `public/panduan/` (taken from the real UI with sample data; the part each step
-  refers to is outlined in red). Retake them if the screens change.
+- User guide (Bahasa Indonesia): [`docs/PANDUAN-PENGGUNA.md`](docs/PANDUAN-PENGGUNA.md), for printing. The in-app guide at
+  `/panduan` is database content edited in **Kelola Panduan** (superadmin, disnakertrans, admin); its first content and
+  screenshots came from `public/panduan/` (backend `npm run guides:seed`). Those files stay for this document and the
+  server guide (`fitur-*.jpg`).
 
 ## Getting started
 
@@ -50,7 +51,7 @@ in the **backend** `.env` to this site's URL.
 | `/produk`, `/produk?q=`, `?kategori=<slug>`, `?urut=terbaru` | public | All approved products, best average rating first (products without reviews last; `?urut=terbaru` = newest first) + search + one category |
 | `/produk/[id]` | public | Product detail: price, rating, public reviews (read + write without login). The address part is the product's **slug** (`/produk/brownis-prafi`); its id or a slug from before a rename redirects there |
 | `/umkm`, `/umkm/[id]` | public | UMKM directory and page (by slug, `/umkm/dapur-mama`; ids and old slugs redirect): profile, contact links, product count, rating, products (`/api/landing/tenants`) |
-| `/panduan` | public | User guide |
+| `/panduan` | public | User guide: topics from `GET /api/landing/guides` (edited in **Kelola Panduan**), desktop or HP picture per step by screen width (`components/GuideImage.tsx`) |
 | `/maintenance` | public | The old "under construction" page |
 | `/login` | public | Login for every role, redirects by role |
 | `/register` | public | Seller sign-up wizard: account → review → email OTP → done |
@@ -59,10 +60,10 @@ in the **backend** `.env` to this site's URL.
 | `/lupa-password`, `/reset-password` | public | Forgot / reset password |
 | `/konfirmasi-email?userId=&token=` | public | Opened from the email a seller gets after an admin changed their email: confirms the new address on load (`POST /api/auth/confirm-email`), or offers a new link (the path is fixed by the backend) |
 | `/aktivasi?userId=&token=` | public | Disnakertrans account activation, opened from the email: temporary password → own password (the path is fixed by the backend) |
-| `/admin/*` | admin | Dashboard, Konfirmasi Produk, Manajemen Produk, Kategori Produk (with carousel image), Manajemen UMKM (search, seller **Detail** with face photo / phone / store / address, change a seller's email: `components/dashboard/SellerDetail.tsx`), Konten Situs (footer about text: `components/dashboard/SiteContentEditor.tsx`), Notifikasi, Pengaturan |
+| `/admin/*` | admin | Dashboard, Konfirmasi Produk, Manajemen Produk, Kategori Produk (with carousel image), Manajemen UMKM (search, seller **Detail** with face photo / phone / store / address, change a seller's email: `components/dashboard/SellerDetail.tsx`), Konten Situs (footer about text: `components/dashboard/SiteContentEditor.tsx`), Kelola Panduan (topics and steps of `/panduan` and the sellers' Bantuan, each step with a desktop 16:10 and an HP 9:16 picture: `components/dashboard/GuideManager.tsx`, `/api/guides`), Notifikasi, Pengaturan |
 | `/tenant/*` | tenant | Dashboard, Produk Saya, Tambah/Ubah Produk, Produk Ditolak, Ulasan Produk, Kalkulator Profit & Iklan (`lib/adCalculator.ts`, nothing is saved), Profil UMKM, Notifikasi, Bantuan, Pengaturan |
-| `/superadmin/*` | superadmin | Dashboard, Akun Disnakertrans (create without a password + resend the activation email), Semua Pengguna, Profil Pengguna (a card per account: user data, shop data and its API log via `GET /api/logs?email=&emailExact=true`: `components/dashboard/UserProfiles.tsx`), Data Produk, Data UMKM, Kategori Produk (read-only), Panduan Server (sidebar link to the backend's `/api/docs/server`, opens in a new tab with the same login; English / Bahasa Indonesia, light / dark; its feature screenshots are `public/panduan/fitur-*.jpg`), Monitor Server (live CPU, RAM and disk, services and storage: `components/dashboard/ServerMonitor.tsx`, first reading from `GET /api/server/metrics`, then the `server:metrics` Socket.IO event), Log API (signed-in users' create/update/delete requests and every auth action incl. guests' failed logins with the email tried, successful and failed, with result summary), Notifikasi, Pengaturan |
-| `/disnakertrans/*` | disnakertrans | Dashboard, Aktivasi Admin (activate/deactivate admins), Konfirmasi Produk (approve/reject/deactivate, like admin), Data Produk, Kategori Produk (manage, like admin), Data UMKM, Konten Situs (like admin), Notifikasi, Pengaturan |
+| `/superadmin/*` | superadmin | Dashboard, Akun Disnakertrans (create without a password + resend the activation email), Semua Pengguna, Profil Pengguna (a card per account: user data, shop data and its API log via `GET /api/logs?email=&emailExact=true`: `components/dashboard/UserProfiles.tsx`), Data Produk, Data UMKM, Kategori Produk (read-only), Kelola Panduan (same as admin), Panduan Server (sidebar link to the backend's `/api/docs/server`, opens in a new tab with the same login; English / Bahasa Indonesia, light / dark; its feature screenshots are `public/panduan/fitur-*.jpg`), Monitor Server (live CPU, RAM and disk, services and storage: `components/dashboard/ServerMonitor.tsx`, first reading from `GET /api/server/metrics`, then the `server:metrics` Socket.IO event), Log API (signed-in users' create/update/delete requests and every auth action incl. guests' failed logins with the email tried, successful and failed, with result summary), Notifikasi, Pengaturan |
+| `/disnakertrans/*` | disnakertrans | Dashboard, Aktivasi Admin (activate/deactivate admins), Konfirmasi Produk (approve/reject/deactivate, like admin), Data Produk, Kategori Produk (manage, like admin), Data UMKM, Konten Situs (like admin), Kelola Panduan (like admin), Notifikasi, Pengaturan |
 
 ## UI components (shadcn/ui + Tailwind)
 
@@ -114,7 +115,7 @@ src/
     format.ts          dates, names, rupiah, ratings, product status logic
     notificationText.ts  notification titles/messages in Bahasa Indonesia, per type and role
     pendingUploads.ts  unsaved uploads in localStorage, deleted on leave / next visit
-    guides.tsx         user-guide content (used by /panduan and /tenant/bantuan)
+    guides.tsx         icons and labels of the Panduan topics (the content is in the database: Kelola Panduan)
     types.ts           API response types
 
 Addresses are always built with `productPath`, `tenantPath` and `categoryPath` (`lib/format.ts`), which use the

@@ -2,7 +2,7 @@
 
 import { DashboardShell, type NavItem } from "@/components/dashboard/DashboardShell";
 import { RoleProfile } from "@/components/dashboard/RoleProfile";
-import { IconBell, IconBox, IconCheckCircle, IconHome, IconLayout, IconMessage, IconSettings, IconStore, IconTag } from "@/components/Icons";
+import { IconBell, IconBox, IconCheckCircle, IconHelp, IconHome, IconLayout, IconMessage, IconSettings, IconStore, IconTag } from "@/components/Icons";
 
 const NAV: NavItem[] = [
   { href: "/admin", label: "Dashboard", icon: IconHome, exact: true },
@@ -12,6 +12,7 @@ const NAV: NavItem[] = [
   { href: "/admin/kategori", label: "Kategori Produk", icon: IconTag },
   { href: "/admin/umkm", label: "Manajemen UMKM", icon: IconStore },
   { href: "/admin/konten", label: "Konten Situs", icon: IconLayout },
+  { href: "/admin/panduan", label: "Kelola Panduan", icon: IconHelp },
   { href: "/admin/notifikasi", label: "Notifikasi", icon: IconBell, badge: true },
   { href: "/admin/pengaturan", label: "Pengaturan Administrator", icon: IconSettings },
 ];

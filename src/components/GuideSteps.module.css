@@ -44,12 +44,19 @@
 }
 
 .text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   padding-top: 4px;
 }
 
 .figure {
   display: block;
+  width: 100%;
   max-width: 640px;
+  padding: 0;
+  background: var(--white);
+  cursor: zoom-in;
   border: 1px solid var(--gray-200);
   border-radius: 12px;
   overflow: hidden;
@@ -63,8 +70,21 @@
 }
 
 .figure img {
+  display: block;
   width: 100%;
   height: auto;
+}
+
+/* Only an HP picture: a phone-sized frame, also on wide screens */
+.portrait {
+  max-width: 300px;
+}
+
+@media (max-width: 640px) {
+  /* The HP picture is shown here: keep it phone-sized */
+  .hasMobile {
+    max-width: 320px;
+  }
 }
 
 @media (max-width: 600px) {

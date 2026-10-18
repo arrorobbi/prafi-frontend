@@ -2,7 +2,7 @@
 
 import { DashboardShell, type NavItem } from "@/components/dashboard/DashboardShell";
 import { RoleProfile } from "@/components/dashboard/RoleProfile";
-import { IconActivity, IconBell, IconBox, IconDocs, IconHome, IconIdCard, IconServer, IconSettings, IconStore, IconTag, IconUser, IconUsers } from "@/components/Icons";
+import { IconActivity, IconBell, IconBox, IconDocs, IconHelp, IconHome, IconIdCard, IconServer, IconSettings, IconStore, IconTag, IconUser, IconUsers } from "@/components/Icons";
 
 const NAV: NavItem[] = [
   { href: "/superadmin", label: "Dashboard", icon: IconHome, exact: true },
@@ -16,6 +16,7 @@ const NAV: NavItem[] = [
   { href: "/superadmin/monitor", label: "Monitor Server", icon: IconActivity },
   // The backend's server guide (superadmin only), through this site's /api proxy so the dashboard login carries over
   { href: "/api/docs/server", label: "Panduan Server", icon: IconServer, external: true },
+  { href: "/superadmin/panduan", label: "Kelola Panduan", icon: IconHelp },
   { href: "/superadmin/notifikasi", label: "Notifikasi", icon: IconBell, badge: true },
   { href: "/superadmin/pengaturan", label: "Pengaturan Akun", icon: IconSettings },
 ];

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { GuideList } from "@/components/GuideList";
 import { PageHeader } from "@/components/ui";
-import { GUIDES } from "@/lib/guides";
+import { getGuides } from "@/lib/server-api";
 import { pageMeta } from "@/lib/seo";
+import { Alert } from "@/components/shadcn/alert";
 import styles from "./panduan.module.css";
 
 export const metadata: Metadata = pageMeta({
@@ -12,14 +13,16 @@ export const metadata: Metadata = pageMeta({
   path: "/panduan",
 });
 
-export default function GuidePage() {
+/** The topics are content edited in "Kelola Panduan" (GET /api/landing/guides, landing cache). */
+export default async function GuidePage() {
+  const guides = await getGuides("public");
   return (
     <div className={styles.page}>
       <PageHeader title="PANDUAN & BANTUAN" backHref="/" />
       <p className={styles.intro}>
         Panduan penggunaan Trans Niaga untuk penjual (UMKM) dan administrator. Klik salah satu topik untuk melihat langkah-langkahnya.
       </p>
-      <GuideList guides={GUIDES.filter((g) => g.audience.includes("public"))} />
+      {guides ? <GuideList guides={guides} /> : <Alert variant="destructive">Panduan sedang tidak dapat dimuat. Silakan coba lagi sebentar lagi.</Alert>}
     </div>
   );
 }

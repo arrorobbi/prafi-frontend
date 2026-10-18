@@ -360,3 +360,45 @@ export interface ServerMetrics {
     lastBackup: { file: string; at: string; bytes: number } | null;
   };
 }
+
+/** Where a Panduan topic is shown: public = /panduan, tenant = Bantuan & Ketentuan in the seller dashboard */
+export type GuideAudience = "public" | "tenant";
+
+export type GuideIcon =
+  | "search" | "user" | "users" | "store" | "plus" | "check" | "bell" | "camera" | "lock" | "settings"
+  | "docs" | "headset" | "help" | "box" | "tag" | "message" | "calculator" | "home" | "heart" | "map";
+
+/** One numbered step of a Panduan topic; each picture is optional (wide screens / phones) */
+export interface GuideStep {
+  id: number;
+  /** Paragraphs, "- " lists, **bold**, [links](/path) */
+  body: string;
+  imageAlt: string | null;
+  sortOrder: number;
+  desktopImageId: number | null;
+  mobileImageId: number | null;
+  desktopImage: ImageFile | null;
+  mobileImage: ImageFile | null;
+}
+
+/** A Panduan topic (GET /api/landing/guides, GET /api/guides) */
+export interface GuideSection {
+  id: number;
+  /** Anchor on /panduan (/panduan#slug) */
+  slug: string;
+  title: string;
+  summary: string;
+  icon: GuideIcon;
+  color: string;
+  audience: GuideAudience[];
+  intro: string | null;
+  outro: string | null;
+  sortOrder: number;
+  updatedAt: string;
+  steps: GuideStep[];
+  /** GET /api/guides: who changed it last */
+  editor?: { id: string; firstName: string; lastName: string; role: Role } | null;
+}
+
+export type GuideSectionInput = Partial<Pick<GuideSection, "title" | "summary" | "icon" | "color" | "audience" | "intro" | "outro">>;
+export type GuideStepInput = Partial<Pick<GuideStep, "body" | "imageAlt" | "desktopImageId" | "mobileImageId">>;

@@ -1,4 +1,4 @@
-import type { PageMeta, Product, ProductCategory, PublicTenant } from "./types";
+import type { GuideAudience, GuideSection, PageMeta, Product, ProductCategory, PublicTenant } from "./types";
 
 /** Server components call the backend directly (no proxy, no CORS). */
 const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "https://api.transniaga.manokwarikab.go.id").replace(/\/+$/, "");
@@ -102,6 +102,15 @@ export async function getLandingTenant(id: string): Promise<{ tenant: PublicTena
 export async function getSiteTexts(): Promise<{ footerAbout: string } | null> {
   try {
     return (await getPublic<{ footerAbout: string }>("/landing/site")).data;
+  } catch {
+    return null;
+  }
+}
+
+/** The Panduan topics (edited in "Kelola Panduan"). null when the API can't be reached. */
+export async function getGuides(audience: GuideAudience = "public"): Promise<GuideSection[] | null> {
+  try {
+    return (await getPublic<GuideSection[]>("/landing/guides", { audience })).data;
   } catch {
     return null;
   }

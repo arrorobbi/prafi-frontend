@@ -24,12 +24,15 @@ export interface CropSpec {
  * The crop of each place a picture is shown. Product photos are square: they appear as squares in lists and nearly
  * square on the product page. The carousel's centre slide is 2:3; the BUMDES card on Beranda is 16:10.
  */
-export const CROP: Record<"product" | "logo" | "category" | "bumdes" | "face", CropSpec> = {
+export const CROP: Record<"product" | "logo" | "category" | "bumdes" | "face" | "guideDesktop" | "guideMobile", CropSpec> = {
   product: { aspect: 1, ratio: "1:1", width: 1000, height: 1000 },
   logo: { aspect: 1, ratio: "1:1", width: 500, height: 500, round: true },
   category: { aspect: 2 / 3, ratio: "2:3", width: 800, height: 1200 },
   bumdes: { aspect: 16 / 10, ratio: "16:10", width: 1280, height: 800 },
   face: { aspect: 1, ratio: "1:1", width: 720, height: 720, round: true },
+  // Panduan screenshots: a laptop screen, and a phone screen (HP)
+  guideDesktop: { aspect: 16 / 10, ratio: "16:10", width: 1280, height: 800 },
+  guideMobile: { aspect: 9 / 16, ratio: "9:16", width: 720, height: 1280 },
 };
 
 /** "Rasio 1:1 · disarankan 1000 × 1000 px" */

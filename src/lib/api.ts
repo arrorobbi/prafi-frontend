@@ -19,6 +19,10 @@ import type {
   ProductCategory,
   ModeratedReview,
   ReportStatus,
+  GuideAudience,
+  GuideSection,
+  GuideSectionInput,
+  GuideStepInput,
   SiteContent,
   TenantProfile,
   User,
@@ -305,6 +309,21 @@ export const api = {
     changeEmail: (id: string, email: string) => patch<{ user: User; verification: { emailSent: boolean; sentTo: string } }>(`/users/${id}/email`, { email }),
   },
 
+  /** Superadmin, disnakertrans, admin: "Kelola Panduan" (topics, steps and their pictures) */
+  guides: {
+    list: () => get<GuideSection[]>("/guides"),
+    create: (input: GuideSectionInput) => post<GuideSection>("/guides", input),
+    update: (id: number, changes: GuideSectionInput) => patch<GuideSection>(`/guides/${id}`, changes),
+    remove: (id: number) => del<null>(`/guides/${id}`),
+    /** Every topic id, in the new order */
+    reorder: (ids: number[]) => patch<GuideSection[]>("/guides/order", { ids }),
+    addStep: (id: number, input: GuideStepInput) => post<GuideSection>(`/guides/${id}/steps`, input),
+    /** An image id set to null removes that picture (its file is deleted) */
+    updateStep: (id: number, stepId: number, changes: GuideStepInput) => patch<GuideSection>(`/guides/${id}/steps/${stepId}`, changes),
+    removeStep: (id: number, stepId: number) => del<GuideSection>(`/guides/${id}/steps/${stepId}`),
+    reorderSteps: (id: number, ids: number[]) => patch<GuideSection>(`/guides/${id}/steps/order`, { ids }),
+  },
+
   /** Admin, disnakertrans: texts of the public site (menu "Konten Situs") */
   siteContent: {
     get: () => get<SiteContent>("/site-content"),
@@ -335,6 +354,8 @@ export const api = {
     tenants: (q: Paged & { q?: string } = {}) =>
       get<PublicTenant[]>("/landing/tenants", { page: 1, limit: 20, ...q }, true),
     tenant: (id: string) => get<PublicTenant>(`/landing/tenants/${id}`, undefined, true),
+    /** The Panduan topics shown on /panduan (public) or in the seller's Bantuan (tenant) */
+    guides: (audience: GuideAudience = "public") => get<GuideSection[]>("/landing/guides", { audience }, true),
     /** Newest first; meta has ratingAverage and reviewCount */
     reviews: (productId: string, q: Paged = {}) =>
       request<Review[]>("GET", `/landing/products/${productId}/reviews`, { query: { page: 1, limit: 10, ...q }, anonymous: true }) as Promise<{

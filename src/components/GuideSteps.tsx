@@ -1,24 +1,24 @@
+import { imageSrc } from "@/lib/format";
+import type { GuideStep } from "@/lib/types";
+import { GuideImage } from "./GuideImage";
+import { RichText } from "./RichText";
 import styles from "./GuideSteps.module.css";
-import { Thumb } from "./ui";
 
-/** Numbered step-by-step list for the guides; each step can show a screenshot. */
-export function Steps({ children }: { children: React.ReactNode }) {
-  return <ol className={styles.steps}>{children}</ol>;
-}
-
-/**
- * One step. `image` is a file in public/panduan (without extension); the highlighted part of the
- * screenshot is what the step talks about. Clicking the picture opens it larger in the popup (Lightbox).
- */
-export function Step({ image, alt, children }: { image?: string; alt?: string; children: React.ReactNode }) {
+/** Numbered step-by-step list of a Panduan topic; each step can show a screenshot (desktop and/or HP). */
+export function GuideSteps({ steps }: { steps: GuideStep[] }) {
+  if (!steps.length) return null;
   return (
-    <li className={styles.step}>
-      <div className={styles.text}>{children}</div>
-      {image && (
-        <div className={styles.figure}>
-          <Thumb zoom src={`/panduan/${image}.jpg`} alt={alt ?? "Contoh tampilan"} width={1024} height={640} />
-        </div>
-      )}
-    </li>
+    <ol className={styles.steps}>
+      {steps.map((s) => (
+        <li key={s.id} className={styles.step}>
+          <RichText text={s.body} className={styles.text} />
+          <GuideImage
+            desktop={s.desktopImage ? imageSrc(s.desktopImage) : null}
+            mobile={s.mobileImage ? imageSrc(s.mobileImage) : null}
+            alt={s.imageAlt || "Contoh tampilan"}
+          />
+        </li>
+      ))}
+    </ol>
   );
 }

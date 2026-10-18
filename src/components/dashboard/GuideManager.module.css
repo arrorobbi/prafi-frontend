@@ -1,0 +1,320 @@
+.toolbar p {
+  font-size: 0.88rem;
+}
+
+.list {
+  display: grid;
+  gap: 16px;
+}
+
+.section {
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow-lg);
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 22px;
+}
+
+.icon svg,
+.iconPreview svg {
+  width: 38px;
+  height: 38px;
+  flex: none;
+}
+
+.title {
+  display: grid;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.title strong {
+  color: var(--navy);
+  font-size: 1rem;
+}
+
+.title > span {
+  color: var(--gray-700);
+  font-size: 0.85rem;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.actions,
+.stepActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.up {
+  transform: rotate(180deg);
+}
+
+.body {
+  display: grid;
+  gap: 14px;
+  padding: 4px 22px 20px;
+  border-top: 1px solid var(--gray-200);
+  padding-top: 16px;
+}
+
+.textBox {
+  display: grid;
+  gap: 6px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--gray-100);
+}
+
+.boxLabel {
+  color: var(--orange);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.rich {
+  display: grid;
+  gap: 6px;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.rich ul {
+  padding-left: 18px;
+  list-style: disc;
+}
+
+.rich a {
+  color: var(--orange);
+  font-weight: 600;
+}
+
+.clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.steps {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto auto;
+  align-items: start;
+  gap: 12px 16px;
+  padding: 12px;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+}
+
+.num {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: var(--white);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.thumbs {
+  display: flex;
+  gap: 10px;
+}
+
+.thumbs figure {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  margin: 0;
+}
+
+.thumbs figcaption {
+  color: var(--gray-700);
+  font-size: 0.7rem;
+}
+
+.thumbDesktop,
+.thumbMobile {
+  border-radius: 8px;
+  object-fit: cover;
+  background: var(--gray-100);
+}
+
+.thumbDesktop {
+  width: 112px;
+  height: 70px;
+}
+
+.thumbMobile {
+  width: 40px;
+  height: 70px;
+}
+
+.none {
+  display: grid;
+  place-items: center;
+  color: var(--gray-500);
+  border: 1px dashed var(--gray-300);
+}
+
+.stepActions {
+  max-width: 90px;
+}
+
+/* forms */
+.form {
+  display: grid;
+  gap: 14px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 14px;
+}
+
+.iconPick {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.select {
+  flex: 1;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--gray-300);
+  border-radius: 999px;
+  background: var(--white);
+}
+
+.colors {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.swatch {
+  width: 30px;
+  height: 30px;
+  border: 3px solid var(--white);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--gray-300);
+  cursor: pointer;
+}
+
+.swatchOn {
+  box-shadow: 0 0 0 2px var(--navy);
+}
+
+.colorInput {
+  width: 38px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--orange);
+}
+
+.help {
+  color: var(--gray-700);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.help code {
+  padding: 1px 5px;
+  border-radius: 5px;
+  background: var(--gray-100);
+  font-size: 0.75rem;
+}
+
+.pickers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 16px;
+}
+
+.picker {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+.removeNote {
+  color: #b91c1c;
+  font-size: 0.78rem;
+}
+
+@media (max-width: 720px) {
+  .head {
+    flex-wrap: wrap;
+    padding: 14px;
+  }
+
+  .actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .body {
+    padding: 14px;
+  }
+
+  .step {
+    grid-template-columns: 30px minmax(0, 1fr);
+  }
+
+  .thumbs,
+  .stepActions {
+    grid-column: 2;
+    max-width: none;
+    justify-content: flex-start;
+  }
+}
