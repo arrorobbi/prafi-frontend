@@ -97,3 +97,12 @@ export async function getLandingTenant(id: string): Promise<{ tenant: PublicTena
     return { tenant: null, failed: !isNotFound(err) };
   }
 }
+
+/** Texts of the site staff edit in "Konten Situs" (the footer's about text). null when the API can't be reached. */
+export async function getSiteTexts(): Promise<{ footerAbout: string } | null> {
+  try {
+    return (await getPublic<{ footerAbout: string }>("/landing/site")).data;
+  } catch {
+    return null;
+  }
+}

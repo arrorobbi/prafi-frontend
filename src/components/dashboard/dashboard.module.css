@@ -292,3 +292,9 @@
   color: var(--gray-500);
   font-size: 0.75rem;
 }
+
+/* Several buttons in one table cell, one under the other (keeps the table narrow) */
+.stackedActions {
+  flex-direction: column;
+  align-items: stretch;
+}

@@ -8,6 +8,7 @@ import { useAsync } from "@/lib/useAsync";
 import { IconFacebook, IconMapPin, IconWhatsapp } from "../Icons";
 import { Modal } from "../Modal";
 import { EmptyState, Loading, Pagination, Thumb } from "../ui";
+import { EmailIssueNote } from "./EmailIssueNote";
 import styles from "./dashboard.module.css";
 import local from "./TenantProfiles.module.css";
 import { Button, buttonVariants } from "@/components/shadcn/button";
@@ -17,7 +18,10 @@ import { Alert } from "@/components/shadcn/alert";
 const LIMIT = 10;
 const isLink = (v?: string | null): v is string => !!v && v !== "-";
 
-/** Every shop profile, read-only (GET /api/tenants — superadmin, disnakertrans, admin). */
+/**
+ * Every shop profile, read-only (GET /api/tenants — superadmin, disnakertrans, admin). Owners whose emails did not
+ * arrive (bounce check) get a note.
+ */
 export function TenantProfiles() {
   const [page, setPage] = useState(1);
   const [detail, setDetail] = useState<TenantProfile | null>(null);
@@ -52,7 +56,10 @@ export function TenantProfiles() {
                     </TableCell>
                     <TableCell data-label="Nama Toko">{t.name}</TableCell>
                     <TableCell data-label="Wilayah">{t.area}</TableCell>
-                    <TableCell data-label="Pemilik">{fullName(t.owner)}</TableCell>
+                    <TableCell data-label="Pemilik">
+                      {fullName(t.owner)}
+                      <EmailIssueNote issue={t.owner?.emailIssue} detail={t.owner?.emailIssueDetail} at={t.owner?.emailIssueAt} />
+                    </TableCell>
                     <TableCell data-label="">
                       <Button type="button" variant="blue" size="sm" onClick={() => setDetail(t)}>
                         Lihat Detail
@@ -90,6 +97,8 @@ export function TenantProfiles() {
               <dt>Pemilik</dt>
               <dd>
                 {fullName(detail.owner)} · {detail.owner?.email}
+                {detail.owner?.phoneNumber && ` · ${detail.owner.phoneNumber}`}
+                <EmailIssueNote issue={detail.owner?.emailIssue} detail={detail.owner?.emailIssueDetail} at={detail.owner?.emailIssueAt} full />
               </dd>
             </dl>
             <div className={local.links}>

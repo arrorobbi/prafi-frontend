@@ -47,10 +47,35 @@ export interface User {
   tenantName: string | null;
   mailActive: boolean;
   passwordChangedAt: string | null;
+  /** Our emails to this address did not arrive (bounce check); null = no known problem */
+  emailIssue?: EmailIssue | null;
+  /** The receiving server's own words */
+  emailIssueDetail?: string | null;
+  emailIssueAt?: string | null;
   createdAt: string;
   updatedAt: string;
   faceImage?: ImageFile | null;
   approval?: Approval | null;
+  /** GET /api/users, tenants: their shop profile (null until they create it) */
+  tenant?: TenantProfile | null;
+}
+
+/** Why our emails don't reach an address: no such mailbox, mailbox full, refused, still retrying, or our send failed */
+export type EmailIssue = "not_found" | "mailbox_full" | "rejected" | "delayed" | "send_failed";
+
+/** GET /api/site-content: one editable text of the public site */
+export interface SiteContentField {
+  value: string;
+  default: string;
+  maxLength: number;
+  /** Never saved: the default text is shown */
+  isDefault: boolean;
+  updatedAt: string | null;
+  updatedBy: { id: string; name: string; role: Role } | null;
+}
+
+export interface SiteContent {
+  footerAbout: SiteContentField;
 }
 
 export interface ProductOwner {
@@ -59,6 +84,12 @@ export interface ProductOwner {
   firstName: string;
   lastName: string;
   email?: string;
+  /** Staff tenant lists (GET /api/tenants): contact and whether our emails reach the owner */
+  phoneNumber?: string;
+  mailActive?: boolean;
+  emailIssue?: EmailIssue | null;
+  emailIssueDetail?: string | null;
+  emailIssueAt?: string | null;
   /** Public product responses: the owner's UMKM profile, for "Lihat UMKM" and its contact buttons */
   tenant?: {
     id: string;

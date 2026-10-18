@@ -2,12 +2,13 @@
 
 import { DashboardShell, type NavItem } from "@/components/dashboard/DashboardShell";
 import { RoleProfile } from "@/components/dashboard/RoleProfile";
-import { IconActivity, IconBell, IconBox, IconDocs, IconHome, IconServer, IconSettings, IconStore, IconTag, IconUser, IconUsers } from "@/components/Icons";
+import { IconActivity, IconBell, IconBox, IconDocs, IconHome, IconIdCard, IconServer, IconSettings, IconStore, IconTag, IconUser, IconUsers } from "@/components/Icons";
 
 const NAV: NavItem[] = [
   { href: "/superadmin", label: "Dashboard", icon: IconHome, exact: true },
   { href: "/superadmin/disnakertrans", label: "Akun Disnakertrans", icon: IconUser },
   { href: "/superadmin/pengguna", label: "Semua Pengguna", icon: IconUsers },
+  { href: "/superadmin/profil-pengguna", label: "Profil Pengguna", icon: IconIdCard },
   { href: "/superadmin/produk", label: "Data Produk", icon: IconBox },
   { href: "/superadmin/umkm", label: "Data UMKM", icon: IconStore },
   { href: "/superadmin/kategori", label: "Kategori Produk", icon: IconTag },

@@ -341,7 +341,10 @@ export const GUIDES: Guide[] = [
           <b>Dashboard</b> menampilkan grafik <b>Statistik</b>: aktivitas produk, UMKM, dan akun baru per hari, status
           produk, produk per kategori, dan akun per role (pilih 7, 30, atau 90 hari terakhir).{" "}
           <b>Manajemen UMKM</b>: aktifkan/nonaktifkan akun penjual (tab <b>Akun Penjual</b>) dan lihat detail toko
-          (tab <b>Profil Toko</b>). <b>Manajemen Produk</b> menampilkan semua produk per status, kategori, dan
+          (tab <b>Profil Toko</b>). Tombol <b>Detail</b> menampilkan foto wajah, email, telepon, nama toko, dan alamat
+          penjual; di sana admin dapat <b>mengubah email</b> penjual (penjual lalu memverifikasi email baru dengan kode
+          OTP sebelum login lagi). Catatan merah di bawah email berarti email verifikasi/OTP tidak sampai.
+          <b> Konten Situs</b>: ubah teks <b>Tentang</b> di footer situs. <b>Manajemen Produk</b> menampilkan semua produk per status, kategori, dan
           penjual; <b>Notifikasi</b> berisi pengajuan produk baru dan pendaftaran penjual.
         </Step>
         <Step>
@@ -379,10 +382,12 @@ export const GUIDES: Guide[] = [
         <p>
           <b>Disnakertrans</b> juga dapat menyetujui, menolak, dan menonaktifkan produk di menu{" "}
           <b>Konfirmasi Produk</b>, sama seperti admin, dan menerima notifikasi produk yang sama. Disnakertrans juga
-          mengelola <b>Kategori Produk</b> (tambah, ubah, hapus, dan gambar carousel Beranda) seperti admin.
+          mengelola <b>Kategori Produk</b> (tambah, ubah, hapus, dan gambar carousel Beranda) dan <b>Konten Situs</b> (teks footer) seperti admin.
         </p>
         <p>
-          <b>Superadmin</b> dapat melihat semua data (hanya baca) dan membuka menu <b>Log API</b>: catatan setiap
+          <b>Superadmin</b> dapat melihat semua data (hanya baca). Menu <b>Profil Pengguna</b> menampilkan satu kartu per
+          akun berisi data akun, data toko, dan log aktivitasnya. Akun yang email verifikasi/OTP-nya tidak sampai
+          (alamat tidak ditemukan, kotak masuk penuh) diberi catatan merah di <b>Semua Pengguna</b>. Menu <b>Log API</b> berisi catatan setiap
           penambahan, perubahan, dan penghapusan data oleh pengguna yang login, serta semua aktivitas akun (login,
           password salah, daftar, OTP, lupa/reset password) termasuk dari tamu beserta email yang dicoba, baik yang
           berhasil maupun yang gagal. Permintaan baca dan permintaan tamu lainnya tidak dicatat. Gunakan filter{" "}

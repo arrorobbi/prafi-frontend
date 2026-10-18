@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api, errorMessage } from "@/lib/api";
 import { formatDate, fullName } from "@/lib/format";
 import type { Role, User } from "@/lib/types";
 import { useAsync } from "@/lib/useAsync";
+import { IconSearch } from "../Icons";
 import { ConfirmDialog } from "../Modal";
 import { useToast } from "../Toast";
 import { EmptyState, Loading, Pagination } from "../ui";
@@ -14,7 +15,9 @@ import { Input } from "@/components/shadcn/input";
 import { Badge } from "@/components/shadcn/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/shadcn/table";
 import { Alert } from "@/components/shadcn/alert";
+import { EmailIssueNote } from "./EmailIssueNote";
 import { PillTabs } from "./PillTabs";
+import { SellerDetail } from "./SellerDetail";
 
 const LIMIT = 10;
 
@@ -35,13 +38,15 @@ function accountStatus(u: User) {
 /**
  * Accounts from GET /api/users (the API limits what each role sees). With `approvable`, each row can be
  * activated/deactivated (PATCH /api/approvals/:id?type=user). With `canResend`, unverified accounts can get a
- * new verification email.
+ * new verification email. With `sellerDetail` (admin), each seller opens a detail with the shop data where the
+ * email can be changed. Accounts whose emails did not arrive (bounce check) get a note under their email.
  */
 export function UserAccounts({
   role,
   roleTabs,
   approvable = false,
   canResend = false,
+  sellerDetail = false,
   noun = "akun",
   reloadKey = 0,
 }: {
@@ -49,6 +54,7 @@ export function UserAccounts({
   roleTabs?: Role[];
   approvable?: boolean;
   canResend?: boolean;
+  sellerDetail?: boolean;
   noun?: string;
   reloadKey?: number;
 }) {
@@ -58,10 +64,23 @@ export function UserAccounts({
   const [target, setTarget] = useState<User | null>(null);
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
+  const [draft, setDraft] = useState("");
+  const [query, setQuery] = useState("");
+  const [onlyIssues, setOnlyIssues] = useState(false);
+  const [detail, setDetail] = useState<User | null>(null);
   const { data, loading, error, reload } = useAsync(
-    () => api.users.list({ page, limit: LIMIT, ...(tab ? { role: tab } : {}) }),
-    [page, tab, reloadKey],
+    () => api.users.list({ page, limit: LIMIT, ...(tab ? { role: tab } : {}), ...(query ? { q: query } : {}), ...(onlyIssues ? { emailIssue: true } : {}) }),
+    [page, tab, query, onlyIssues, reloadKey],
   );
+
+  // Search after a short pause in typing
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setQuery(draft.trim());
+      setPage(1);
+    }, 350);
+    return () => clearTimeout(t);
+  }, [draft]);
 
   const selectTab = (r: Role | "") => {
     setTab(r);
@@ -70,6 +89,9 @@ export function UserAccounts({
   const active = target?.approval?.isActive === true;
   const showTenant = tab === "tenant" || !tab;
   const showRole = !!roleTabs;
+  const hasActions = approvable || canResend || sellerDetail;
+  // With the detail view, phone and sign-up date are shown there, which keeps the table narrow enough
+  const showContact = !sellerDetail;
 
   const toggle = async () => {
     if (!target) return;
@@ -106,12 +128,34 @@ export function UserAccounts({
         />
       )}
       <div className={styles.panel}>
+        <div className={styles.toolbar}>
+          <label className={styles.search}>
+            <span className="sr-only">Cari {noun}</span>
+            <input placeholder="Cari nama, email, telepon, toko" value={draft} onChange={(e) => setDraft(e.target.value)} />
+            <IconSearch />
+          </label>
+          <span className={styles.toolbarSpacer} />
+          <Button
+            type="button"
+            size="sm"
+            variant={onlyIssues ? "red" : "light"}
+            aria-pressed={onlyIssues}
+            onClick={() => {
+              setOnlyIssues((v) => !v);
+              setPage(1);
+            }}
+          >
+            {onlyIssues ? "Tampilkan Semua" : "Email Tidak Terkirim"}
+          </Button>
+        </div>
         {loading && !data ? (
           <Loading />
         ) : error ? (
           <Alert variant="destructive">{error}</Alert>
         ) : data!.data.length === 0 ? (
-          <EmptyState title={`Belum ada ${noun}`} />
+          <EmptyState title={query || onlyIssues ? `Tidak ada ${noun} yang cocok` : `Belum ada ${noun}`}>
+            {onlyIssues && !query ? "Semua email verifikasi/OTP terkirim tanpa masalah yang tercatat." : undefined}
+          </EmptyState>
         ) : (
           <>
             <div className="table-wrap">
@@ -122,11 +166,11 @@ export function UserAccounts({
                     {showRole && <TableHead>Role</TableHead>}
                     {showTenant && <TableHead>Nama Toko</TableHead>}
                     <TableHead>Email</TableHead>
-                    <TableHead>Telepon</TableHead>
-                    <TableHead>Terdaftar</TableHead>
+                    {showContact && <TableHead>Telepon</TableHead>}
+                    {showContact && <TableHead>Terdaftar</TableHead>}
                     <TableHead>Verifikasi</TableHead>
                     <TableHead>Status</TableHead>
-                    {(approvable || canResend) && <TableHead className="col-actions">Aksi</TableHead>}
+                    {hasActions && <TableHead className="col-actions">Aksi</TableHead>}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -139,9 +183,10 @@ export function UserAccounts({
                         {showTenant && <TableCell data-label="Nama Toko">{u.tenantName ?? "-"}</TableCell>}
                         <TableCell data-label="Email" className={styles.wrap}>
                           {u.email}
+                          <EmailIssueNote issue={u.emailIssue} detail={u.emailIssueDetail} at={u.emailIssueAt} />
                         </TableCell>
-                        <TableCell data-label="Telepon">{u.phoneNumber}</TableCell>
-                        <TableCell data-label="Terdaftar">{formatDate(u.createdAt)}</TableCell>
+                        {showContact && <TableCell data-label="Telepon">{u.phoneNumber}</TableCell>}
+                        {showContact && <TableCell data-label="Terdaftar">{formatDate(u.createdAt)}</TableCell>}
                         <TableCell data-label="Verifikasi">
                           <Badge variant={u.mailActive ? "active" : "pending"}>
                             {u.mailActive ? "Terverifikasi" : "Belum"}
@@ -155,9 +200,14 @@ export function UserAccounts({
                             </small>
                           )}
                         </TableCell>
-                        {(approvable || canResend) && (
+                        {hasActions && (
                           <TableCell data-label="">
-                            <span className="actions">
+                            <span className={`actions ${sellerDetail ? styles.stackedActions : ""}`}>
+                              {sellerDetail && (
+                                <Button type="button" variant="blue" size="sm" onClick={() => setDetail(u)}>
+                                  Detail
+                                </Button>
+                              )}
                               {approvable && (
                                 <button
                                   type="button"
@@ -195,6 +245,17 @@ export function UserAccounts({
           </>
         )}
       </div>
+
+      {sellerDetail && (
+        <SellerDetail
+          user={detail}
+          onClose={() => setDetail(null)}
+          onChanged={(u) => {
+            setDetail(u);
+            reload();
+          }}
+        />
+      )}
 
       <ConfirmDialog
         open={!!target}

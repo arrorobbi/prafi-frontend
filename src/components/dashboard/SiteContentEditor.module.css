@@ -1,0 +1,64 @@
+.textarea {
+  min-height: 180px;
+  border-radius: 18px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.over {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.previewLabel {
+  margin: 20px 0 8px;
+  color: var(--navy);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* Like the footer's about band (SiteFooter.module.css) */
+.preview {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 28px;
+  border-radius: 18px;
+  background: var(--navy);
+  color: var(--white);
+}
+
+.preview img {
+  flex-shrink: 0;
+}
+
+.previewText {
+  display: grid;
+  gap: 0.75em;
+  padding-left: 24px;
+  border-left: 3px solid var(--white);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  text-align: justify;
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  margin: 14px 0 18px;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 640px) {
+  .preview {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .previewText {
+    padding: 16px 0 0;
+    border-left: 0;
+    border-top: 3px solid var(--white);
+    text-align: left;
+  }
+}

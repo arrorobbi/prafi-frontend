@@ -58,10 +58,10 @@ in the **backend** `.env` to this site's URL.
 | `/verifikasi?userId=&email=` | public | Email OTP for accounts that tried to log in unverified |
 | `/lupa-password`, `/reset-password` | public | Forgot / reset password |
 | `/aktivasi?userId=&token=` | public | Disnakertrans account activation, opened from the email: temporary password → own password (the path is fixed by the backend) |
-| `/admin/*` | admin | Dashboard, Konfirmasi Produk, Manajemen Produk, Kategori Produk (with carousel image), Manajemen UMKM, Notifikasi, Pengaturan |
+| `/admin/*` | admin | Dashboard, Konfirmasi Produk, Manajemen Produk, Kategori Produk (with carousel image), Manajemen UMKM (search, seller **Detail** with face photo / phone / store / address, change a seller's email: `components/dashboard/SellerDetail.tsx`), Konten Situs (footer about text: `components/dashboard/SiteContentEditor.tsx`), Notifikasi, Pengaturan |
 | `/tenant/*` | tenant | Dashboard, Produk Saya, Tambah/Ubah Produk, Produk Ditolak, Ulasan Produk, Kalkulator Profit & Iklan (`lib/adCalculator.ts`, nothing is saved), Profil UMKM, Notifikasi, Bantuan, Pengaturan |
-| `/superadmin/*` | superadmin | Dashboard, Akun Disnakertrans (create without a password + resend the activation email), Semua Pengguna, Data Produk, Data UMKM, Kategori Produk (read-only), Panduan Server (sidebar link to the backend's `/api/docs/server`, opens in a new tab with the same login; English / Bahasa Indonesia, light / dark; its feature screenshots are `public/panduan/fitur-*.jpg`), Monitor Server (live CPU, RAM and disk, services and storage: `components/dashboard/ServerMonitor.tsx`, first reading from `GET /api/server/metrics`, then the `server:metrics` Socket.IO event), Log API (signed-in users' create/update/delete requests and every auth action incl. guests' failed logins with the email tried, successful and failed, with result summary), Notifikasi, Pengaturan |
-| `/disnakertrans/*` | disnakertrans | Dashboard, Aktivasi Admin (activate/deactivate admins), Konfirmasi Produk (approve/reject/deactivate, like admin), Data Produk, Kategori Produk (manage, like admin), Data UMKM, Notifikasi, Pengaturan |
+| `/superadmin/*` | superadmin | Dashboard, Akun Disnakertrans (create without a password + resend the activation email), Semua Pengguna, Profil Pengguna (a card per account: user data, shop data and its API log via `GET /api/logs?email=&emailExact=true`: `components/dashboard/UserProfiles.tsx`), Data Produk, Data UMKM, Kategori Produk (read-only), Panduan Server (sidebar link to the backend's `/api/docs/server`, opens in a new tab with the same login; English / Bahasa Indonesia, light / dark; its feature screenshots are `public/panduan/fitur-*.jpg`), Monitor Server (live CPU, RAM and disk, services and storage: `components/dashboard/ServerMonitor.tsx`, first reading from `GET /api/server/metrics`, then the `server:metrics` Socket.IO event), Log API (signed-in users' create/update/delete requests and every auth action incl. guests' failed logins with the email tried, successful and failed, with result summary), Notifikasi, Pengaturan |
+| `/disnakertrans/*` | disnakertrans | Dashboard, Aktivasi Admin (activate/deactivate admins), Konfirmasi Produk (approve/reject/deactivate, like admin), Data Produk, Kategori Produk (manage, like admin), Data UMKM, Konten Situs (like admin), Notifikasi, Pengaturan |
 
 ## UI components (shadcn/ui + Tailwind)
 
@@ -124,7 +124,10 @@ slug from the API and fall back to the id for a row that has none.
 
 Every endpoint in the API docs is wired in `src/lib/api.ts`. Admin-only/tenant-only endpoints are used by those
 dashboards; the superadmin creates disnakertrans accounts, reads everything and views the API log; disnakertrans
-activates admins and approves products like admins. Tenants need a complete UMKM profile and an account photo before
+activates admins and approves products like admins. Accounts whose emails did not arrive (backend bounce check,
+`user.emailIssue`) get a red `EmailIssueNote` in the account and shop lists. The footer's about text comes from
+`GET /api/landing/site` (`getSiteTexts` in `lib/server-api.ts`, landing cache tag) and is rendered by `RichText`
+(plain text, paragraphs, `**bold**`; never HTML). Tenants need a complete UMKM profile and an account photo before
 they can add products.
 
 ### Landing page cache

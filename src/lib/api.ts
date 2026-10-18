@@ -19,6 +19,7 @@ import type {
   ProductCategory,
   ModeratedReview,
   ReportStatus,
+  SiteContent,
   TenantProfile,
   User,
   Verification,
@@ -132,8 +133,10 @@ async function request<T>(method: string, path: string, opts: RequestOptions = {
   if (!res.ok || json.success === false) {
     const e = json.error;
     const err = new ApiError(res.status, e?.code ?? `HTTP_${res.status}`, e?.message ?? httpErrorMessage(res.status), e?.details);
-    // An authenticated request rejected with 401: the session is over (expired, logged out elsewhere, password reset)
-    if (res.status === 401 && token && typeof window !== "undefined") {
+    // An authenticated request rejected with 401 (expired, logged out elsewhere, password reset), or because the
+    // account can no longer be used (deactivated, or its email was changed and must be verified): the session is over
+    const accountBlocked = res.status === 403 && (err.code === "EMAIL_NOT_VERIFIED" || err.code === "USER_NOT_ACTIVATED");
+    if ((res.status === 401 || accountBlocked) && token && typeof window !== "undefined") {
       window.dispatchEvent(new CustomEvent(UNAUTHORIZED_EVENT, { detail: err.message }));
     }
     throw err;
@@ -293,7 +296,18 @@ export const api = {
   },
 
   users: {
-    list: (q: Paged & { role?: Role } = {}) => get<User[]>("/users", { page: 1, limit: 20, ...q }),
+    /** q: name, email, phone or store name; emailIssue: only accounts whose emails did not arrive */
+    list: (q: Paged & { role?: Role; q?: string; emailIssue?: boolean } = {}) =>
+      get<User[]>("/users", { page: 1, limit: 20, ...q }),
+    /** Admin: a seller's new email; the seller verifies it (OTP) before logging in again */
+    changeEmail: (id: string, email: string) => patch<{ user: User; verification: { emailSent: boolean; sentTo: string } }>(`/users/${id}/email`, { email }),
+  },
+
+  /** Admin, disnakertrans: texts of the public site (menu "Konten Situs") */
+  siteContent: {
+    get: () => get<SiteContent>("/site-content"),
+    /** "" = back to the default text */
+    update: (changes: { footerAbout?: string }) => patch<SiteContent>("/site-content", changes),
   },
 
   approvals: {
@@ -387,6 +401,8 @@ export const api = {
         status?: string;
         path?: string;
         email?: string;
+        /** true: the whole address must match (one person's log) */
+        emailExact?: boolean;
         errorCode?: string;
         userId?: string;
         from?: string;

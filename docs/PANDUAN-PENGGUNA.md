@@ -194,6 +194,7 @@ Penjual menerima notifikasi untuk setiap perubahan pada produknya:
 
   ![Lupa password](../public/panduan/akun-2-lupa-password.jpg)
 
+- **Email diubah oleh administrator (penjual):** jika admin memperbaiki email akun Anda, Anda keluar dari sesi yang sedang berjalan. Email lama menerima pemberitahuan, dan email baru menerima **kode OTP**. Saat login dengan email baru, masukkan kode itu di halaman verifikasi; kode kedaluwarsa dapat diminta ulang di sana.
 - Sesi login berakhir otomatis setelah **1 jam tanpa aktivitas**: selama Anda masih memakai situs, sesi diperpanjang sendiri. Paling lama 12 jam sejak login; setelah itu silakan login kembali.
 
 ---
@@ -214,8 +215,9 @@ Penjual menerima notifikasi untuk setiap perubahan pada produknya:
 | Konfirmasi Produk | Daftar produk yang menunggu keputusan. ✔ untuk menerima, ✖ untuk menolak dengan alasan, atau **Lihat Detail** |
 | Manajemen Produk | Semua produk dengan tab status, pencarian, filter kategori, dan filter penjual |
 | Kategori Produk | Tambah, ubah, dan hapus kategori produk beserta **gambarnya** (wajib; tampil di carousel Beranda, dapat diganti tetapi tidak dihapus). Kategori yang masih dipakai produk tidak bisa dihapus |
-| Manajemen UMKM | *Akun Penjual*: aktifkan/nonaktifkan akun. *Profil Toko*: detail toko, WhatsApp, lokasi |
+| Manajemen UMKM | *Akun Penjual*: cari penjual, aktifkan/nonaktifkan akun, dan **Detail** (foto wajah, nama, email, telepon, nama toko, alamat). Admin hanya dapat **mengubah email** penjual; penjual lalu harus memverifikasi email baru dengan kode OTP sebelum dapat login lagi, dan email lama menerima pemberitahuan. Tombol **Email Tidak Terkirim** menampilkan penjual yang email verifikasi/OTP-nya tidak sampai (catatan merah: alamat tidak ditemukan, kotak masuk penuh, ditolak). *Profil Toko*: detail toko, WhatsApp, lokasi |
 | Laporan Ulasan | Ulasan yang dilaporkan penjual (tab *Menunggu*, *Disembunyikan*, *Dipertahankan*, *Semua*). **Sembunyikan** (tidak tampil, tidak dihitung dalam rating), **Tetap Tampilkan**, atau **Tampilkan Lagi**, dengan catatan opsional untuk penjual |
+| Konten Situs | Ubah teks **Tentang** di footer semua halaman publik. Baris kosong = paragraf baru, `**teks**` = tebal. Pratinjau tampil di bawah kotak teks; **Kembalikan Teks Bawaan** memulihkan teks asli. Perubahan langsung tampil di situs |
 | Notifikasi | Produk baru diajukan, produk diperbarui, penjual baru, profil toko diperbarui, ulasan dilaporkan |
 | Pengaturan Administrator | Data akun, foto, dan password |
 
@@ -254,7 +256,8 @@ tautan di halaman aktivasi atau kepada superadmin.
 | Dashboard | Jumlah admin, admin belum aktif, UMKM, dan produk, serta grafik **Statistik** (aktivitas, status produk, produk per kategori, akun admin) |
 | Aktivasi Admin | Aktifkan atau nonaktifkan akun admin (alasan opsional). Admin baru hanya bisa login setelah diaktifkan, dan menerima email saat akunnya diaktifkan (alasan yang diisi ikut tercantum) |
 | Konfirmasi Produk | Menyetujui, menolak (dengan alasan), atau menonaktifkan produk — sama seperti admin |
-| Data Produk / Data UMKM | Melihat semua produk dan profil toko; produk dibuka ke halaman konfirmasinya |
+| Data Produk / Data UMKM | Melihat semua produk dan profil toko; produk dibuka ke halaman konfirmasinya. Pemilik toko yang email verifikasi/OTP-nya tidak sampai diberi catatan merah |
+| Konten Situs | Mengubah teks **Tentang** di footer situs — sama seperti admin |
 | Kategori Produk | Tambah, ubah, dan hapus kategori produk beserta gambarnya (wajib; carousel Beranda) — sama seperti admin |
 | Laporan Ulasan | Memeriksa ulasan yang dilaporkan penjual dan menyembunyikan / mempertahankannya — sama seperti admin |
 | Notifikasi | *Admin Baru Menunggu Aktivasi*, serta notifikasi produk yang sama dengan admin (produk baru, diperbarui, ditayangkan) |
@@ -272,7 +275,8 @@ Akun superadmin dibuat oleh pengelola server. Superadmin **hanya membaca** data,
 | --- | --- |
 | Dashboard | Ringkasan akun per role, produk, dan akun terbaru, serta grafik **Statistik** (aktivitas, status produk, produk per kategori, akun per role) |
 | Akun Disnakertrans | **TAMBAH AKUN**: isi nama, telepon, dan email (tanpa password). Sistem mengirim kata sandi sementara dan tautan aktivasi ke email itu; pemilik akun membuat password sendiri saat aktivasi. Bila email tidak sampai atau kedaluwarsa, klik **Kirim Ulang Verifikasi** (mengirim tautan dan kata sandi sementara baru) |
-| Semua Pengguna | Semua akun, disaring per role |
+| Semua Pengguna | Semua akun, disaring per role, dengan pencarian. Akun yang email verifikasi/OTP-nya **tidak sampai** (alamat tidak ditemukan, kotak masuk penuh, ditolak) diberi catatan merah; tombol **Email Tidak Terkirim** menampilkan akun-akun itu saja |
+| Profil Pengguna | Satu kartu per akun: data akun, data toko (penjual), dan **Log Aktivitas** akun tersebut (berdasarkan emailnya; buka per kartu, **Muat Lebih Banyak** untuk log lama). Bisa dicari dan disaring per role |
 | Data Produk / Data UMKM / Kategori Produk | Melihat data (hanya baca) |
 | Log API | Catatan setiap penambahan, perubahan, dan penghapusan data **oleh pengguna yang login**, serta **semua aktivitas akun** (login, password/email salah, daftar, OTP, lupa/reset password, logout) termasuk dari tamu beserta **email yang dicoba**, baik yang berhasil maupun yang gagal. Permintaan baca dan permintaan tamu lainnya (ulasan, bot) tidak dicatat. Isi: siapa, kapan, field yang dikirim, dan ringkasan hasil atau error-nya. Filter **Hasil** (Berhasil / Gagal), method, status, path, email (pengguna atau email yang dicoba), dan tanggal. Log baru muncul otomatis (tanda **● Live**). **Grafik Log**: permintaan per hari (berhasil / gagal), per method, endpoint terbanyak, error terbanyak |
 | Monitor Server | Keadaan server secara langsung: pemakaian **CPU, RAM, dan penyimpanan (disk)** yang diperbarui setiap 3 detik beserta grafik 5 menit terakhir, status layanan (backend, website, database, nginx), dan besar database, foto, serta cadangan. Bila disk terisi 90% atau lebih, sistem juga mengirim **email peringatan** ke email situs |

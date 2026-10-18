@@ -6,7 +6,10 @@ import { UserAccounts } from "@/components/dashboard/UserAccounts";
 import { PageHeader } from "@/components/ui";
 import { PillTabs } from "@/components/dashboard/PillTabs";
 
-/** Seller accounts (GET /api/users, activate/deactivate) and their shop profiles (GET /api/tenants). */
+/**
+ * Seller accounts (GET /api/users: activate/deactivate, detail with the shop data, change the email) and their shop
+ * profiles (GET /api/tenants).
+ */
 export default function ManageSellersPage() {
   const [tab, setTab] = useState<"accounts" | "profiles">("accounts");
   return (
@@ -21,7 +24,7 @@ export default function ManageSellersPage() {
           { value: "profiles", label: "Profil Toko" },
         ]}
       />
-      {tab === "accounts" ? <UserAccounts role="tenant" approvable noun="akun penjual" /> : <TenantProfiles />}
+      {tab === "accounts" ? <UserAccounts role="tenant" approvable sellerDetail noun="akun penjual" /> : <TenantProfiles />}
     </>
   );
 }

@@ -1,0 +1,46 @@
+.note {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 6px;
+  padding: 5px 10px;
+  border-radius: 10px;
+  background: #fde8e8;
+  color: #7a1010;
+  font-size: 0.76rem;
+  line-height: 1.4;
+  white-space: normal;
+}
+
+.mild {
+  background: #fff4d6;
+  color: #5a4300;
+}
+
+.head {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+}
+
+.head svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.when {
+  opacity: 0.75;
+  font-size: 0.72rem;
+}
+
+.detail {
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.6);
+  font-size: 0.72rem;
+  overflow-wrap: anywhere;
+}
