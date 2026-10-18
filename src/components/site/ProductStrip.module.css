@@ -20,6 +20,8 @@
 
 .item {
   flex: 0 0 160px;
+  /* Without this a long product name (kept on one line) widens its card over the next ones */
+  min-width: 0;
   scroll-snap-align: start;
 }
 
