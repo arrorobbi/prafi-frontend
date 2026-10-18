@@ -23,6 +23,7 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [resendUserId, setResendUserId] = useState<string | null>(null);
+  const [resendLabel, setResendLabel] = useState("Kirim ulang tautan aktivasi");
   const passwordRef = useRef<HTMLInputElement>(null);
 
   /**
@@ -50,6 +51,7 @@ function LoginForm() {
     }
     if (params.get("verified")) setNotice("Email berhasil diverifikasi, silakan login.");
     if (params.get("reset")) setNotice("Kata sandi berhasil diubah, silakan login dengan kata sandi baru.");
+    if (params.get("dikonfirmasi")) setNotice("Email berhasil dikonfirmasi, silakan login dengan email baru Anda.");
     if (params.get("aktif")) setNotice("Akun berhasil diaktifkan, silakan login dengan password baru Anda.");
   }, [params]);
 
@@ -71,12 +73,18 @@ function LoginForm() {
     } catch (err) {
       setBusy(false);
       if (err instanceof ApiError && err.code === "EMAIL_NOT_VERIFIED") {
-        const d = err.details as { userId?: string; method?: "otp" | "link" } | undefined;
+        const d = err.details as { userId?: string; method?: "otp" | "link" | "confirm" } | undefined;
         if (d?.userId && d.method === "otp") {
           router.push(`/verifikasi?userId=${d.userId}&email=${encodeURIComponent(email.trim())}`);
           return;
         }
         if (d?.userId) setResendUserId(d.userId);
+        if (d?.method === "confirm") {
+          setResendLabel("Kirim ulang tautan konfirmasi");
+          setError("Email akun Anda telah diubah oleh administrator. Klik tautan konfirmasi yang kami kirim ke email ini, lalu login kembali.");
+          return;
+        }
+        setResendLabel("Kirim ulang tautan aktivasi");
         setError("Akun belum diaktifkan. Buka tautan pada email aktivasi, lalu ganti kata sandi sementara dengan password Anda sendiri.");
         return;
       }
@@ -112,11 +120,14 @@ function LoginForm() {
                 onClick={() =>
                   api.auth
                     .resendVerification(resendUserId)
-                    .then(({ data }) => setNotice(data.message))
+                    .then(({ data }) => {
+                      setNotice(data.message);
+                      setError(null);
+                    })
                     .catch((e) => setError(errorMessage(e)))
                 }
               >
-                Kirim ulang tautan aktivasi
+                {resendLabel}
               </Button>
             )}
           </div>

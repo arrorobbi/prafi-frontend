@@ -194,7 +194,7 @@ Penjual menerima notifikasi untuk setiap perubahan pada produknya:
 
   ![Lupa password](../public/panduan/akun-2-lupa-password.jpg)
 
-- **Email diubah oleh administrator (penjual):** jika admin memperbaiki email akun Anda, Anda keluar dari sesi yang sedang berjalan. Email lama menerima pemberitahuan, dan email baru menerima **kode OTP**. Saat login dengan email baru, masukkan kode itu di halaman verifikasi; kode kedaluwarsa dapat diminta ulang di sana.
+- **Email diubah oleh administrator (penjual):** jika admin memperbaiki email akun Anda, Anda keluar dari sesi yang sedang berjalan. Email lama menerima pemberitahuan, dan email baru menerima **tautan konfirmasi**: tekan tombol **Konfirmasi Email** di email itu, lalu login dengan email baru dan password yang sama. Tautan berlaku 24 jam; bila kedaluwarsa, login dengan email baru dan klik **Kirim ulang tautan konfirmasi**.
 - Sesi login berakhir otomatis setelah **1 jam tanpa aktivitas**: selama Anda masih memakai situs, sesi diperpanjang sendiri. Paling lama 12 jam sejak login; setelah itu silakan login kembali.
 
 ---
@@ -215,7 +215,7 @@ Penjual menerima notifikasi untuk setiap perubahan pada produknya:
 | Konfirmasi Produk | Daftar produk yang menunggu keputusan. ✔ untuk menerima, ✖ untuk menolak dengan alasan, atau **Lihat Detail** |
 | Manajemen Produk | Semua produk dengan tab status, pencarian, filter kategori, dan filter penjual |
 | Kategori Produk | Tambah, ubah, dan hapus kategori produk beserta **gambarnya** (wajib; tampil di carousel Beranda, dapat diganti tetapi tidak dihapus). Kategori yang masih dipakai produk tidak bisa dihapus |
-| Manajemen UMKM | *Akun Penjual*: cari penjual, aktifkan/nonaktifkan akun, dan **Detail** (foto wajah, nama, email, telepon, nama toko, alamat). Admin hanya dapat **mengubah email** penjual; penjual lalu harus memverifikasi email baru dengan kode OTP sebelum dapat login lagi, dan email lama menerima pemberitahuan. Tombol **Email Tidak Terkirim** menampilkan penjual yang email verifikasi/OTP-nya tidak sampai (catatan merah: alamat tidak ditemukan, kotak masuk penuh, ditolak). *Profil Toko*: detail toko, WhatsApp, lokasi |
+| Manajemen UMKM | *Akun Penjual*: cari penjual, aktifkan/nonaktifkan akun, dan **Detail** (foto wajah, nama, email, telepon, nama toko, alamat). Admin hanya dapat **mengubah email** penjual; penjual lalu harus mengeklik **tautan konfirmasi** yang dikirim ke email baru sebelum dapat login lagi, dan email lama menerima pemberitahuan. Tombol **Email Tidak Terkirim** menampilkan penjual yang email verifikasi/OTP-nya tidak sampai (catatan merah: alamat tidak ditemukan, kotak masuk penuh, ditolak). *Profil Toko*: detail toko, WhatsApp, lokasi |
 | Laporan Ulasan | Ulasan yang dilaporkan penjual (tab *Menunggu*, *Disembunyikan*, *Dipertahankan*, *Semua*). **Sembunyikan** (tidak tampil, tidak dihitung dalam rating), **Tetap Tampilkan**, atau **Tampilkan Lagi**, dengan catatan opsional untuk penjual |
 | Konten Situs | Ubah teks **Tentang** di footer semua halaman publik. Baris kosong = paragraf baru, `**teks**` = tebal. Pratinjau tampil di bawah kotak teks; **Kembalikan Teks Bawaan** memulihkan teks asli. Perubahan langsung tampil di situs |
 | Notifikasi | Produk baru diajukan, produk diperbarui, penjual baru, profil toko diperbarui, ulasan dilaporkan |

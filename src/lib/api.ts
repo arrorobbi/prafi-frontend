@@ -275,6 +275,8 @@ export const api = {
     checkActivation: (userId: string, token: string) =>
       post<{ valid: boolean; email: string; expiresAt: string }>("/auth/activate/check", { userId, token }, true),
     /** Replaces the emailed temporary password with the person's own; the account can log in afterwards. */
+    /** The link a seller gets after an admin changed their email: one call confirms the new address */
+    confirmEmail: (userId: string, token: string) => post<{ message: string; email: string }>("/auth/confirm-email", { userId, token }, true),
     activate: (userId: string, token: string, temporaryPassword: string, password: string) =>
       post<{ message: string; user: User }>("/auth/activate", { userId, token, temporaryPassword, password }, true),
     forgotPassword: (email: string) => post<{ message: string }>("/auth/forgot-password", { email }, true),

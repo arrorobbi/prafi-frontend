@@ -57,6 +57,7 @@ in the **backend** `.env` to this site's URL.
 | `/register/admin` | public | Admin sign-up (needs Disnakertrans activation afterwards) |
 | `/verifikasi?userId=&email=` | public | Email OTP for accounts that tried to log in unverified |
 | `/lupa-password`, `/reset-password` | public | Forgot / reset password |
+| `/konfirmasi-email?userId=&token=` | public | Opened from the email a seller gets after an admin changed their email: confirms the new address on load (`POST /api/auth/confirm-email`), or offers a new link (the path is fixed by the backend) |
 | `/aktivasi?userId=&token=` | public | Disnakertrans account activation, opened from the email: temporary password → own password (the path is fixed by the backend) |
 | `/admin/*` | admin | Dashboard, Konfirmasi Produk, Manajemen Produk, Kategori Produk (with carousel image), Manajemen UMKM (search, seller **Detail** with face photo / phone / store / address, change a seller's email: `components/dashboard/SellerDetail.tsx`), Konten Situs (footer about text: `components/dashboard/SiteContentEditor.tsx`), Notifikasi, Pengaturan |
 | `/tenant/*` | tenant | Dashboard, Produk Saya, Tambah/Ubah Produk, Produk Ditolak, Ulasan Produk, Kalkulator Profit & Iklan (`lib/adCalculator.ts`, nothing is saved), Profil UMKM, Notifikasi, Bantuan, Pengaturan |

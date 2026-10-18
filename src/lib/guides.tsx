@@ -342,8 +342,8 @@ export const GUIDES: Guide[] = [
           produk, produk per kategori, dan akun per role (pilih 7, 30, atau 90 hari terakhir).{" "}
           <b>Manajemen UMKM</b>: aktifkan/nonaktifkan akun penjual (tab <b>Akun Penjual</b>) dan lihat detail toko
           (tab <b>Profil Toko</b>). Tombol <b>Detail</b> menampilkan foto wajah, email, telepon, nama toko, dan alamat
-          penjual; di sana admin dapat <b>mengubah email</b> penjual (penjual lalu memverifikasi email baru dengan kode
-          OTP sebelum login lagi). Catatan merah di bawah email berarti email verifikasi/OTP tidak sampai.
+          penjual; di sana admin dapat <b>mengubah email</b> penjual (penjual lalu mengeklik tautan konfirmasi yang
+          dikirim ke email baru sebelum login lagi). Catatan merah di bawah email berarti email verifikasi/OTP tidak sampai.
           <b> Konten Situs</b>: ubah teks <b>Tentang</b> di footer situs. <b>Manajemen Produk</b> menampilkan semua produk per status, kategori, dan
           penjual; <b>Notifikasi</b> berisi pengajuan produk baru dan pendaftaran penjual.
         </Step>

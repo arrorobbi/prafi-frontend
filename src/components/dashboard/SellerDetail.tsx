@@ -20,8 +20,8 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
  * A seller's account and shop data for the admin ("Manajemen UMKM"): face photo, name, email, phone, store name and
- * address. Only the email can be changed (PATCH /api/users/:id/email): the seller then verifies the new address
- * with an OTP before logging in again.
+ * address. Only the email can be changed (PATCH /api/users/:id/email): the seller then confirms the new address
+ * with one click on the link emailed there before logging in again.
  */
 export function SellerDetail({ user, onClose, onChanged }: { user: User | null; onClose: () => void; onChanged: (u: User) => void }) {
   const toast = useToast();
@@ -48,8 +48,8 @@ export function SellerDetail({ user, onClose, onChanged }: { user: User | null; 
       toast.success(
         "Email penjual diubah",
         data.verification.emailSent
-          ? `Kode OTP dikirim ke ${data.user.email}. Penjual harus memverifikasinya sebelum dapat login kembali.`
-          : `Kode OTP gagal dikirim ke ${data.user.email}; penjual dapat meminta kode baru saat login.`,
+          ? `Tautan konfirmasi dikirim ke ${data.user.email}. Penjual harus mengekliknya sebelum dapat login kembali.`
+          : `Tautan konfirmasi gagal dikirim ke ${data.user.email}; penjual dapat meminta tautan baru saat login.`,
       );
       setEditing(false);
       onChanged(data.user);
@@ -95,7 +95,7 @@ export function SellerDetail({ user, onClose, onChanged }: { user: User | null; 
                   />
                   {fieldError && <span className="field-error">{fieldError}</span>}
                   <Alert variant="warning">
-                    Penjual akan keluar dari semua sesi dan harus memverifikasi email baru dengan kode OTP sebelum dapat login kembali.
+                    Penjual akan keluar dari semua sesi dan harus mengeklik tautan konfirmasi yang dikirim ke email baru sebelum dapat login kembali.
                     Email lama akan menerima pemberitahuan perubahan ini.
                   </Alert>
                   <div className={local.emailActions}>
