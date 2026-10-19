@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api, errorMessage } from "@/lib/api";
 import { formatDate, formatTime, fullName, imageSrc } from "@/lib/format";
 import { GUIDE_AUDIENCE_LABEL, GUIDE_ICONS } from "@/lib/guides";
@@ -26,13 +26,91 @@ const TOKENS = { "kontak-admin": <GuideContact /> };
 const AUDIENCES = Object.keys(GUIDE_AUDIENCE_LABEL) as GuideAudience[];
 const COLORS = ["#ea7b25", "#0e3c69", "#13a10e", "#1aa5d9", "#e53030", "#4a4a4a"];
 
-/** How staff format the texts (the same rules as RichText) */
-function FormatHelp() {
+/**
+ * Snippets the template bar inserts. `pick`: the part selected afterwards, so typing replaces the example value.
+ * Buttons are drawn by RichTextButton ({email: …}, {whatsapp: …} …).
+ */
+const SNIPPETS: { label: string; title: string; text: string; pick?: string; wrap?: [string, string]; ownLine?: boolean }[] = [
+  { label: "Tebal", title: "Teks tebal: **teks**", text: "**teks tebal**", pick: "teks tebal", wrap: ["**", "**"] },
+  { label: "Tautan", title: "Tautan teks: [teks](/alamat)", text: "[teks tautan](/register)", pick: "teks tautan" },
+  { label: "Daftar", title: "Baris daftar berpoin", text: "- poin", pick: "poin", ownLine: true },
+  { label: "Email", title: "Tombol email: {email: alamat}", text: "{email: nama@contoh.com}", pick: "nama@contoh.com" },
+  { label: "WhatsApp", title: "Tombol WhatsApp: {whatsapp: nomor | teks tombol | pesan awal}", text: "{whatsapp: 08xxxxxxxxxx | Chat Admin | Halo, saya mau bertanya}", pick: "08xxxxxxxxxx" },
+  { label: "Telepon", title: "Tombol telepon: {telepon: nomor}", text: "{telepon: 08xxxxxxxxxx}", pick: "08xxxxxxxxxx" },
+  { label: "Instagram", title: "Tombol Instagram: {instagram: @akun}", text: "{instagram: @namaakun}", pick: "@namaakun" },
+  { label: "Facebook", title: "Tombol Facebook: {facebook: nama halaman atau tautan}", text: "{facebook: namahalaman}", pick: "namahalaman" },
+  { label: "Lokasi", title: "Tombol lokasi: {lokasi: tautan Google Maps | teks tombol}", text: "{lokasi: https://maps.app.goo.gl/... | Lihat Lokasi}", pick: "https://maps.app.goo.gl/..." },
+  { label: "Tombol", title: "Tombol ke halaman / tautan: {tombol: /alamat | teks tombol}", text: "{tombol: /register | Daftar Sekarang}", pick: "/register" },
+  { label: "Kontak Admin", title: "WhatsApp & email administrator dari pengaturan situs", text: "{{kontak-admin}}", ownLine: true },
+];
+
+/**
+ * A text box of Kelola Panduan with a template bar (bold, link, list and the button templates) that inserts at the
+ * cursor, the writing rules, and a preview of the result.
+ */
+function GuideTextField({
+  label,
+  value,
+  onChange,
+  rows,
+  maxLength,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  rows: number;
+  maxLength: number;
+}) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+
+  const insert = (snip: (typeof SNIPPETS)[number]) => {
+    const el = ref.current;
+    const start = el?.selectionStart ?? value.length;
+    const end = el?.selectionEnd ?? value.length;
+    const selected = value.slice(start, end);
+    let text = snip.wrap && selected ? `${snip.wrap[0]}${selected}${snip.wrap[1]}` : snip.text;
+    // A list line or the contact block needs a line of its own
+    if (snip.ownLine) {
+      const before = value.slice(0, start);
+      if (before && !before.endsWith("\n")) text = `${snip.label === "Daftar" ? "\n" : "\n\n"}${text}`;
+      if (snip.label !== "Daftar") text += "\n\n";
+    }
+    const next = value.slice(0, start) + text + value.slice(end);
+    if (next.length > maxLength) return;
+    onChange(next);
+    // Select the example value, so typing replaces it
+    const offset = snip.pick && !(snip.wrap && selected) ? text.indexOf(snip.pick) : -1;
+    requestAnimationFrame(() => {
+      if (!el) return;
+      el.focus();
+      if (offset >= 0) el.setSelectionRange(start + offset, start + offset + snip.pick!.length);
+      else el.setSelectionRange(start + text.length, start + text.length);
+    });
+  };
+
   return (
-    <p className={local.help}>
-      Baris kosong = paragraf baru · awali baris dengan <code>- </code> untuk daftar · <code>**teks**</code> = tebal ·{" "}
-      <code>[teks](/register)</code> = tautan · <code>{"{{kontak-admin}}"}</code> = WhatsApp &amp; email administrator
-    </p>
+    <div className="field">
+      <span className="label">{label}</span>
+      <div className={local.templateBar} role="toolbar" aria-label={`Sisipkan ke ${label.toLowerCase()}`}>
+        {SNIPPETS.map((snip) => (
+          <button key={snip.label} type="button" className={local.templateButton} title={snip.title} onClick={() => insert(snip)}>
+            {snip.label}
+          </button>
+        ))}
+      </div>
+      <Textarea ref={ref} rows={rows} value={value} maxLength={maxLength} aria-label={label} onChange={(e) => onChange(e.target.value)} />
+      <p className={local.help}>
+        Baris kosong = paragraf baru · <code>- </code> di awal baris = daftar · tombol: <code>{"{jenis: nilai | teks tombol}"}</code> dengan jenis{" "}
+        <code>email</code>, <code>whatsapp</code>, <code>telepon</code>, <code>instagram</code>, <code>facebook</code>, <code>lokasi</code>, <code>tombol</code>.
+        Template yang salah (mis. email tidak valid) tampil sebagai teks biasa.
+      </p>
+      {value.trim() && (
+        <div className={local.textBox}>
+          <span className={local.boxLabel}>Pratinjau</span>
+          <RichText text={value} tokens={TOKENS} className={local.rich} />
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -433,15 +511,8 @@ function SectionForm({
           ))}
           {errors.audience && <span className="field-error">{errors.audience}</span>}
         </fieldset>
-        <label className="field">
-          <span className="label">Teks pembuka (opsional, sebelum langkah-langkah)</span>
-          <Textarea rows={4} value={form.intro} maxLength={5000} onChange={(e) => set("intro", e.target.value)} />
-        </label>
-        <label className="field">
-          <span className="label">Teks penutup (opsional, setelah langkah-langkah)</span>
-          <Textarea rows={4} value={form.outro} maxLength={5000} onChange={(e) => set("outro", e.target.value)} />
-        </label>
-        <FormatHelp />
+        <GuideTextField label="Teks pembuka (opsional, sebelum langkah-langkah)" rows={4} maxLength={5000} value={form.intro} onChange={(v) => set("intro", v)} />
+        <GuideTextField label="Teks penutup (opsional, setelah langkah-langkah)" rows={4} maxLength={5000} value={form.outro} onChange={(v) => set("outro", v)} />
         {errors.form && <Alert variant="destructive">{errors.form}</Alert>}
       </div>
     </Modal>
@@ -548,17 +619,7 @@ function StepForm({
       }
     >
       <div className={local.form}>
-        <label className="field">
-          <span className="label">Teks langkah</span>
-          <Textarea rows={5} value={body} maxLength={3000} onChange={(e) => setBody(e.target.value)} />
-        </label>
-        <FormatHelp />
-        {body.trim() && (
-          <div className={local.textBox}>
-            <span className={local.boxLabel}>Pratinjau</span>
-            <RichText text={body} tokens={TOKENS} className={local.rich} />
-          </div>
-        )}
+        <GuideTextField label="Teks langkah" rows={5} maxLength={3000} value={body} onChange={setBody} />
         <div className={local.pickers}>
           {picker("DESKTOP", "Tampil di layar lebar (laptop / komputer). Bila kosong, gambar HP dipakai.", desktop, setDesktop, step?.desktopImage ?? null, CROP.guideDesktop)}
           {picker("HP", "Tampil di layar HP. Bila kosong, gambar desktop dipakai.", mobile, setMobile, step?.mobileImage ?? null, CROP.guideMobile)}

@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { Fragment } from "react";
+import { TEMPLATE_RE, TemplateButton, parseTemplate } from "./RichTextButton";
 
 /** The default footer text, shown when the API can't be reached (the same as the backend's default). */
 export const DEFAULT_FOOTER_ABOUT =
   "**UMKM TRANS NIAGA** dibangun dari semangat gotong royong untuk memajukan perekonomian lokal. Sebagai direktori dan marketplace UMKM di Prafi, Manokwari, platform ini dirancang untuk membina serta memperluas jangkauan pasar para pelaku usaha daerah. Melalui Trans Niaga, beli produk lokal kini jadi lebih praktis, sekaligus menjadi bentuk nyata dukungan kita terhadap kemajuan UMKM Prafi.";
 
-const INLINE = /(\*\*[^*]+\*\*|\[[^\]\n]+\]\([^)\s]+\))/g;
+/** Bold, links and button templates ({email: …} …, see RichTextButton), split out of a line */
+const INLINE = new RegExp(`(\\*\\*[^*]+\\*\\*|\\[[^\\]\\n]+\\]\\([^)\\s]+\\)|${TEMPLATE_RE.source})`, "gi");
 
 /** Only addresses that can't run anything: a page of this site, or http(s) / mailto / tel */
 const safeHref = (href: string) => (/^(\/(?!\/)|#|https?:\/\/|mailto:|tel:)/i.test(href) ? href : null);
@@ -13,6 +15,10 @@ const safeHref = (href: string) => (/^(\/(?!\/)|#|https?:\/\/|mailto:|tel:)/i.te
 /** One line with **bold** parts and [links](/path); everything else stays plain text (React escapes it). */
 function Line({ text }: { text: string }) {
   return text.split(INLINE).map((part, i) => {
+    if (part.startsWith("{")) {
+      const button = parseTemplate(part);
+      if (button) return <TemplateButton key={i} button={button} />;
+    }
     if (/^\*\*[^*]+\*\*$/.test(part)) return <strong key={i}>{part.slice(2, -2)}</strong>;
     const link = /^\[([^\]]+)\]\(([^)\s]+)\)$/.exec(part);
     const href = link && safeHref(link[2]);
@@ -64,7 +70,8 @@ function Block({ lines }: { lines: string[] }) {
 
 /**
  * Plain text written by staff ("Konten Situs", "Kelola Panduan"): an empty line starts a new paragraph, a single line
- * break stays a line break, lines starting with "- " make a list, **text** is bold and [label](/path) is a link.
+ * break stays a line break, lines starting with "- " make a list, **text** is bold, [label](/path) is a link and
+ * {email: …}, {whatsapp: …}, {telepon: …}, {instagram: …}, {facebook: …}, {lokasi: …}, {tombol: …} are buttons.
  * `tokens`: a paragraph that is exactly e.g. {{kontak-admin}} is replaced by that element.
  */
 export function RichText({ text, className, tokens }: { text: string; className?: string; tokens?: Record<string, React.ReactNode> }) {

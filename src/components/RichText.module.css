@@ -1,0 +1,57 @@
+/* Buttons from {email: …}, {whatsapp: …} … templates in staff texts */
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 6px 2px 0;
+  padding: 7px 16px;
+  border-radius: 999px;
+  color: var(--white) !important;
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none !important;
+  vertical-align: middle;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  transition: filter 0.15s, transform 0.15s;
+  overflow-wrap: anywhere;
+}
+
+.button:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.button svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+}
+
+.whatsapp {
+  background: #1fa855;
+}
+
+.email {
+  background: var(--navy);
+}
+
+.phone {
+  background: var(--orange);
+}
+
+.instagram {
+  background: linear-gradient(45deg, #f09433, #dc2743 50%, #bc1888);
+}
+
+.facebook {
+  background: #1877f2;
+}
+
+.maps {
+  background: #d93025;
+}
+
+.link {
+  background: var(--orange);
+}

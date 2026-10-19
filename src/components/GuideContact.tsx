@@ -1,24 +1,18 @@
 import { ADMIN_CONTACT } from "@/lib/guides";
+import { parseTemplate, TemplateButton } from "./RichTextButton";
 
-/** The administrator's WhatsApp and email ({{kontak-admin}} in a Panduan text), from the frontend .env. */
+/** The administrator's WhatsApp and email as buttons ({{kontak-admin}} in a Panduan text), from the frontend .env. */
 export function GuideContact() {
-  const wa = ADMIN_CONTACT.whatsapp.replace(/\D/g, "");
+  const buttons = [
+    ADMIN_CONTACT.whatsapp && parseTemplate(`{whatsapp: ${ADMIN_CONTACT.whatsapp} | WhatsApp ${ADMIN_CONTACT.whatsapp}}`),
+    ADMIN_CONTACT.email && parseTemplate(`{email: ${ADMIN_CONTACT.email}}`),
+  ].filter((b) => !!b);
+  if (!buttons.length) return <p>Datang langsung ke kantor pengelola UMKM Kawasan Transmigrasi Prafi, Manokwari.</p>;
   return (
-    <ul>
-      {wa && (
-        <li>
-          WhatsApp:{" "}
-          <a href={`https://wa.me/${wa.replace(/^0/, "62")}`} target="_blank" rel="noreferrer">
-            {ADMIN_CONTACT.whatsapp}
-          </a>
-        </li>
-      )}
-      {ADMIN_CONTACT.email && (
-        <li>
-          Email: <a href={`mailto:${ADMIN_CONTACT.email}`}>{ADMIN_CONTACT.email}</a>
-        </li>
-      )}
-      {!wa && !ADMIN_CONTACT.email && <li>Datang langsung ke kantor pengelola UMKM Kawasan Transmigrasi Prafi, Manokwari.</li>}
-    </ul>
+    <p>
+      {buttons.map((b) => (
+        <TemplateButton key={b.href} button={b} />
+      ))}
+    </p>
   );
 }

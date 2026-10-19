@@ -262,6 +262,28 @@
   accent-color: var(--orange);
 }
 
+.templateBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.templateButton {
+  padding: 4px 11px;
+  border: 1px solid var(--gray-300);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--navy);
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.templateButton:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
 .help {
   color: var(--gray-700);
   font-size: 0.78rem;

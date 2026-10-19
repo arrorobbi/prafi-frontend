@@ -285,6 +285,17 @@ export const IconMail = (p: P) => (
     <path d="M3 7l9 6 9-6" />
   </svg>
 );
+export const IconPhone = (p: P) => (
+  <svg {...base(p)}>
+    <path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2" />
+  </svg>
+);
+export const IconLink = (p: P) => (
+  <svg {...base(p)}>
+    <path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1" />
+    <path d="M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1" />
+  </svg>
+);
 export const IconLock = (p: P) => (
   <svg {...base(p)}>
     <rect x="5" y="11" width="14" height="10" rx="2" />
