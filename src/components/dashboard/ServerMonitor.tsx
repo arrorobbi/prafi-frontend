@@ -209,9 +209,17 @@ export function ServerMonitor() {
 
       <Panel title="CPU & RAM (5 menit terakhir)">
         {history.length > 1 ? (
-          <ChartContainer config={chartConfig} className="aspect-auto h-[240px] w-full">
+          <ChartContainer config={chartConfig} className="aspect-auto h-[200px] w-full sm:h-[240px]">
             <AreaChart data={history} margin={{ left: 0, right: 8, top: 8 }}>
-              <CartesianGrid vertical={false} />
+              <defs>
+                {(["cpu", "memory"] as const).map((key) => (
+                  <linearGradient key={key} id={`mon-${key}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={`var(--color-${key})`} stopOpacity={0.28} />
+                    <stop offset="100%" stopColor={`var(--color-${key})`} stopOpacity={0.02} />
+                  </linearGradient>
+                ))}
+              </defs>
+              <CartesianGrid vertical={false} strokeDasharray="4 4" />
               <XAxis dataKey="at" tickLine={false} axisLine={false} tickMargin={8} minTickGap={48} tickFormatter={clock} />
               <YAxis domain={[0, 100]} tickLine={false} axisLine={false} width={44} tickFormatter={(v) => `${v}%`} />
               <ChartTooltip content={<ChartTooltipContent labelFormatter={(v) => clock(String(v))} />} />
@@ -222,9 +230,9 @@ export function ServerMonitor() {
                   dataKey={key}
                   type="monotone"
                   stroke={`var(--color-${key})`}
-                  fill={`var(--color-${key})`}
-                  fillOpacity={0.12}
-                  strokeWidth={2}
+                  fill={`url(#mon-${key})`}
+                  strokeWidth={2.2}
+                  dot={false}
                   isAnimationActive={false}
                 />
               ))}

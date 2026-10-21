@@ -1,0 +1,157 @@
+/* Dashboard charts (StatsCharts.tsx): simple, modern, and laid out for both phones and wide screens */
+
+.swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  color: var(--gray-700);
+  font-size: 0.8rem;
+  line-height: 1.3;
+}
+
+.swatch i {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border-radius: 3px;
+}
+
+.seriesLegend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 16px;
+  margin-top: 12px;
+}
+
+.num {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  color: var(--navy);
+  font-size: 0.86rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.num small {
+  min-width: 34px;
+  color: var(--gray-500);
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* ---------- donut: chart and legend side by side, stacked on phones ---------- */
+.donut {
+  display: grid;
+  grid-template-columns: minmax(130px, 180px) minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+}
+
+.donutChart {
+  width: 100%;
+  max-width: 180px;
+  margin: 0 auto;
+}
+
+.donutLegend {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.donutLegend li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 10px;
+  white-space: nowrap;
+  border-radius: 10px;
+  background: var(--gray-100);
+}
+
+/* ---------- bar list: name + number, slim bar under it ---------- */
+.barList {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.barHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.barLabel {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--gray-700);
+  font-size: 0.84rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.track {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--gray-100);
+}
+
+.fill {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 999px;
+  transform-origin: left center;
+  animation: grow 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.fill span {
+  min-width: 4px;
+  height: 100%;
+}
+
+.fill span + span {
+  margin-left: 2px;
+}
+
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .donut {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .donutChart {
+    max-width: 190px;
+  }
+
+  .barList {
+    gap: 12px;
+  }
+}
