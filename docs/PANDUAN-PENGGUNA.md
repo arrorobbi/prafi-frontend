@@ -196,6 +196,7 @@ Penjual menerima notifikasi untuk setiap perubahan pada produknya:
   ![Lupa password](../public/panduan/akun-2-lupa-password.jpg)
 
 - **Email diubah oleh administrator (penjual):** jika admin memperbaiki email akun Anda, Anda keluar dari sesi yang sedang berjalan. Email lama menerima pemberitahuan, dan email baru menerima **tautan konfirmasi**: tekan tombol **Konfirmasi Email** di email itu, lalu login dengan email baru dan password yang sama. Tautan berlaku 24 jam; bila kedaluwarsa, login dengan email baru dan klik **Kirim ulang tautan konfirmasi**.
+- **Setiap tab memakai login-nya sendiri:** Anda dapat membuka akun yang berbeda di tab yang berbeda; tab yang diduplikasi tetap memakai akun yang sama. Membuka halaman **Login** di tab yang sudah masuk menampilkan pilihan **Lanjut ke Dashboard** atau **Masuk dengan Akun Lain di Tab Ini** (akun di tab lain tetap masuk).
 - Sesi login berakhir otomatis setelah **1 jam tanpa aktivitas**: selama Anda masih memakai situs, sesi diperpanjang sendiri. Paling lama 12 jam sejak login; setelah itu silakan login kembali.
 
 ---
@@ -212,7 +213,7 @@ Penjual menerima notifikasi untuk setiap perubahan pada produknya:
 
 | Menu | Fungsi |
 | --- | --- |
-| Dashboard | Ringkasan: total UMKM, total produk, menunggu verifikasi, aktif, **stok kosong** (aktif tetapi ditandai habis oleh penjual, tidak tampil untuk pengunjung), ditolak, dinonaktifkan (dapat disaring per rentang waktu), dan grafik **Statistik**: aktivitas per hari, status produk (*Aktif · Tersedia* dan *Aktif · Stok Kosong* dipisah), produk per kategori, akun penjual (7 / 30 / 90 hari) |
+| Dashboard | Ringkasan: total UMKM, total produk, menunggu verifikasi, aktif, **stok kosong** (aktif tetapi ditandai habis oleh penjual, tidak tampil untuk pengunjung), ditolak, dinonaktifkan (dapat disaring per rentang waktu), dan grafik **Statistik**: aktivitas per hari (produk dan akun baru, serta produk yang ditandai stok kosong / tersedia kembali), status produk (*Aktif · Tersedia* dan *Aktif · Stok Kosong* dipisah), produk per kategori, akun penjual (7 / 30 / 90 hari) |
 | Konfirmasi Produk | Daftar produk yang menunggu keputusan. ✔ untuk menerima, ✖ untuk menolak dengan alasan, atau **Lihat Detail** |
 | Manajemen Produk | Semua produk dengan tab status, pencarian, filter kategori, dan filter penjual |
 | Kategori Produk | Tambah, ubah, dan hapus kategori produk beserta **gambarnya** (wajib; tampil di carousel Beranda, dapat diganti tetapi tidak dihapus). Kategori yang masih dipakai produk tidak bisa dihapus |

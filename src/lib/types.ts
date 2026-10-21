@@ -327,7 +327,8 @@ export interface StatsOverview {
   };
   tenants: { total: number; byArea: { area: string; count: number }[] };
   users: { roles: Role[]; total: number; byRole: { role: Role; active: number; inactive: number }[] };
-  perDay: { date: string; products: number; tenants: number; users: number }[];
+  /** outOfStock / backInStock: products the sellers switched to "Stok Kosong" / back to "Tersedia" that day */
+  perDay: { date: string; products: number; tenants: number; users: number; outOfStock: number; backInStock: number }[];
 }
 
 /** GET /api/logs/stats: API log chart numbers (superadmin) */

@@ -39,7 +39,23 @@ export const UNAUTHORIZED_EVENT = "prafi:unauthorized";
 /** Fired in this tab when the login was renewed (here or in another tab). detail: the new token */
 export const TOKEN_RENEWED_EVENT = "prafi:token-renewed";
 
+/*
+ * One login per tab. Each tab keeps its own token in sessionStorage, so tabs logged in as different accounts don't
+ * take over each other (and a duplicated tab, which copies sessionStorage, stays the same account). localStorage
+ * keeps the most recent login only to start a brand-new tab with it (adoptLastLogin).
+ */
+
+/** This tab's token */
 export function getToken(): string | null {
+  try {
+    return sessionStorage.getItem(TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/** The most recent login of this browser (any tab) */
+export function getLastLogin(): string | null {
   try {
     return localStorage.getItem(TOKEN_KEY);
   } catch {
@@ -47,13 +63,50 @@ export function getToken(): string | null {
   }
 }
 
+/** Saves this tab's token, and remembers it as the browser's most recent login. null: this tab logs out. */
 export function setToken(token: string | null) {
   try {
-    if (token) localStorage.setItem(TOKEN_KEY, token);
-    else localStorage.removeItem(TOKEN_KEY);
+    const previous = sessionStorage.getItem(TOKEN_KEY);
+    if (token) {
+      sessionStorage.setItem(TOKEN_KEY, token);
+      localStorage.setItem(TOKEN_KEY, token);
+    } else {
+      sessionStorage.removeItem(TOKEN_KEY);
+      // Forget the "most recent login" only when it is this tab's: another tab's account stays logged in
+      if (previous && sameSession(localStorage.getItem(TOKEN_KEY), previous)) localStorage.removeItem(TOKEN_KEY);
+    }
   } catch {
     // storage unavailable (private mode): the session lasts until reload
   }
+}
+
+/** On a tab's first load: a new tab (nothing of its own yet) starts with the browser's most recent login. */
+export function adoptLastLogin() {
+  try {
+    if (!sessionStorage.getItem(TOKEN_KEY)) {
+      const last = localStorage.getItem(TOKEN_KEY);
+      if (last) sessionStorage.setItem(TOKEN_KEY, last);
+    }
+  } catch {
+    // ignore
+  }
+}
+
+function tokenClaims(token: string): { sub?: string; jti?: string } | null {
+  try {
+    return JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+  } catch {
+    return null;
+  }
+}
+
+/** Both tokens belong to the same login (a renewed token keeps the login's id), not just the same account. */
+export function sameSession(a: string | null | undefined, b: string | null | undefined) {
+  if (!a || !b) return false;
+  if (a === b) return true;
+  const ca = tokenClaims(a);
+  const cb = tokenClaims(b);
+  return !!ca?.jti && ca.jti === cb?.jti && ca.sub === cb?.sub;
 }
 
 export class ApiError extends Error {

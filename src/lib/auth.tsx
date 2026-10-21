@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { api, ApiError, getToken, setToken, TOKEN_KEY, TOKEN_RENEWED_EVENT, UNAUTHORIZED_EVENT } from "./api";
+import { adoptLastLogin, api, ApiError, getToken, sameSession, setToken, TOKEN_KEY, TOKEN_RENEWED_EVENT, UNAUTHORIZED_EVENT } from "./api";
 import type { Role, User } from "./types";
 
 type Status = "loading" | "authenticated" | "guest";
@@ -15,6 +15,8 @@ interface AuthContextValue {
   logout: (message?: string) => Promise<void>;
   refreshUser: () => Promise<void>;
   setUser: (user: User) => void;
+  /** This tab forgets its login (no logout on the server), so another account can sign in here; other tabs keep theirs */
+  switchAccount: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -32,8 +34,9 @@ export function roleHome(role: Role) {
 
 function cacheUser(user: User | null) {
   try {
-    if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
-    else localStorage.removeItem(USER_KEY);
+    // Per tab, like the token (lib/api.ts)
+    if (user) sessionStorage.setItem(USER_KEY, JSON.stringify(user));
+    else sessionStorage.removeItem(USER_KEY);
   } catch {
     // ignore
   }
@@ -41,7 +44,7 @@ function cacheUser(user: User | null) {
 
 function cachedUser(): User | null {
   try {
-    const raw = localStorage.getItem(USER_KEY);
+    const raw = sessionStorage.getItem(USER_KEY);
     return raw ? (JSON.parse(raw) as User) : null;
   } catch {
     return null;
@@ -121,8 +124,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [clearSession, router],
   );
 
-  // Restore the session on first load
+  // Restore the session on first load (a new tab starts with the browser's most recent login)
   useEffect(() => {
+    adoptLastLogin();
     const token = getToken();
     if (!token) {
       setStatus("guest");
@@ -171,7 +175,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       api.auth
         .refresh()
         .then(({ data }) => {
-          // Logged out (or logged in as someone else) while the request was on its way: leave that alone
+          // Logged out (or logged in as someone else) in this tab while the request was on its way: leave that alone
           if (getToken() !== token) return;
           setToken(data.accessToken);
           scheduleExpiry(data.accessToken);
@@ -189,14 +193,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => ACTIVITY_EVENTS.forEach((e) => window.removeEventListener(e, onActivity));
   }, [status, scheduleExpiry]);
 
-  // Another tab of this browser renewed the login or logged out: follow it
+  // Another tab with this same login renewed it or logged out: follow it. A login as another account in another
+  // tab is ignored: every tab keeps its own account (lib/api.ts)
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
-      if (e.key !== TOKEN_KEY || e.newValue === e.oldValue) return;
-      if (e.newValue) {
+      if (e.storageArea !== localStorage || e.key !== TOKEN_KEY || e.newValue === e.oldValue) return;
+      const mine = getToken();
+      if (e.newValue && sameSession(mine, e.newValue)) {
+        try {
+          sessionStorage.setItem(TOKEN_KEY, e.newValue);
+        } catch {
+          // ignore
+        }
         scheduleExpiry(e.newValue);
         window.dispatchEvent(new CustomEvent(TOKEN_RENEWED_EVENT, { detail: e.newValue }));
-      } else if (e.oldValue) {
+      } else if (!e.newValue && e.oldValue && sameSession(mine, e.oldValue)) {
         clearSession();
         router.replace("/login");
       }
@@ -238,14 +249,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [clearSession, router],
   );
 
+  const switchAccount = useCallback(() => {
+    if (expiryTimer.current) clearTimeout(expiryTimer.current);
+    try {
+      sessionStorage.removeItem(TOKEN_KEY);
+    } catch {
+      // ignore
+    }
+    cacheUser(null);
+    setUserState(null);
+    setStatus("guest");
+  }, []);
+
   const refreshUser = useCallback(async () => {
     const { data } = await api.auth.me();
     setUser(data);
   }, [setUser]);
 
   const value = useMemo(
-    () => ({ status, user, login, logout, refreshUser, setUser }),
-    [status, user, login, logout, refreshUser, setUser],
+    () => ({ status, user, login, logout, refreshUser, setUser, switchAccount }),
+    [status, user, login, logout, refreshUser, setUser, switchAccount],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

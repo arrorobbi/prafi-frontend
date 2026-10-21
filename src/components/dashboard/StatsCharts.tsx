@@ -61,7 +61,12 @@ function Section({ title, picker, children }: { title: string; picker: React.Rea
 const activityConfig = {
   products: { label: "Produk baru", color: "var(--chart-2)" },
   users: { label: "Akun baru", color: "var(--chart-3)" },
+  outOfStock: { label: "Ditandai stok kosong", color: "#dc2626" },
+  backInStock: { label: "Tersedia kembali", color: "#0ea5a4" },
 } satisfies ChartConfig;
+
+/** The Aktivitas lines: new products and accounts, and the sellers' "Stok Kosong" / "Tersedia" switches */
+const ACTIVITY_KEYS = ["products", "users", "outOfStock", "backInStock"] as const;
 
 const statusConfig = {
   count: { label: "Produk" },
@@ -97,8 +102,10 @@ export function DashboardStats() {
       ) : (
         s && (
           <div className="grid gap-4 lg:grid-cols-2">
-            <ChartCard title="Aktivitas" description={`Produk dan akun baru per hari (${days} hari terakhir)`} className="lg:col-span-2">
-              {s.perDay.some((d) => d.products || d.users) ? (
+            <ChartCard
+              title="Aktivitas"
+              description={`Produk dan akun baru, serta produk yang ditandai stok kosong / tersedia kembali oleh penjual, per hari (${days} hari terakhir)`} className="lg:col-span-2">
+              {s.perDay.some((d) => ACTIVITY_KEYS.some((k) => d[k])) ? (
                 <ChartContainer config={activityConfig} className="aspect-auto h-[260px] w-full">
                   <AreaChart data={s.perDay} margin={{ left: 0, right: 8 }}>
                     <CartesianGrid vertical={false} />
@@ -106,7 +113,7 @@ export function DashboardStats() {
                     <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={40} />
                     <ChartTooltip content={<ChartTooltipContent labelFormatter={(v) => shortDate(String(v))} />} />
                     <ChartLegend content={<ChartLegendContent />} />
-                    {(["products", "users"] as const).map((key) => (
+                    {ACTIVITY_KEYS.map((key) => (
                       <Area
                         key={key}
                         dataKey={key}

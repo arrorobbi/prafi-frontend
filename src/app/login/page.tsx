@@ -8,14 +8,16 @@ import styles from "@/components/auth/auth.module.css";
 import { IconEye, IconEyeOff } from "@/components/Icons";
 import { Loading } from "@/components/ui";
 import { api, ApiError, errorMessage } from "@/lib/api";
+import { ROLE_LABEL } from "@/components/dashboard/UserAccounts";
 import { roleHome, SESSION_MESSAGE_KEY, useAuth } from "@/lib/auth";
+import { fullName } from "@/lib/format";
 import { Button } from "@/components/shadcn/button";
 import { Alert } from "@/components/shadcn/alert";
 
 function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const { status, user, login } = useAuth();
+  const { status, user, login, switchAccount } = useAuth();
   const [email, setEmail] = useState(params.get("email") ?? "");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -55,10 +57,12 @@ function LoginForm() {
     if (params.get("aktif")) setNotice("Akun berhasil diaktifkan, silakan login dengan password baru Anda.");
   }, [params]);
 
-  // Already logged in: go to the dashboard
+  // Already logged in and sent here from a page (?next=): go back to it. Opened directly: this tab can continue,
+  // or sign in with another account (each tab keeps its own login, lib/api.ts)
+  const next = params.get("next");
   useEffect(() => {
-    if (status === "authenticated" && user && !busy) router.replace(params.get("next") || roleHome(user.role));
-  }, [status, user, busy, router, params]);
+    if (status === "authenticated" && user && !busy && next) router.replace(next);
+  }, [status, user, busy, router, next]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,6 +107,30 @@ function LoginForm() {
       );
     }
   };
+
+  if (status === "authenticated" && user && !busy && !next) {
+    return (
+      <div className={styles.orangeCard}>
+        <h2>MASUK AKUN</h2>
+        <Alert variant="info" className={styles.cardAlert}>
+          <div>
+            Tab ini sudah masuk sebagai <strong>{user.tenantName || fullName(user)}</strong> ({ROLE_LABEL[user.role]}).
+          </div>
+        </Alert>
+        <div className="stack">
+          <Button type="button" variant="navy" size="lg" onClick={() => router.replace(roleHome(user.role))}>
+            Lanjut ke Dashboard
+          </Button>
+          <Button type="button" variant="white" size="lg" onClick={switchAccount}>
+            Masuk dengan Akun Lain di Tab Ini
+          </Button>
+          <p className="hint" style={{ color: "inherit" }}>
+            Akun di tab lain tetap masuk. Setiap tab dapat memakai akun yang berbeda.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.orangeCard}>
