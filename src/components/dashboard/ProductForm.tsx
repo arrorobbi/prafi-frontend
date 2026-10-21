@@ -29,6 +29,8 @@ interface Values {
   details: string;
   /** Product category id, "" = not picked yet */
   categoryId: string;
+  /** "Tersedia" (true) or "Stok Kosong" (false: hidden from the public pages) */
+  isAvailable: boolean;
 }
 
 /** Profile fields the API reports as missing (GET /api/tenants/me → missingFields), as the tenant knows them. */
@@ -63,6 +65,7 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
     description: product?.description ?? "",
     details: product?.details ?? "",
     categoryId: product?.categoryId ? String(product.categoryId) : "",
+    isAvailable: product ? product.isAvailable !== false : true,
   });
   const [categories, setCategories] = useState<ProductCategory[] | null>(null);
   const [categoryError, setCategoryError] = useState<string | null>(null);
@@ -122,6 +125,7 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
       description: values.description.trim(),
       details: values.details.trim(),
       categoryId: Number(values.categoryId),
+      isAvailable: values.isAvailable,
     };
 
     // Editing: only what changed (a new photo always counts as a change)
@@ -255,6 +259,31 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
             <span className="hint">Belum ada kategori produk. Hubungi administrator untuk menambahkannya.</span>
           )}
         </label>
+        <div className="field">
+          <span className="label" id="availability-label">Ketersediaan</span>
+          <span className={styles.availability} role="radiogroup" aria-labelledby="availability-label">
+            {[
+              { value: true, label: "Tersedia" },
+              { value: false, label: "Stok Kosong" },
+            ].map((o) => (
+              <button
+                key={o.label}
+                type="button"
+                role="radio"
+                aria-checked={values.isAvailable === o.value}
+                className={`${styles.availabilityOption} ${values.isAvailable === o.value ? (o.value ? styles.availableOn : styles.emptyOn) : ""}`}
+                onClick={() => setValues((v) => ({ ...v, isAvailable: o.value }))}
+              >
+                {o.label}
+              </button>
+            ))}
+          </span>
+          <span className="hint">
+            {values.isAvailable
+              ? "Produk tampil di halaman utama (setelah disetujui)."
+              : "Produk disembunyikan dari halaman utama sampai Anda ubah menjadi Tersedia lagi."}
+          </span>
+        </div>
         <p className="hint">
           Produk otomatis menjadi <strong>rekomendasi</strong> (tampil di halaman utama) bila memiliki minimal 3 ulasan pembeli dengan
           rata-rata 4,8 bintang atau lebih.

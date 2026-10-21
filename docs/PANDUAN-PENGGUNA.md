@@ -114,6 +114,7 @@ halaman `/panduan`.
   | Ditolak | belum memenuhi ketentuan — lihat alasan di *Produk Ditolak* |
   | Dinonaktifkan | diturunkan administrator atau Disnakertrans |
 
+- **Ketersediaan (Tersedia / Stok Kosong):** di **Produk Saya**, klik sakelar di kolom *Ketersediaan* saat stok habis; produk berubah menjadi **Stok Kosong** dan disembunyikan dari halaman utama (tidak bisa dicari, dibuka, atau diulas) sampai Anda klik lagi menjadi **Tersedia**. Pilihan yang sama ada di form tambah/ubah produk. Hanya penjual yang dapat mengubahnya; administrator, Disnakertrans, dan superadmin menerima notifikasi setiap kali berubah dan melihat labelnya di daftar produk. Pengunjung tidak melihat label ini.
 - **Produk Ditolak:** baca alasan penolakan, klik ikon pensil, perbaiki, lalu klik **Simpan & Ajukan Ulang**.
   Produk kembali berstatus *Menunggu Konfirmasi*.
 

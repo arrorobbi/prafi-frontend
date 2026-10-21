@@ -3,6 +3,7 @@
 import { RatingSummary } from "@/components/Stars";
 import Link from "next/link";
 import { useState } from "react";
+import { AvailabilityToggle } from "@/components/dashboard/AvailabilityToggle";
 import styles from "@/components/dashboard/dashboard.module.css";
 import { IconPencil, IconPlus, IconSearch, IconTrash } from "@/components/Icons";
 import { ConfirmDialog } from "@/components/Modal";
@@ -25,6 +26,9 @@ export default function MyProductsPage() {
   const toast = useToast();
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<ProductStatus | "">("");
+  const [stock, setStock] = useState<"" | "yes" | "no">("");
+  // A toggled product, until the list reloads
+  const [changed, setChanged] = useState<Record<string, Product>>({});
   const [page, setPage] = useState(1);
   const [deleting, setDeleting] = useState<Product | null>(null);
   const [busy, setBusy] = useState(false);
@@ -32,7 +36,14 @@ export default function MyProductsPage() {
   const { data, loading, error, reload } = useAsync(() => fetchAll((p) => api.products.list({ page: p, limit: 100 })), []);
 
   const q = query.trim().toLowerCase();
-  const list = (data ?? []).filter((p) => (!q || p.name.toLowerCase().includes(q)) && (!status || productStatus(p) === status));
+  const list = (data ?? [])
+    .map((p) => changed[p.id] ?? p)
+    .filter(
+      (p) =>
+        (!q || p.name.toLowerCase().includes(q)) &&
+        (!status || productStatus(p) === status) &&
+        (!stock || (stock === "yes") === (p.isAvailable !== false)),
+    );
   const totalPages = Math.max(1, Math.ceil(list.length / PER_PAGE));
   const current = Math.min(page, totalPages);
   const shown = list.slice((current - 1) * PER_PAGE, current * PER_PAGE);
@@ -86,6 +97,19 @@ export default function MyProductsPage() {
           <option value="rejected">Ditolak</option>
           <option value="inactive">Dinonaktifkan</option>
         </NativeSelect>
+        <NativeSelect wrapperClassName="w-auto max-sm:w-full"
+          className={"h-[38px] min-w-[180px] rounded-full border-0 bg-white pr-11 pl-5 text-[0.88rem] text-foreground shadow-[0_14px_30px_rgba(14,60,105,0.12)]"}
+          value={stock}
+          aria-label="Ketersediaan"
+          onChange={(e) => {
+            setStock(e.target.value as "" | "yes" | "no");
+            setPage(1);
+          }}
+        >
+          <option value="">Semua Ketersediaan</option>
+          <option value="yes">Tersedia</option>
+          <option value="no">Stok Kosong</option>
+        </NativeSelect>
       </div>
 
       <div className={styles.panel}>
@@ -116,6 +140,7 @@ export default function MyProductsPage() {
                     <TableHead>Ulasan</TableHead>
                     <TableHead>Diajukan</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Ketersediaan</TableHead>
                     <TableHead className="col-actions">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -142,6 +167,9 @@ export default function MyProductsPage() {
                       <TableCell data-label="Diajukan">{formatDate(p.createdAt)}</TableCell>
                       <TableCell data-label="Status">
                         <StatusBadge status={productStatus(p)} />
+                      </TableCell>
+                      <TableCell data-label="Ketersediaan">
+                        <AvailabilityToggle product={p} onChanged={(np) => setChanged((c) => ({ ...c, [np.id]: np }))} />
                       </TableCell>
                       <TableCell data-label="">
                         <span className="actions">

@@ -148,6 +148,9 @@ export function productStatus(p: Pick<Product, "approval" | "updatedAt">): Produ
   return "inactive";
 }
 
+/** The seller's stock flag (product.isAvailable) as shown in the dashboards; the public pages never show it */
+export const availabilityLabel = (available: boolean | undefined) => (available === false ? "Stok Kosong" : "Tersedia");
+
 export const STATUS_LABEL: Record<ProductStatus, string> = {
   active: "Aktif",
   pending: "Menunggu Konfirmasi",

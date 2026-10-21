@@ -18,7 +18,7 @@ import type { Product } from "@/lib/types";
 import { useAsync } from "@/lib/useAsync";
 import { IconSearch } from "../Icons";
 import { Modal } from "../Modal";
-import { EmptyState, Loading, Pagination, StatusBadge, Thumb } from "../ui";
+import { AvailabilityBadge, EmptyState, Loading, Pagination, StatusBadge, Thumb } from "../ui";
 import styles from "./dashboard.module.css";
 import { Button, buttonVariants } from "@/components/shadcn/button";
 import { NativeSelect } from "@/components/shadcn/native-select";
@@ -143,7 +143,10 @@ export function ProductBrowser({ detailHref }: { detailHref?: (p: Product) => st
                         {formatTime(p.createdAt)}
                       </TableCell>
                       <TableCell data-label="Status">
-                        <StatusBadge status={productStatus(p)} />
+                        <span className="inline-flex flex-col items-center gap-1.5">
+                          <StatusBadge status={productStatus(p)} />
+                          <AvailabilityBadge available={p.isAvailable} />
+                        </span>
                       </TableCell>
                       <TableCell data-label="">
                         {detailHref ? (
@@ -186,6 +189,13 @@ function ProductDetail({ product }: { product: Product }) {
           <dd>
             <StatusBadge status={status} />
             {reason && <span className="muted"> — {reason}</span>}
+          </dd>
+        </div>
+        <div>
+          <dt className="label">Ketersediaan</dt>
+          <dd>
+            <AvailabilityBadge available={product.isAvailable} />
+            {product.isAvailable === false && <span className="muted"> — disembunyikan dari halaman utama oleh penjual</span>}
           </dd>
         </div>
         <div>

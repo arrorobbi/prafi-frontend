@@ -144,7 +144,7 @@ export function NotificationCenter() {
       ) : (
         <ul className={styles.list}>
           {items.map((n) => {
-            const tone = notificationTone(n.type);
+            const tone = notificationTone(n.type, n);
             const Icon = TONE_ICON[tone];
             return (
               <li key={n.id} className={`${styles.item} ${n.isRead ? "" : styles.unread}`}>

@@ -231,6 +231,8 @@ export type ProductInput = {
   price: number;
   categoryId: number;
   imageId: number;
+  /** "Tersedia" (true, default) or "Stok Kosong" (false: hidden from the public pages) */
+  isAvailable?: boolean;
 };
 
 export type TenantInput = {

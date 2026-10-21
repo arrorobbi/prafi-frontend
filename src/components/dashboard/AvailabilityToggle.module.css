@@ -1,0 +1,43 @@
+.switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 128px;
+  height: 32px;
+  padding: 0 12px 0 4px;
+  border: 0;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.switch:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.knob {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--white);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s;
+}
+
+.on {
+  background: #6edb9f;
+  color: #073d22;
+}
+
+.off {
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  padding: 0 4px 0 12px;
+  background: #ff8f8f;
+  color: #5b0000;
+}

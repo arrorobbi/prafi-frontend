@@ -116,6 +116,8 @@ export interface Product {
   price: number;
   /** Set by the server: true while its reviews average 4.8 stars or more (shown in the landing page's recommendations) */
   isRecommended: boolean;
+  /** Set by the seller: true = "Tersedia", false = "Stok Kosong" (hidden from the public pages) */
+  isAvailable: boolean;
   /** Null only for older products created before categories moved to products */
   categoryId: number | null;
   category?: Pick<ProductCategory, "id" | "name" | "slug"> | null;
@@ -232,7 +234,8 @@ export type NotificationType =
   | "PRODUCT_CHANGES_SAVED"
   | "PRODUCT_REVIEWED"
   | "REVIEW_REPORTED"
-  | "REVIEW_MODERATED";
+  | "REVIEW_MODERATED"
+  | "PRODUCT_AVAILABILITY_CHANGED";
 
 export interface AppNotification {
   id: number;

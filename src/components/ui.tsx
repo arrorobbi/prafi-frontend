@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import { STATUS_BADGE, STATUS_LABEL, type ProductStatus } from "@/lib/format";
+import { availabilityLabel, STATUS_BADGE, STATUS_LABEL, type ProductStatus } from "@/lib/format";
 import { IconBack, IconChevronLeft, IconChevronRight, IconEye, IconEyeOff, IconImagePlus } from "./Icons";
 import { canGoBack } from "@/lib/navHistory";
 import { useLeaveGuard } from "./LeaveGuard";
@@ -91,6 +91,11 @@ export function EmptyState({ title, children }: { title: string; children?: Reac
 
 export function StatusBadge({ status }: { status: ProductStatus }) {
   return <Badge variant={STATUS_BADGE[status]}>{STATUS_LABEL[status]}</Badge>;
+}
+
+/** "Tersedia" / "Stok Kosong" (product.isAvailable), dashboards only */
+export function AvailabilityBadge({ available }: { available: boolean | undefined }) {
+  return <Badge variant={available === false ? "rejected" : "active"}>{availabilityLabel(available)}</Badge>;
 }
 
 /** "Menampilkan x dari y data" + ◀ 1 2 3 … n ▶ */

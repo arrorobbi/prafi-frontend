@@ -23,6 +23,7 @@ const TITLES: Record<NotificationType, string> = {
   PRODUCT_REVIEWED: "Ulasan Baru",
   REVIEW_REPORTED: "Ulasan Dilaporkan",
   REVIEW_MODERATED: "Keputusan Laporan Ulasan",
+  PRODUCT_AVAILABILITY_CHANGED: "Ketersediaan Produk Diubah",
 };
 
 const BY_ROLE: Record<string, string> = { admin: "administrator", disnakertrans: "Disnakertrans" };
@@ -37,8 +38,12 @@ const isRejection = (n: AppNotification) => takenDown(n.description ?? "").reaso
 const quoted = (text: string) => text.match(/"([^"]+)"/)?.[1];
 const before = (text: string, marker: string) => (text.includes(marker) ? text.slice(0, text.indexOf(marker)).trim() : undefined);
 
+/** PRODUCT_AVAILABILITY_CHANGED: marked out of stock (otherwise: available again) */
+const isOutOfStock = (n: AppNotification) => n.name === "Product out of stock" || / as out of stock/.test(n.description ?? "");
+
 export function notificationTitle(n: AppNotification) {
   if (n.type === "PRODUCT_TAKEN_DOWN" && isRejection(n)) return "Produk Ditolak";
+  if (n.type === "PRODUCT_AVAILABILITY_CHANGED") return isOutOfStock(n) ? "Produk Stok Kosong" : "Produk Tersedia Kembali";
   return TITLES[n.type] ?? n.name;
 }
 
@@ -92,6 +97,19 @@ export function notificationMessage(n: AppNotification) {
       const by = before(d, " updated");
       return product ? `${by ?? "Penjual"} memperbarui produk "${product}".` : d;
     }
+    case "PRODUCT_AVAILABILITY_CHANGED": {
+      if (!product) return d;
+      // To the seller: "You marked …"; to staff: "<toko> marked …"
+      if (d.startsWith("You marked")) {
+        return isOutOfStock(n)
+          ? `Produk "${product}" ditandai Stok Kosong dan disembunyikan dari halaman utama sampai tersedia lagi.`
+          : `Produk "${product}" ditandai Tersedia dan tampil lagi di halaman utama.`;
+      }
+      const by = before(d, " marked") ?? "Penjual";
+      return isOutOfStock(n)
+        ? `${by} menandai produk "${product}" Stok Kosong. Produk disembunyikan dari halaman utama.`
+        : `${by} menandai produk "${product}" Tersedia kembali.`;
+    }
     case "PRODUCT_DELETED": {
       const by = before(d, " deleted");
       return product ? `${by ?? "Penjual"} menghapus produk "${product}".` : d;
@@ -134,6 +152,7 @@ export function notificationHref(n: AppNotification, role: Role) {
   if (role === "tenant" && n.entityType === "product" && n.entityId) {
     if (n.type === "PRODUCT_REVIEWED") return `/produk/${n.entityId}#ulasan`;
     if (n.type === "PRODUCT_TAKEN_DOWN" && isRejection(n)) return "/tenant/ditolak";
+    if (n.type === "PRODUCT_AVAILABILITY_CHANGED") return "/tenant/produk";
     return `/tenant/produk/${n.entityId}/edit`;
   }
   if (role === "superadmin") {
@@ -150,11 +169,13 @@ export function notificationHref(n: AppNotification, role: Role) {
 
 export type NotificationTone = "pending" | "success" | "danger" | "info";
 
-export function notificationTone(type: NotificationType): NotificationTone {
+/** `n`: the whole notification, for types whose tone depends on what happened (in stock / out of stock) */
+export function notificationTone(type: NotificationType, n?: AppNotification): NotificationTone {
   if (type === "PRODUCT_APPROVED" || type === "PRODUCT_PUBLISHED") return "success";
   if (type === "USER_DEACTIVATED" || type === "PRODUCT_DEACTIVATED" || type === "PRODUCT_TAKEN_DOWN" || type === "PRODUCT_DELETED") return "danger";
   if (type === "PRODUCT_REVIEWED" || type === "PRODUCT_CHANGES_SAVED") return "success";
   if (type === "REVIEW_REPORTED") return "pending";
+  if (type === "PRODUCT_AVAILABILITY_CHANGED") return n && isOutOfStock(n) ? "danger" : "success";
   if (type === "PRODUCT_UNDER_REVIEW" || type === "PRODUCT_SUBMITTED" || type === "ADMIN_PENDING_ACTIVATION") return "pending";
   return "info";
 }

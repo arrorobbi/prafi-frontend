@@ -6,7 +6,7 @@ import { useProductReview } from "./ProductReview";
 import { useConfirm } from "../Modal";
 import styles from "./dashboard.module.css";
 import { IconWarning } from "@/components/Icons";
-import { Loading, PageHeader, StatusBadge, Thumb } from "@/components/ui";
+import { AvailabilityBadge, Loading, PageHeader, StatusBadge, Thumb } from "@/components/ui";
 import { api } from "@/lib/api";
 import { approvalReason, DEACTIVATE_PREFIX, formatDate, formatRupiah, imageSrc, productStatus, REJECT_PREFIX, sellerName } from "@/lib/format";
 import { useAsync } from "@/lib/useAsync";
@@ -104,6 +104,7 @@ export function ConfirmProductDetail({ base }: { base: string }) {
         <div className={local.photo}>
           <Thumb zoom src={imageSrc(product.image)} alt={product.name} />
           <StatusBadge status={status} />
+          <AvailabilityBadge available={product.isAvailable} />
         </div>
 
         <div className="stack">
