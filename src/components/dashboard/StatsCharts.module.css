@@ -67,24 +67,69 @@
   list-style: none;
 }
 
-.donutLegend li {
+.donutLegend button {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  width: 100%;
   padding: 7px 10px;
-  white-space: nowrap;
+  border: 1px solid transparent;
   border-radius: 10px;
   background: var(--gray-100);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.donutLegend button:hover,
+.donutLegend button:focus-visible {
+  border-color: var(--orange);
+  background: var(--white);
+}
+
+/* Charts that open a detail popup when clicked */
+.clickable,
+.clickable :global(.recharts-surface) {
+  cursor: pointer;
+}
+
+.hint {
+  margin-top: 10px;
+  color: var(--gray-500);
+  font-size: 0.74rem;
+  text-align: center;
 }
 
 /* ---------- bar list: name + number, slim bar under it ---------- */
 .barList {
   display: grid;
-  gap: 14px;
-  margin: 0;
+  gap: 4px;
+  margin: 0 -8px;
   padding: 0;
   list-style: none;
+}
+
+/* A whole row (name, number and bar) is one big button */
+.barRow {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.barRow:hover,
+.barRow:focus-visible {
+  background: var(--gray-100);
+}
+
+.barRow:hover .barLabel {
+  color: var(--navy);
 }
 
 .barHead {
@@ -105,6 +150,7 @@
 }
 
 .track {
+  display: block;
   height: 10px;
   overflow: hidden;
   border-radius: 999px;
@@ -151,7 +197,157 @@
     max-width: 190px;
   }
 
-  .barList {
-    gap: 12px;
+  .facts {
+    grid-template-columns: minmax(0, 1fr);
   }
+}
+
+/* ---------- detail popup ---------- */
+.detail {
+  display: grid;
+  gap: 16px;
+}
+
+.detailSub {
+  margin-top: -6px;
+  color: var(--gray-500);
+  font-size: 0.84rem;
+}
+
+.headline {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(234, 123, 37, 0.12), rgba(14, 60, 105, 0.08));
+}
+
+.headline strong {
+  color: var(--navy);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.headline span {
+  color: var(--gray-700);
+  font-size: 0.86rem;
+}
+
+.detailItems {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.detailRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.detailItems .fill {
+  animation: none;
+}
+
+.detailNote {
+  margin-top: 4px;
+  color: var(--gray-500);
+  font-size: 0.75rem;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.facts div {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--gray-100);
+}
+
+.facts dt {
+  color: var(--gray-500);
+  font-size: 0.74rem;
+}
+
+.facts dd {
+  margin: 2px 0 0;
+  color: var(--navy);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.compare {
+  display: grid;
+  gap: 8px;
+}
+
+.compareTitle {
+  color: var(--navy);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.compare ul {
+  display: grid;
+  gap: 4px;
+  max-height: 240px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.compare li {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(60px, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+.compareActive {
+  background: rgba(234, 123, 37, 0.12);
+  font-weight: 700;
+}
+
+.compareLabel {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--gray-700);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compareBar {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--gray-100);
+}
+
+.compareBar i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+}
+
+.detailNav {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
 }
