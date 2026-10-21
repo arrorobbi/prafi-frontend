@@ -1,7 +1,7 @@
 "use client";
 
 import { api, fetchAll } from "./api";
-import { productStatus } from "./format";
+import { isActiveOutOfStock, productStatus } from "./format";
 import type { Role } from "./types";
 
 /** Number of accounts of one role (meta.total of GET /api/users?role=). */
@@ -23,6 +23,8 @@ export async function productAndShopStats() {
     pending: by("pending"),
     rejected: by("rejected"),
     inactive: by("inactive"),
+    /** Active, but marked "Stok Kosong" by the seller (hidden from the public pages) */
+    outOfStock: products.filter(isActiveOutOfStock).length,
     shops: tenants.meta?.total ?? tenants.data.length,
   };
 }

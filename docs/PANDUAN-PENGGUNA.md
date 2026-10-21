@@ -212,7 +212,7 @@ Penjual menerima notifikasi untuk setiap perubahan pada produknya:
 
 | Menu | Fungsi |
 | --- | --- |
-| Dashboard | Ringkasan: total UMKM, total produk, menunggu verifikasi, aktif, ditolak, dinonaktifkan (dapat disaring per rentang waktu), dan grafik **Statistik**: aktivitas per hari, status produk, produk per kategori, akun penjual (7 / 30 / 90 hari) |
+| Dashboard | Ringkasan: total UMKM, total produk, menunggu verifikasi, aktif, **stok kosong** (aktif tetapi ditandai habis oleh penjual, tidak tampil untuk pengunjung), ditolak, dinonaktifkan (dapat disaring per rentang waktu), dan grafik **Statistik**: aktivitas per hari, status produk (*Aktif · Tersedia* dan *Aktif · Stok Kosong* dipisah), produk per kategori, akun penjual (7 / 30 / 90 hari) |
 | Konfirmasi Produk | Daftar produk yang menunggu keputusan. ✔ untuk menerima, ✖ untuk menolak dengan alasan, atau **Lihat Detail** |
 | Manajemen Produk | Semua produk dengan tab status, pencarian, filter kategori, dan filter penjual |
 | Kategori Produk | Tambah, ubah, dan hapus kategori produk beserta **gambarnya** (wajib; tampil di carousel Beranda, dapat diganti tetapi tidak dihapus). Kategori yang masih dipakai produk tidak bisa dihapus |
@@ -255,7 +255,7 @@ tautan di halaman aktivasi atau kepada superadmin.
 
 | Menu | Fungsi |
 | --- | --- |
-| Dashboard | Jumlah admin, admin belum aktif, UMKM, dan produk, serta grafik **Statistik** (aktivitas, status produk, produk per kategori, akun admin) |
+| Dashboard | Jumlah admin, admin belum aktif, UMKM, dan produk (termasuk **Stok Kosong**), serta grafik **Statistik** (aktivitas, status produk, produk per kategori, akun admin) |
 | Aktivasi Admin | Aktifkan atau nonaktifkan akun admin (alasan opsional). Admin baru hanya bisa login setelah diaktifkan, dan menerima email saat akunnya diaktifkan (alasan yang diisi ikut tercantum) |
 | Konfirmasi Produk | Menyetujui, menolak (dengan alasan), atau menonaktifkan produk — sama seperti admin |
 | Data Produk / Data UMKM | Melihat semua produk dan profil toko; produk dibuka ke halaman konfirmasinya. Pemilik toko yang email verifikasi/OTP-nya tidak sampai diberi catatan merah |
@@ -276,7 +276,7 @@ Akun superadmin dibuat oleh pengelola server. Superadmin **hanya membaca** data,
 
 | Menu | Fungsi |
 | --- | --- |
-| Dashboard | Ringkasan akun per role, produk, dan akun terbaru, serta grafik **Statistik** (aktivitas, status produk, produk per kategori, akun per role) |
+| Dashboard | Ringkasan akun per role, produk (termasuk **Stok Kosong**), dan akun terbaru, serta grafik **Statistik** (aktivitas, status produk, produk per kategori, akun per role) |
 | Akun Disnakertrans | **TAMBAH AKUN**: isi nama, telepon, dan email (tanpa password). Sistem mengirim kata sandi sementara dan tautan aktivasi ke email itu; pemilik akun membuat password sendiri saat aktivasi. Bila email tidak sampai atau kedaluwarsa, klik **Kirim Ulang Verifikasi** (mengirim tautan dan kata sandi sementara baru) |
 | Semua Pengguna | Semua akun, disaring per role, dengan pencarian. Akun yang email verifikasi/OTP-nya **tidak sampai** (alamat tidak ditemukan, kotak masuk penuh, ditolak) diberi catatan merah; tombol **Email Tidak Terkirim** menampilkan akun-akun itu saja |
 | Kelola Panduan | Mengubah topik, langkah, dan gambar Panduan — sama seperti admin |

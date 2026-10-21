@@ -65,7 +65,8 @@ const activityConfig = {
 
 const statusConfig = {
   count: { label: "Produk" },
-  active: { label: "Aktif", color: "var(--chart-3)" },
+  active: { label: "Aktif · Tersedia", color: "var(--chart-3)" },
+  outOfStock: { label: "Aktif · Stok Kosong", color: "#f97316" },
   pending: { label: "Menunggu", color: "#f5b700" },
   rejected: { label: "Ditolak", color: "var(--chart-5)" },
   inactive: { label: "Dinonaktifkan", color: "#9ca3af" },
@@ -129,8 +130,15 @@ export function DashboardStats() {
                   <PieChart>
                     <ChartTooltip content={<ChartTooltipContent nameKey="status" hideLabel />} />
                     <Pie
-                      data={(Object.keys(s.products.byStatus) as (keyof typeof s.products.byStatus)[])
-                        .map((status) => ({ status, count: s.products.byStatus[status], fill: `var(--color-${status})` }))
+                      data={[
+                        // "Aktif" split: approved and in stock (shown to visitors) / approved but "Stok Kosong" (hidden)
+                        { status: "active", count: s.products.byStatus.active - (s.products.outOfStock?.active ?? 0) },
+                        { status: "outOfStock", count: s.products.outOfStock?.active ?? 0 },
+                        { status: "pending", count: s.products.byStatus.pending },
+                        { status: "rejected", count: s.products.byStatus.rejected },
+                        { status: "inactive", count: s.products.byStatus.inactive },
+                      ]
+                        .map((d) => ({ ...d, fill: `var(--color-${d.status})` }))
                         .filter((d) => d.count > 0)}
                       dataKey="count"
                       nameKey="status"

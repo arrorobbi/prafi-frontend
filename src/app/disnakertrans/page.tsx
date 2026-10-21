@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import styles from "@/components/dashboard/dashboard.module.css";
 import { StatCard } from "@/components/dashboard/StatCard";
-import { IconBox, IconCheck, IconClock, IconStore, IconUsers } from "@/components/Icons";
+import { IconBox, IconCheck, IconClock, IconStore, IconUsers, IconWarning } from "@/components/Icons";
 import { EmptyState, Loading, PageHeader } from "@/components/ui";
 import { api, fetchAll } from "@/lib/api";
 import { formatDate, formatNumber, fullName } from "@/lib/format";
@@ -45,7 +45,8 @@ export default function DisnakertransDashboardPage() {
             <StatCard icon={IconClock} color="#ffffff" bg="#f2cf2c" label="Admin Belum Aktif" value={formatNumber(data!.waiting.length)} note="Perlu diaktifkan" />
             <StatCard icon={IconStore} color="#ffffff" bg="#ea7b25" label="Total UMKM" value={formatNumber(data!.stats.shops)} note="Profil toko terdaftar" />
             <StatCard icon={IconBox} color="#ffffff" bg="#4fc9de" label="Total Produk" value={formatNumber(data!.stats.products)} note="Semua produk diajukan" />
-            <StatCard icon={IconCheck} color="#ffffff" bg="#13a10e" label="Produk Aktif" value={formatNumber(data!.stats.active)} note="Tampil di halaman utama" />
+            <StatCard icon={IconCheck} color="#ffffff" bg="#13a10e" label="Produk Aktif" value={formatNumber(data!.stats.active)} note={data!.stats.outOfStock ? `${data!.stats.outOfStock} di antaranya stok kosong` : "Tampil di halaman utama"} />
+            <StatCard icon={IconWarning} color="#ffffff" bg="#f97316" label="Stok Kosong" value={formatNumber(data!.stats.outOfStock)} note="Aktif, disembunyikan dari halaman utama oleh penjual" />
             <StatCard icon={IconClock} color="#ffffff" bg="#c9a300" label="Produk Menunggu" value={formatNumber(data!.stats.pending)} note="Menunggu keputusan admin" />
           </div>
 

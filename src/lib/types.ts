@@ -322,6 +322,8 @@ export interface StatsOverview {
     total: number;
     byStatus: { active: number; pending: number; rejected: number; inactive: number };
     byCategory: { name: string; count: number }[];
+    /** Marked "Stok Kosong" by the seller: every one, and the approved ones (counted in byStatus.active too) */
+    outOfStock: { total: number; active: number };
   };
   tenants: { total: number; byArea: { area: string; count: number }[] };
   users: { roles: Role[]; total: number; byRole: { role: Role; active: number; inactive: number }[] };
