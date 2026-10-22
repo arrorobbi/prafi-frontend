@@ -273,12 +273,12 @@ tautan di halaman aktivasi atau kepada superadmin.
 
 ## 6. Superadmin
 
-Akun superadmin dibuat oleh pengelola server. Superadmin **hanya membaca** data, kecuali membuat akun Disnakertrans.
+Akun superadmin dibuat oleh pengelola server. Superadmin **hanya membaca** data, kecuali membuat, menonaktifkan, dan mengaktifkan kembali akun Disnakertrans (serta Kelola Panduan).
 
 | Menu | Fungsi |
 | --- | --- |
 | Dashboard | Ringkasan akun per role, produk (termasuk **Stok Kosong**), dan akun terbaru, serta grafik **Statistik** (aktivitas, status produk, produk per kategori, akun per role) |
-| Akun Disnakertrans | **TAMBAH AKUN**: isi nama, telepon, dan email (tanpa password). Sistem mengirim kata sandi sementara dan tautan aktivasi ke email itu; pemilik akun membuat password sendiri saat aktivasi. Bila email tidak sampai atau kedaluwarsa, klik **Kirim Ulang Verifikasi** (mengirim tautan dan kata sandi sementara baru) |
+| Akun Disnakertrans | **Nonaktifkan / Aktifkan** akun Disnakertrans (alasan opsional): petugas langsung keluar dari semua sesi dan menerima email pemberitahuan; akun dapat diaktifkan lagi kapan saja. **TAMBAH AKUN**: isi nama, telepon, dan email (tanpa password). Sistem mengirim kata sandi sementara dan tautan aktivasi ke email itu; pemilik akun membuat password sendiri saat aktivasi. Bila email tidak sampai atau kedaluwarsa, klik **Kirim Ulang Verifikasi** (mengirim tautan dan kata sandi sementara baru) |
 | Semua Pengguna | Semua akun, disaring per role, dengan pencarian. Akun yang email verifikasi/OTP-nya **tidak sampai** (alamat tidak ditemukan, kotak masuk penuh, ditolak) diberi catatan merah; tombol **Email Tidak Terkirim** menampilkan akun-akun itu saja |
 | Kelola Panduan | Mengubah topik, langkah, dan gambar Panduan — sama seperti admin |
 | Profil Pengguna | Satu kartu per akun: data akun, data toko (penjual), dan **Log Aktivitas** akun tersebut (berdasarkan emailnya; buka per kartu, **Muat Lebih Banyak** untuk log lama). Bisa dicari dan disaring per role |

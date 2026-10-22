@@ -44,33 +44,3 @@
   margin-top: 10px;
 }
 
-/* "Tersedia" / "Stok Kosong" choice */
-.availability {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.availabilityOption {
-  min-height: 38px;
-  padding: 0 20px;
-  border: 1px solid var(--gray-300);
-  border-radius: 999px;
-  background: var(--white);
-  color: var(--gray-700);
-  font-size: 0.88rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.availableOn {
-  border-color: #6edb9f;
-  background: #6edb9f;
-  color: #073d22;
-}
-
-.emptyOn {
-  border-color: #ff8f8f;
-  background: #ff8f8f;
-  color: #5b0000;
-}

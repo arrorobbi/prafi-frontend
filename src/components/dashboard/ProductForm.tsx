@@ -13,6 +13,7 @@ import { useConfirm } from "../Modal";
 import { useToast } from "../Toast";
 import { ImagePicker } from "../ui";
 import { usePendingImage } from "../UploadDialog";
+import { AvailabilityChoice } from "./AvailabilityToggle";
 import styles from "./ProductForm.module.css";
 import { Button, buttonVariants } from "@/components/shadcn/button";
 import { Input } from "@/components/shadcn/input";
@@ -260,23 +261,9 @@ export function ProductForm({ product, onSaved }: { product?: Product; onSaved?:
           )}
         </label>
         <div className="field">
-          <span className="label" id="availability-label">Ketersediaan</span>
-          <span className={styles.availability} role="radiogroup" aria-labelledby="availability-label">
-            {[
-              { value: true, label: "Tersedia" },
-              { value: false, label: "Stok Kosong" },
-            ].map((o) => (
-              <button
-                key={o.label}
-                type="button"
-                role="radio"
-                aria-checked={values.isAvailable === o.value}
-                className={`${styles.availabilityOption} ${values.isAvailable === o.value ? (o.value ? styles.availableOn : styles.emptyOn) : ""}`}
-                onClick={() => setValues((v) => ({ ...v, isAvailable: o.value }))}
-              >
-                {o.label}
-              </button>
-            ))}
+          <span className="label">Ketersediaan</span>
+          <span>
+            <AvailabilityChoice label="Ketersediaan" value={values.isAvailable} onChange={(v) => setValues((x) => ({ ...x, isAvailable: v }))} />
           </span>
           <span className="hint">
             {values.isAvailable

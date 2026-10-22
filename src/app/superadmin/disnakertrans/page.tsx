@@ -19,7 +19,8 @@ const EMPTY = { fullName: "", phone: "", email: "" };
 
 /**
  * Disnakertrans accounts: only the superadmin creates them (POST /api/auth/register/disnakertrans). No password is
- * typed here: the backend emails a temporary one, which the owner replaces when activating the account.
+ * typed here: the backend emails a temporary one, which the owner replaces when activating the account. The superadmin
+ * can also deactivate an account (the officer is logged out and emailed) and activate it again.
  */
 export default function DisnakertransAccountsPage() {
   const toast = useToast();
@@ -82,7 +83,7 @@ export default function DisnakertransAccountsPage() {
         </Button>
       </div>
 
-      <UserAccounts role="disnakertrans" canResend noun="akun disnakertrans" reloadKey={reloadKey} />
+      <UserAccounts role="disnakertrans" approvable canResend noun="akun disnakertrans" reloadKey={reloadKey} />
 
       <Modal open={open} title="Tambah Akun Disnakertrans" onClose={close} wide>
         {created ? (

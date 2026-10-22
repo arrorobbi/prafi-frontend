@@ -269,6 +269,7 @@ export function UserAccounts({
               {active
                 ? "Pengguna tidak akan bisa login dan sesi yang sedang berjalan akan diakhiri."
                 : "Pengguna akan dapat login dan menggunakan panelnya."}{" "}
+              {target?.role === "disnakertrans" && "Pemilik akun menerima email pemberitahuan beserta alasan (bila diisi). "}
               Akun: <strong>{target?.tenantName || fullName(target)}</strong> ({target?.email})
             </p>
             {target && !target.mailActive && !active && (
